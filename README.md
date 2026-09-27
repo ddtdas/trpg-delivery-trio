@@ -1,9 +1,10 @@
 # TRPG 跑团辅助系统 · 交付三件套
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
-[![Server](https://img.shields.io/badge/server-FastAPI%20%2F%20Python%203.12-009688.svg)](docs/TRPG-项目架构与调度关系说明.md)
-[![Web Client](https://img.shields.io/badge/web%20client-zero--build-success.svg)](docs/TRPG-项目架构与调度关系说明.md)
-[![Mini Program](https://img.shields.io/badge/miniprogram-WeChat%20Native-07c160.svg)](docs/TRPG-项目架构与调度关系说明.md)
+[![Release](https://img.shields.io/github/v/release/ddtdas/trpg-delivery-trio?color=f2c14e)](https://github.com/ddtdas/trpg-delivery-trio/releases/latest)
+[![Server](https://img.shields.io/badge/server-FastAPI%20%2F%20Python%203.12-009688.svg)](docs/服务端-使用与配置手册.md)
+[![Web Client](https://img.shields.io/badge/web%20client-zero--build-success.svg)](docs/服务端-使用与配置手册.md)
+[![Mini Program](https://img.shields.io/badge/miniprogram-WeChat%20Native-07c160.svg)](docs/服务端-使用与配置手册.md)
 [![Platform](https://img.shields.io/badge/platform-Windows-0078D6.svg)](#快速开始)
 
 > **TRPG（桌上角色扮演游戏）跑团辅助系统** —— 黑客松交付三件套：`服务端` + `Web 客户端` + `微信小程序客户端`。
@@ -86,6 +87,21 @@ flowchart LR
 ---
 
 ## 快速开始
+
+### 0. 下载交付包
+
+**推荐方式：从 Release 下载**（无需 clone，直接拿打包好的交付物）
+
+| 附件 | 对应交付物 |
+|---|---|
+| `TRPG-server.zip` | 服务端 |
+| `TRPG-web-client.zip` | Web 客户端 |
+| `TRPG-wechat-miniprogram.zip` | 微信小程序客户端 |
+
+➡️ **[下载 v1.0.0](https://github.com/ddtdas/trpg-delivery-trio/releases/latest)**
+
+> 附件名为 ASCII 安全名（避免下载工具对中文名的兼容问题），解压后顶层目录仍是中文原名。
+> 也可以直接使用本仓库根目录下的同名 zip 文件。
 
 ### 1. 解压与校验
 
