@@ -1,0 +1,113 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="820" viewBox="0 0 1400 820" font-family="'Microsoft YaHei','Segoe UI',sans-serif">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#131a2b"/>
+      <stop offset="100%" stop-color="#0d1320"/>
+    </linearGradient>
+    <linearGradient id="gold" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#f2c14e"/>
+      <stop offset="100%" stop-color="#e0a32e"/>
+    </linearGradient>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+      <path d="M0,0 L0,6 L9,3 z" fill="#7d8ba6"/>
+    </marker>
+    <marker id="arrowGold" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+      <path d="M0,0 L0,6 L9,3 z" fill="#f2c14e"/>
+    </marker>
+    <filter id="glow" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="6" result="b"/>
+      <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>
+
+  <rect width="1400" height="820" fill="url(#bg)"/>
+
+  <!-- title bar -->
+  <text x="46" y="60" fill="#f2c14e" font-size="30" font-weight="700">TRPG 服务端 · 部署与运行总览</text>
+  <text x="46" y="92" fill="#8b98b0" font-size="16">一份包、一个端口：主持端与玩家端页面都由同一个 FastAPI 进程托管</text>
+  <line x1="46" y1="112" x2="1354" y2="112" stroke="#26314a" stroke-width="2"/>
+
+  <!-- ============ Operator machine ============ -->
+  <rect x="46" y="146" width="1308" height="596" rx="14" fill="#161d2e" stroke="#26314a" stroke-width="1.5"/>
+  <text x="72" y="182" fill="#c8d3e6" font-size="17" font-weight="700">主持机（Windows 10 / 11，需装 Python 3.12+）</text>
+
+  <!-- Launcher column -->
+  <rect x="76" y="206" width="252" height="300" rx="12" fill="#1b2338" stroke="#33405e" stroke-width="1.5"/>
+  <text x="98" y="240" fill="#f2c14e" font-size="16" font-weight="700">① 启动器脚本</text>
+  <g font-size="14.5" fill="#c8d3e6">
+    <rect x="98" y="258" width="208" height="38" rx="8" fill="#233048" stroke="#3a4a6b"/>
+    <text x="112" y="283">环境检查.bat</text>
+    <rect x="98" y="306" width="208" height="38" rx="8" fill="#233048" stroke="#3a4a6b"/>
+    <text x="112" y="331">首次运行-安装依赖.bat</text>
+    <rect x="98" y="354" width="208" height="38" rx="8" fill="#3a2f16" stroke="#f2c14e" stroke-width="1.6"/>
+    <text x="112" y="379" fill="#f7d488" font-weight="700">start.bat  ← 启动</text>
+    <rect x="98" y="402" width="208" height="38" rx="8" fill="#233048" stroke="#3a4a6b"/>
+    <text x="112" y="427">自检.bat</text>
+    <rect x="98" y="450" width="208" height="38" rx="8" fill="#233048" stroke="#3a4a6b"/>
+    <text x="112" y="475">stop.bat  （停止）</text>
+  </g>
+  <text x="98" y="502" fill="#7d8ba6" font-size="12.5">双击即用，无需手工贴命令</text>
+
+  <!-- Server process -->
+  <rect x="368" y="206" width="378" height="448" rx="12" fill="#1b2338" stroke="#f2c14e" stroke-width="1.8"/>
+  <text x="392" y="240" fill="#f2c14e" font-size="16" font-weight="700">② TRPG 服务端进程（uvicorn + FastAPI）</text>
+  <text x="392" y="266" fill="#8b98b0" font-size="13">自动挑选空闲端口 9210 → 9230</text>
+
+  <rect x="392" y="284" width="330" height="66" rx="9" fill="#233048" stroke="#3a4a6b"/>
+  <text x="408" y="309" fill="#c8d3e6" font-size="14" font-weight="700">主持端 UI</text>
+  <text x="408" y="333" fill="#8b98b0" font-size="13">/app/  ·  预构建 React，无需 npm</text>
+
+  <rect x="392" y="362" width="330" height="66" rx="9" fill="#233048" stroke="#3a4a6b"/>
+  <text x="408" y="387" fill="#c8d3e6" font-size="14" font-weight="700">玩家端页面</text>
+  <text x="408" y="411" fill="#8b98b0" font-size="13">/player/  ·  零构建 HTML/JS</text>
+
+  <rect x="392" y="440" width="330" height="66" rx="9" fill="#233048" stroke="#3a4a6b"/>
+  <text x="408" y="465" fill="#c8d3e6" font-size="14" font-weight="700">接入层 + 实时通道</text>
+  <text x="408" y="489" fill="#8b98b0" font-size="13">/access/*  ·  /api/*  ·  WS /ws</text>
+
+  <rect x="392" y="518" width="330" height="60" rx="9" fill="#1f2a40" stroke="#3a4a6b"/>
+  <text x="408" y="543" fill="#c8d3e6" font-size="14" font-weight="700">领域内核</text>
+  <text x="408" y="566" fill="#8b98b0" font-size="13">事件溯源 SQLite(WAL) · 规则判定 · AI 审批</text>
+
+  <rect x="392" y="592" width="330" height="44" rx="9" fill="#16233a" stroke="#4a6fa5"/>
+  <text x="408" y="620" fill="#8fc0ff" font-size="13">落盘发现文件 → run\server.json / server.port</text>
+
+  <!-- Browser clients -->
+  <rect x="790" y="206" width="252" height="212" rx="12" fill="#1b2338" stroke="#33405e" stroke-width="1.5"/>
+  <text x="812" y="240" fill="#f2c14e" font-size="16" font-weight="700">③ 主持端浏览器</text>
+  <text x="812" y="272" fill="#c8d3e6" font-size="13.5">http://127.0.0.1:9210/app/</text>
+  <rect x="812" y="286" width="208" height="52" rx="8" fill="#3a2f16" stroke="#f2c14e" stroke-width="1.5"/>
+  <text x="826" y="308" fill="#f7d488" font-size="13" font-weight="700">必须带 ?token=</text>
+  <text x="826" y="328" fill="#d8c08a" font-size="12">否则一直「连接中断，正在重连…」</text>
+  <text x="812" y="366" fill="#8b98b0" font-size="12.5">token 取 configs/access_config.yaml</text>
+  <text x="812" y="386" fill="#8b98b0" font-size="12.5">的 webapp 项</text>
+  <text x="812" y="406" fill="#8b98b0" font-size="12.5">GM 总览：/#/overview?campaign=…</text>
+
+  <rect x="1062" y="206" width="252" height="212" rx="12" fill="#1b2338" stroke="#33405e" stroke-width="1.5"/>
+  <text x="1084" y="240" fill="#f2c14e" font-size="16" font-weight="700">④ 玩家端</text>
+  <text x="1084" y="272" fill="#c8d3e6" font-size="13.5">PC / 手机浏览器</text>
+  <text x="1084" y="300" fill="#c8d3e6" font-size="13.5">http://&lt;本机IP&gt;:9210/player/</text>
+  <text x="1084" y="332" fill="#8b98b0" font-size="12.5">填服务器地址 + mobile token</text>
+  <text x="1084" y="352" fill="#8b98b0" font-size="12.5">+ 连接码 + 玩家ID + 昵称</text>
+  <text x="1084" y="384" fill="#8b98b0" font-size="12.5">微信小程序端同样直连该地址</text>
+
+  <!-- DSH panel -->
+  <rect x="790" y="442" width="524" height="110" rx="12" fill="#1b2338" stroke="#4a6fa5" stroke-width="1.5"/>
+  <text x="812" y="474" fill="#8fc0ff" font-size="15.5" font-weight="700">⑤ DSH 助手面板（可选）</text>
+  <text x="812" y="502" fill="#c8d3e6" font-size="13">双击 dsh\start.bat 自动确保服务端在跑并打开 /app/#/dsh</text>
+  <text x="812" y="528" fill="#8b98b0" font-size="12.5">注意：面板只认 localStorage 的 trpg_token（与 URL 上的 ?token= 是两个参数）</text>
+
+  <!-- firewall -->
+  <rect x="790" y="576" width="524" height="90" rx="12" fill="#241b1b" stroke="#a05a5a" stroke-width="1.5"/>
+  <text x="812" y="604" fill="#f0a0a0" font-size="15.5" font-weight="700">⑥ 局域网联机需放行入站端口</text>
+  <text x="812" y="630" fill="#d6b4b4" font-size="12" font-family="Consolas,monospace">netsh advfirewall firewall add rule name="trpg-9210"</text>
+  <text x="812" y="650" fill="#d6b4b4" font-size="12" font-family="Consolas,monospace">  dir=in action=allow protocol=TCP localport=9210</text>
+
+  <!-- arrows -->
+  <line x1="328" y1="356" x2="366" y2="356" stroke="#f2c14e" stroke-width="2.4" marker-end="url(#arrowGold)"/>
+  <line x1="746" y1="300" x2="788" y2="300" stroke="#7d8ba6" stroke-width="2" marker-end="url(#arrow)"/>
+  <line x1="746" y1="330" x2="788" y2="330" stroke="#7d8ba6" stroke-width="2" marker-end="url(#arrow)"/>
+
+  <!-- footer note -->
+  <text x="46" y="784" fill="#6b7891" font-size="13">提示：全程只启动一个进程；主持端与玩家端共用同一份事件与权限管理。停止服务端用 stop.bat。</text>
+</svg>

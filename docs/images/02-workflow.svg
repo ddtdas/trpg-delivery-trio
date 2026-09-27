@@ -1,0 +1,137 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="880" viewBox="0 0 1400 880" font-family="'Microsoft YaHei','Segoe UI',sans-serif">
+  <defs>
+    <linearGradient id="bg2" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#131a2b"/>
+      <stop offset="100%" stop-color="#0d1320"/>
+    </linearGradient>
+    <marker id="ar" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+      <path d="M0,0 L0,6 L9,3 z" fill="#7d8ba6"/>
+    </marker>
+    <marker id="arG" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+      <path d="M0,0 L0,6 L9,3 z" fill="#f2c14e"/>
+    </marker>
+    <marker id="arB" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+      <path d="M0,0 L0,6 L9,3 z" fill="#4a9edb"/>
+    </marker>
+  </defs>
+
+  <rect width="1400" height="880" fill="url(#bg2)"/>
+  <text x="46" y="58" fill="#f2c14e" font-size="30" font-weight="700">一场跑团的完整流程 · 从开桌到散场</text>
+  <text x="46" y="90" fill="#8b98b0" font-size="16">主持人保留裁决权：AI 只起草，玩家只看得到自己该看到的内容</text>
+  <line x1="46" y1="110" x2="1354" y2="110" stroke="#26314a" stroke-width="2"/>
+
+  <!-- ===== Lane header ===== -->
+  <rect x="46" y="132" width="200" height="40" rx="8" fill="#1f2a40" stroke="#3a4a6b"/>
+  <text x="146" y="158" fill="#c8d3e6" font-size="14.5" font-weight="700" text-anchor="middle">阶段</text>
+  <rect x="262" y="132" width="360" height="40" rx="8" fill="#1f2a40" stroke="#3a4a6b"/>
+  <text x="442" y="158" fill="#c8d3e6" font-size="14.5" font-weight="700" text-anchor="middle">主持人（KP / DM）</text>
+  <rect x="638" y="132" width="360" height="40" rx="8" fill="#1f2a40" stroke="#3a4a6b"/>
+  <text x="818" y="158" fill="#c8d3e6" font-size="14.5" font-weight="700" text-anchor="middle">服务端（唯一权威）</text>
+  <rect x="1014" y="132" width="340" height="40" rx="8" fill="#1f2a40" stroke="#3a4a6b"/>
+  <text x="1184" y="158" fill="#c8d3e6" font-size="14.5" font-weight="700" text-anchor="middle">玩家端（PC / 手机 / 小程序）</text>
+
+  <!-- Row 1 -->
+  <g>
+    <rect x="46" y="188" width="200" height="128" rx="10" fill="#233048" stroke="#3a4a6b"/>
+    <text x="66" y="228" fill="#f2c14e" font-size="15" font-weight="700">① 开桌</text>
+    <text x="66" y="256" fill="#8b98b0" font-size="12.5">建桌并拿到连接码</text>
+
+    <rect x="262" y="188" width="360" height="128" rx="10" fill="#1b2338" stroke="#33405e"/>
+    <text x="284" y="222" fill="#c8d3e6" font-size="13.5">双击 start.bat → 打开</text>
+    <text x="284" y="246" fill="#c8d3e6" font-size="13.5">/app/?token=&lt;webapp token&gt;</text>
+    <text x="284" y="274" fill="#8b98b0" font-size="12.5">POST /access/host/table 开桌</text>
+    <text x="284" y="296" fill="#8b98b0" font-size="12.5">POST /access/host/turn 开回合</text>
+
+    <rect x="638" y="188" width="360" height="128" rx="10" fill="#1b2338" stroke="#f2c14e" stroke-width="1.6"/>
+    <text x="660" y="222" fill="#f7d488" font-size="13.5" font-weight="700">生成连接码，落盘桌注册表</text>
+    <text x="660" y="250" fill="#8b98b0" font-size="12.5">data\tables_registry.json</text>
+    <text x="660" y="278" fill="#8b98b0" font-size="12.5">回合状态：IDLE → COLLECTING</text>
+
+    <rect x="1014" y="188" width="340" height="128" rx="10" fill="#1b2338" stroke="#33405e"/>
+    <text x="1036" y="222" fill="#c8d3e6" font-size="13.5">用连接码加入：</text>
+    <text x="1036" y="248" fill="#8b98b0" font-size="12.5">填服务器地址 + mobile token</text>
+    <text x="1036" y="272" fill="#8b98b0" font-size="12.5">+ 连接码 + 玩家ID + 昵称</text>
+    <text x="1036" y="298" fill="#7d8ba6" font-size="12">（GET /access/table/resolve）</text>
+  </g>
+
+  <!-- Row 2 -->
+  <g>
+    <rect x="46" y="336" width="200" height="128" rx="10" fill="#233048" stroke="#3a4a6b"/>
+    <text x="66" y="376" fill="#f2c14e" font-size="15" font-weight="700">② 跑团中</text>
+    <text x="66" y="404" fill="#8b98b0" font-size="12.5">收集行动、执行规则</text>
+
+    <rect x="262" y="336" width="360" height="128" rx="10" fill="#1b2338" stroke="#33405e"/>
+    <text x="284" y="370" fill="#c8d3e6" font-size="13.5">玩家描述行动，主持人控场</text>
+    <text x="284" y="398" fill="#8b98b0" font-size="12.5">敏感动作（撬锁/取走）进待审队列</text>
+    <text x="284" y="424" fill="#8b98b0" font-size="12.5">旁白提案：通过 / 修改 / 驳回</text>
+    <text x="284" y="450" fill="#7d8ba6" font-size="12">拍板前玩家看不到候选正文</text>
+
+    <rect x="638" y="336" width="360" height="128" rx="10" fill="#1b2338" stroke="#4a9edb" stroke-width="1.6"/>
+    <text x="660" y="370" fill="#8fc0ff" font-size="13.5" font-weight="700">事件溯源：每次变更落一条事件</text>
+    <text x="660" y="398" fill="#8b98b0" font-size="12.5">SQLite WAL · 全局单调 seq</text>
+    <text x="660" y="424" fill="#8b98b0" font-size="12.5">投影 → 会话状态（确定性）</text>
+    <text x="660" y="450" fill="#8b98b0" font-size="12.5">一事件一帧广播到房间</text>
+
+    <rect x="1014" y="336" width="340" height="128" rx="10" fill="#1b2338" stroke="#33405e"/>
+    <text x="1036" y="370" fill="#c8d3e6" font-size="13.5">主通道：REST 轮询（权威）</text>
+    <text x="1036" y="394" fill="#7d8ba6" font-size="12" font-family="Consolas,monospace">GET /api/campaigns/{c}/events</text>
+    <text x="1036" y="422" fill="#c8d3e6" font-size="13.5">增强：WS /ws（可静默降级）</text>
+    <text x="1036" y="448" fill="#7d8ba6" font-size="12">连不上不影响任何文案</text>
+  </g>
+
+  <!-- Row 3 -->
+  <g>
+    <rect x="46" y="484" width="200" height="128" rx="10" fill="#233048" stroke="#3a4a6b"/>
+    <text x="66" y="524" fill="#f2c14e" font-size="15" font-weight="700">③ 可见性</text>
+    <text x="66" y="552" fill="#8b98b0" font-size="12.5">按身份分发信息</text>
+
+    <rect x="262" y="484" width="360" height="128" rx="10" fill="#1b2338" stroke="#33405e"/>
+    <text x="284" y="518" fill="#c8d3e6" font-size="13.5">主持人看全桌</text>
+    <text x="284" y="546" fill="#8b98b0" font-size="12.5">暗骰（KP 归属）非 KP 整条不可见</text>
+    <text x="284" y="572" fill="#8b98b0" font-size="12.5">NPC 提案走同一条审批总线</text>
+
+    <rect x="638" y="484" width="360" height="128" rx="10" fill="#1b2338" stroke="#33405e"/>
+    <text x="660" y="518" fill="#c8d3e6" font-size="13.5">服务端权威过滤</text>
+    <text x="660" y="546" fill="#8b98b0" font-size="12.5">whisper 私语 / 条件情报</text>
+    <text x="660" y="572" fill="#8b98b0" font-size="12.5">定向投递只发给对应玩家</text>
+
+    <rect x="1014" y="484" width="340" height="128" rx="10" fill="#1b2338" stroke="#33405e"/>
+    <text x="1036" y="518" fill="#c8d3e6" font-size="13.5">只看公共内容 + 自己的密语</text>
+    <text x="1036" y="546" fill="#8b98b0" font-size="12.5">断线重连：带 last_seq 补齐</text>
+    <text x="1036" y="572" fill="#8b98b0" font-size="12.5">游标只由轮询推进并落盘</text>
+  </g>
+
+  <!-- Row 4 -->
+  <g>
+    <rect x="46" y="632" width="200" height="128" rx="10" fill="#233048" stroke="#3a4a6b"/>
+    <text x="66" y="672" fill="#f2c14e" font-size="15" font-weight="700">④ 散场后</text>
+    <text x="66" y="700" fill="#8b98b0" font-size="12.5">存档与复盘</text>
+
+    <rect x="262" y="632" width="360" height="128" rx="10" fill="#1b2338" stroke="#33405e"/>
+    <text x="284" y="666" fill="#c8d3e6" font-size="13.5">保存快照，下次沿着进度续跑</text>
+    <text x="284" y="694" fill="#8b98b0" font-size="12.5">录音上传 → 转写 → 进事件流</text>
+    <text x="284" y="720" fill="#8b98b0" font-size="12.5">（无 STT 密钥时降级为占位文本）</text>
+
+    <rect x="638" y="632" width="360" height="128" rx="10" fill="#1b2338" stroke="#33405e"/>
+    <text x="660" y="666" fill="#c8d3e6" font-size="13.5">快照 + seq 之后补拉尾事件</text>
+    <text x="660" y="694" fill="#8b98b0" font-size="12.5">data\snapshots\</text>
+    <text x="660" y="720" fill="#8b98b0" font-size="12.5">停服：双击 stop.bat</text>
+
+    <rect x="1014" y="632" width="340" height="128" rx="10" fill="#1b2338" stroke="#33405e"/>
+    <text x="1036" y="666" fill="#c8d3e6" font-size="13.5">重开团档即可继续</text>
+    <text x="1036" y="694" fill="#8b98b0" font-size="12.5">本地游标已持久化</text>
+    <text x="1036" y="720" fill="#8b98b0" font-size="12.5">trpg_last_seq_&lt;table&gt;</text>
+  </g>
+
+  <!-- arrows between columns -->
+  <line x1="624" y1="252" x2="636" y2="252" stroke="#f2c14e" stroke-width="2.2" marker-end="url(#arG)"/>
+  <line x1="1000" y1="252" x2="1012" y2="252" stroke="#7d8ba6" stroke-width="2" marker-end="url(#ar)"/>
+  <line x1="624" y1="400" x2="636" y2="400" stroke="#4a9edb" stroke-width="2.2" marker-end="url(#arB)"/>
+  <line x1="1000" y1="400" x2="1012" y2="400" stroke="#7d8ba6" stroke-width="2" marker-end="url(#ar)"/>
+  <line x1="624" y1="548" x2="636" y2="548" stroke="#7d8ba6" stroke-width="2" marker-end="url(#ar)"/>
+  <line x1="1000" y1="548" x2="1012" y2="548" stroke="#7d8ba6" stroke-width="2" marker-end="url(#ar)"/>
+  <line x1="624" y1="696" x2="636" y2="696" stroke="#7d8ba6" stroke-width="2" marker-end="url(#ar)"/>
+
+  <text x="46" y="812" fill="#6b7891" font-size="13">关键规则：一切状态变化都以「事件」为唯一事实源；AI 的建议必须经主持人确认才会成为后续剧情依据。</text>
+  <text x="46" y="840" fill="#6b7891" font-size="13">应用内状态：IDLE → COLLECTING → CLOSED → RESOLVING → ADVANCED；玩家端只把 COLLECTING 当作可提交。</text>
+</svg>

@@ -1,0 +1,90 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="860" viewBox="0 0 1400 860" font-family="'Microsoft YaHei','Segoe UI',sans-serif">
+  <defs>
+    <linearGradient id="bg3" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#131a2b"/>
+      <stop offset="100%" stop-color="#0d1320"/>
+    </linearGradient>
+  </defs>
+
+  <rect width="1400" height="860" fill="url(#bg3)"/>
+  <text x="46" y="58" fill="#f2c14e" font-size="30" font-weight="700">配置速查 · 改哪个文件、填哪个值</text>
+  <text x="46" y="90" fill="#8b98b0" font-size="16">三个配置文件分工明确：谁能进门看 token，AI 用哪个通道看环境变量</text>
+  <line x1="46" y1="110" x2="1354" y2="110" stroke="#26314a" stroke-width="2"/>
+
+  <!-- Card 1 -->
+  <rect x="46" y="140" width="420" height="330" rx="14" fill="#161d2e" stroke="#f2c14e" stroke-width="1.8"/>
+  <text x="70" y="178" fill="#f2c14e" font-size="18" font-weight="700">configs\access_config.yaml</text>
+  <text x="70" y="204" fill="#8b98b0" font-size="13">三端 token 与启用开关（鉴权总闸门）</text>
+  <line x1="70" y1="218" x2="442" y2="218" stroke="#2c3854"/>
+
+  <rect x="70" y="232" width="372" height="98" rx="9" fill="#0f1626" stroke="#33405e"/>
+  <text x="86" y="256" fill="#c8d3e6" font-size="13" font-family="Consolas,monospace">ends:</text>
+  <text x="86" y="278" fill="#8fc0ff" font-size="13" font-family="Consolas,monospace">  mobile:  { enabled: true, token: … }</text>
+  <text x="86" y="298" fill="#f7d488" font-size="13" font-family="Consolas,monospace">  webapp:  { enabled: true, token: … }</text>
+  <text x="86" y="318" fill="#a8e0a8" font-size="13" font-family="Consolas,monospace">  recorder:{ enabled: true, token: … }</text>
+
+  <g font-size="13" fill="#c8d3e6">
+    <text x="70" y="356">→ 玩家端用 <tspan fill="#8fc0ff">mobile</tspan>，主持端用 <tspan fill="#f7d488">webapp</tspan>，录音端用 <tspan fill="#a8e0a8">recorder</tspan></text>
+    <text x="70" y="384">→ 传法：<tspan font-family="Consolas,monospace">Authorization: Bearer &lt;token&gt;</tspan></text>
+    <text x="94" y="406" fill="#8b98b0" font-family="Consolas,monospace">或 URL 查询串 ?token=&lt;token&gt;</text>
+    <text x="70" y="436" fill="#f0a0a0">⚠ 包内为默认值，对外分发前务必更换</text>
+    <text x="70" y="458" fill="#8b98b0">⚠ enabled: false 会直接关掉该端入口</text>
+  </g>
+
+  <!-- Card 2 -->
+  <rect x="490" y="140" width="420" height="330" rx="14" fill="#161d2e" stroke="#4a9edb" stroke-width="1.8"/>
+  <text x="514" y="178" fill="#8fc0ff" font-size="18" font-weight="700">configs\llm_providers.yaml</text>
+  <text x="514" y="204" fill="#8b98b0" font-size="13">AI 通道（密钥一律走环境变量，文件内无明文）</text>
+  <line x1="514" y1="218" x2="886" y2="218" stroke="#2c3854"/>
+
+  <g font-size="13" fill="#c8d3e6">
+    <rect x="514" y="232" width="372" height="172" rx="9" fill="#0f1626" stroke="#33405e"/>
+    <text x="530" y="256" font-family="Consolas,monospace"><tspan fill="#f7d488">primary</tspan>   newapi · deepseek-v4-flash</text>
+    <text x="546" y="276" fill="#8b98b0" font-family="Consolas,monospace">${NEWAPI_API_KEY}</text>
+    <text x="530" y="300" font-family="Consolas,monospace"><tspan fill="#8fc0ff">fallback</tspan>  deepseek · deepseek-chat</text>
+    <text x="546" y="320" fill="#8b98b0" font-family="Consolas,monospace">${DEEPSEEK_API_KEY}</text>
+    <text x="530" y="344" font-family="Consolas,monospace"><tspan fill="#8b98b0">tertiary</tspan>  gpt5（预留，当前 503）</text>
+    <text x="530" y="368" font-family="Consolas,monospace"><tspan fill="#8b98b0">local</tspan>     lm_studio 127.0.0.1:1234</text>
+    <text x="530" y="392" font-family="Consolas,monospace"><tspan fill="#a8e0a8">stt</tspan>       whisper-1 / ${STT_API_KEY}</text>
+  </g>
+  <text x="514" y="428" fill="#c8d3e6" font-size="13">→ 通道按 primary → fallback → tertiary → local 依次尝试</text>
+  <text x="514" y="452" fill="#8b98b0" font-size="13">→ 全部不可用：AI 建议降级，不影响开团与记事件</text>
+
+  <!-- Card 3 -->
+  <rect x="934" y="140" width="420" height="330" rx="14" fill="#161d2e" stroke="#33405e" stroke-width="1.8"/>
+  <text x="958" y="178" fill="#c8d3e6" font-size="18" font-weight="700">configs\table_default.yaml</text>
+  <text x="958" y="204" fill="#8b98b0" font-size="13">新建桌面的默认配置</text>
+  <line x1="958" y1="218" x2="1330" y2="218" stroke="#2c3854"/>
+
+  <rect x="958" y="232" width="372" height="90" rx="9" fill="#0f1626" stroke="#33405e"/>
+  <text x="974" y="258" fill="#c8d3e6" font-size="13" font-family="Consolas,monospace">桌名 / 战役 id / 默认规则包</text>
+  <text x="974" y="282" fill="#c8d3e6" font-size="13" font-family="Consolas,monospace">可见性默认值</text>
+  <text x="974" y="306" fill="#8b98b0" font-size="13" font-family="Consolas,monospace">max_players 等</text>
+
+  <text x="958" y="352" fill="#c8d3e6" font-size="13">→ 影响「一键开桌」时写入的初始值</text>
+  <text x="958" y="378" fill="#8b98b0" font-size="13">→ 不填也能跑：代码内有内置默认</text>
+  <text x="958" y="410" fill="#f0a0a0" font-size="13">⚠ 已开桌的战役不会因改此文件而变</text>
+  <text x="958" y="436" fill="#8b98b0" font-size="13">（除非重新开桌）</text>
+
+  <!-- Env section -->
+  <rect x="46" y="496" width="1308" height="240" rx="14" fill="#161d2e" stroke="#4a6fa5" stroke-width="1.8"/>
+  <text x="70" y="534" fill="#8fc0ff" font-size="18" font-weight="700">环境变量（Key 只放这里，不写进 YAML）</text>
+  <text x="70" y="560" fill="#8b98b0" font-size="13">设置方式（当前会话）或在「系统属性 → 环境变量」里持久化：</text>
+
+  <rect x="70" y="576" width="620" height="140" rx="9" fill="#0f1626" stroke="#33405e"/>
+  <text x="86" y="602" fill="#c8d3e6" font-size="13" font-family="Consolas,monospace">set NEWAPI_API_KEY=sk-xxxx</text>
+  <text x="86" y="626" fill="#c8d3e6" font-size="13" font-family="Consolas,monospace">set DEEPSEEK_API_KEY=sk-xxxx</text>
+  <text x="86" y="650" fill="#c8d3e6" font-size="13" font-family="Consolas,monospace">set STT_API_KEY=sk-xxxx</text>
+  <text x="86" y="674" fill="#8b98b0" font-size="13" font-family="Consolas,monospace">set NEWAPI_BASE_URL=https://…/v1</text>
+  <text x="86" y="698" fill="#8b98b0" font-size="13" font-family="Consolas,monospace">set STT_BASE_URL=https://…/v1</text>
+
+  <g font-size="13" fill="#c8d3e6">
+    <text x="720" y="602">→ 不配 AI 密钥：开团、回合、事件流、存档全部照常</text>
+    <text x="720" y="628">→ 只失去「AI 起草旁白 / 云端转写」这两项增强</text>
+    <text x="720" y="660" fill="#f0a0a0">→ 配好后必须重启服务端才生效（stop.bat → start.bat）</text>
+    <text x="720" y="692" fill="#8b98b0">→ 密钥不要写进 YAML、不要提交到仓库、不要贴进聊天</text>
+  </g>
+
+  <text x="46" y="788" fill="#6b7891" font-size="13">改完配置后的标准动作：stop.bat → start.bat → 浏览器 Ctrl+F5 强制刷新。</text>
+  <text x="46" y="816" fill="#6b7891" font-size="13">token 改了两端要同步：服务端 access_config.yaml、玩家端页面里填的 mobile token 必须是同一个值。</text>
+</svg>

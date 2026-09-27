@@ -1,0 +1,90 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="900" viewBox="0 0 1400 900" font-family="'Microsoft YaHei','Segoe UI',sans-serif">
+  <defs>
+    <linearGradient id="bg4" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#131a2b"/>
+      <stop offset="100%" stop-color="#0d1320"/>
+    </linearGradient>
+  </defs>
+
+  <rect width="1400" height="900" fill="url(#bg4)"/>
+  <text x="46" y="58" fill="#f2c14e" font-size="30" font-weight="700">故障排查决策图 · 先看现象，再对症处理</text>
+  <text x="46" y="90" fill="#8b98b0" font-size="16">90% 的问题落在四类：Python 环境 / 依赖 / 端口 / token</text>
+  <line x1="46" y1="110" x2="1354" y2="110" stroke="#26314a" stroke-width="2"/>
+
+  <!-- Start -->
+  <rect x="520" y="134" width="360" height="56" rx="12" fill="#3a2f16" stroke="#f2c14e" stroke-width="2"/>
+  <text x="700" y="170" fill="#f7d488" font-size="17" font-weight="700" text-anchor="middle">先跑 环境检查.bat</text>
+
+  <!-- Branch 1 -->
+  <rect x="60" y="242" width="300" height="120" rx="12" fill="#161d2e" stroke="#a05a5a" stroke-width="1.6"/>
+  <text x="82" y="274" fill="#f0a0a0" font-size="15" font-weight="700">现象 A：Python 报错</text>
+  <text x="82" y="302" fill="#c8d3e6" font-size="12.5">「未找到 Python 3.12 或更高版本」</text>
+  <text x="82" y="326" fill="#8b98b0" font-size="12.5">处理：装 Python 3.12+</text>
+  <text x="82" y="348" fill="#8b98b0" font-size="12.5">安装时勾选 Add python.exe to PATH</text>
+
+  <!-- Branch 2 -->
+  <rect x="400" y="242" width="300" height="120" rx="12" fill="#161d2e" stroke="#a05a5a" stroke-width="1.6"/>
+  <text x="422" y="274" fill="#f0a0a0" font-size="15" font-weight="700">现象 B：缺少依赖</text>
+  <text x="422" y="302" fill="#c8d3e6" font-size="12.5">fastapi / uvicorn 导入失败</text>
+  <text x="422" y="326" fill="#8b98b0" font-size="12.5">处理：首次运行-安装依赖.bat</text>
+  <text x="422" y="348" fill="#8b98b0" font-size="12.5">无网自动改用 wheels\ 离线装</text>
+
+  <!-- Branch 3 -->
+  <rect x="740" y="242" width="300" height="120" rx="12" fill="#161d2e" stroke="#a05a5a" stroke-width="1.6"/>
+  <text x="762" y="274" fill="#f0a0a0" font-size="15" font-weight="700">现象 C：端口被占</text>
+  <text x="762" y="302" fill="#c8d3e6" font-size="12.5">9210-9230 区间全被占用</text>
+  <text x="762" y="326" fill="#8b98b0" font-size="12.5">处理：stop.bat 释放</text>
+  <text x="762" y="348" fill="#8b98b0" font-size="12.5">或 start.bat 9260 指定别的端口</text>
+
+  <!-- Branch 4 -->
+  <rect x="1080" y="242" width="274" height="120" rx="12" fill="#161d2e" stroke="#a05a5a" stroke-width="1.6"/>
+  <text x="1102" y="274" fill="#f0a0a0" font-size="15" font-weight="700">现象 D：页面异常</text>
+  <text x="1102" y="302" fill="#c8d3e6" font-size="12.5">主持端一直「连接中断」</text>
+  <text x="1102" y="326" fill="#8b98b0" font-size="12.5">处理：URL 补 ?token=&lt;webapp&gt;</text>
+  <text x="1102" y="348" fill="#8b98b0" font-size="12.5">改前端后 Ctrl+F5 强刷</text>
+
+  <!-- connective lines -->
+  <line x1="700" y1="190" x2="210" y2="240" stroke="#33405e" stroke-width="2"/>
+  <line x1="700" y1="190" x2="550" y2="240" stroke="#33405e" stroke-width="2"/>
+  <line x1="700" y1="190" x2="890" y2="240" stroke="#33405e" stroke-width="2"/>
+  <line x1="700" y1="190" x2="1217" y2="240" stroke="#33405e" stroke-width="2"/>
+
+  <!-- Detailed table -->
+  <rect x="60" y="396" width="1294" height="336" rx="14" fill="#161d2e" stroke="#26314a" stroke-width="1.5"/>
+  <text x="84" y="432" fill="#c8d3e6" font-size="17" font-weight="700">常见现象 → 处理对照表</text>
+  <line x1="84" y1="446" x2="1330" y2="446" stroke="#2c3854"/>
+
+  <g font-size="13.5">
+    <text x="84" y="476" fill="#8fc0ff" font-weight="700">现象</text>
+    <text x="624" y="476" fill="#8fc0ff" font-weight="700">怎么处理</text>
+
+    <text x="84" y="508" fill="#c8d3e6">退出码 1 · 缺少运行依赖</text>
+    <text x="624" y="508" fill="#8b98b0">python -m pip install -r requirements.txt</text>
+
+    <text x="84" y="536" fill="#c8d3e6">退出码 1 · Python 版本过低</text>
+    <text x="624" y="536" fill="#8b98b0">装 Python 3.12+ 并确认在 PATH 中</text>
+
+    <text x="84" y="564" fill="#c8d3e6">退出码 2 · 端口被占用</text>
+    <text x="624" y="564" fill="#8b98b0">stop.bat 释放，或 start.bat 9211</text>
+
+    <text x="84" y="592" fill="#c8d3e6">退出码 3 · 健康检查超时</text>
+    <text x="624" y="592" fill="#8b98b0">看 run\server.log；多为依赖缺失或配置写错</text>
+
+    <text x="84" y="620" fill="#c8d3e6">/player/ 返回 404 player_not_built</text>
+    <text x="624" y="620" fill="#8b98b0">player-web\index.html 缺失</text>
+
+    <text x="84" y="648" fill="#c8d3e6">/app/ 返回 404 frontend_not_built</text>
+    <text x="624" y="648" fill="#8b98b0">web\dist\index.html 缺失</text>
+
+    <text x="84" y="676" fill="#c8d3e6">局域网其它设备打不开</text>
+    <text x="624" y="676" fill="#8b98b0">放行入站端口 + netstat -ano | findstr :9210</text>
+
+    <text x="84" y="704" fill="#c8d3e6">中文路径 / 输出乱码</text>
+    <text x="624" y="704" fill="#8b98b0">确认 .ps1 为 UTF-8 带 BOM（PS 5.1 否则按 ANSI 解析）</text>
+  </g>
+
+  <!-- Footer -->
+  <text x="60" y="782" fill="#6b7891" font-size="13">排查顺序建议：环境检查.bat → start.bat 的退出码 → run\ 下的日志与 server.json → 浏览器 F12 控制台/网络。</text>
+  <text x="60" y="812" fill="#6b7891" font-size="13">记忆口诀：环境看 Python、启动看依赖、连不上看端口、页面空白看 token 与强刷。</text>
+  <text x="60" y="852" fill="#7d8ba6" font-size="13">若 start.bat 提示「服务已在运行」，说明检测到同一部署的实例，直接用它打印的地址即可。</text>
+</svg>
