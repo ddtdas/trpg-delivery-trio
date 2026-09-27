@@ -1,0 +1,64 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="640" viewBox="0 0 1280 640" font-family="'Microsoft YaHei','Segoe UI',sans-serif">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#151d30"/>
+      <stop offset="55%" stop-color="#101728"/>
+      <stop offset="100%" stop-color="#0b101c"/>
+    </linearGradient>
+    <linearGradient id="goldline" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#f2c14e"/>
+      <stop offset="60%" stop-color="#e0a32e"/>
+      <stop offset="100%" stop-color="#8a6a1e"/>
+    </linearGradient>
+    <radialGradient id="glow1" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0%" stop-color="#f2c14e" stop-opacity="0.22"/>
+      <stop offset="100%" stop-color="#f2c14e" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="glow2" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0%" stop-color="#4a9edb" stop-opacity="0.20"/>
+      <stop offset="100%" stop-color="#4a9edb" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+
+  <rect width="1280" height="640" fill="url(#bg)"/>
+  <circle cx="1080" cy="120" r="320" fill="url(#glow1)"/>
+  <circle cx="200" cy="560" r="300" fill="url(#glow2)"/>
+
+  <!-- top rule -->
+  <rect x="0" y="0" width="1280" height="6" fill="url(#goldline)"/>
+
+  <!-- Title block -->
+  <text x="80" y="168" fill="#8b98b0" font-size="22" letter-spacing="4">ANKER HACKATHON 2026 · 智能录音赛道</text>
+
+  <text x="80" y="252" fill="#ffffff" font-size="60" font-weight="700">TRPG 跑团辅助系统</text>
+  <text x="80" y="312" fill="#f2c14e" font-size="34" font-weight="700">人来讲故事，AI 记住现场</text>
+
+  <line x1="80" y1="348" x2="560" y2="348" stroke="#2c3854" stroke-width="2"/>
+
+  <text x="80" y="392" fill="#c8d3e6" font-size="22">真人主持 · AI 辅助 · 录音留存 · 多人协作</text>
+
+  <!-- three cards -->
+  <g>
+    <rect x="80" y="428" width="330" height="132" rx="14" fill="#1b2338" stroke="#f2c14e" stroke-width="2"/>
+    <text x="104" y="466" fill="#f2c14e" font-size="21" font-weight="700">服务端</text>
+    <text x="104" y="498" fill="#c8d3e6" font-size="16">FastAPI · 事件溯源</text>
+    <text x="104" y="524" fill="#8b98b0" font-size="15">规则判定 · AI 副主持 · MCP</text>
+    <text x="104" y="548" fill="#7d8ba6" font-size="14">Python 3.12+ / SQLite WAL</text>
+
+    <rect x="432" y="428" width="330" height="132" rx="14" fill="#1b2338" stroke="#4a9edb" stroke-width="2"/>
+    <text x="456" y="466" fill="#8fc0ff" font-size="21" font-weight="700">Web 客户端</text>
+    <text x="456" y="498" fill="#c8d3e6" font-size="16">零构建 · 零 CDN</text>
+    <text x="456" y="524" fill="#8b98b0" font-size="15">PC / 手机浏览器玩家端</text>
+    <text x="456" y="548" fill="#7d8ba6" font-size="14">原生 HTML/CSS/JS + 同源反代</text>
+
+    <rect x="784" y="428" width="330" height="132" rx="14" fill="#1b2338" stroke="#07c160" stroke-width="2"/>
+    <text x="808" y="466" fill="#5fd39a" font-size="21" font-weight="700">微信小程序</text>
+    <text x="808" y="498" fill="#c8d3e6" font-size="16">原生小程序 · 直连</text>
+    <text x="808" y="524" fill="#8b98b0" font-size="15">与 Web 端功能完全一致</text>
+    <text x="808" y="548" fill="#7d8ba6" font-size="14">无 npm 依赖 · 无需真实 AppID</text>
+  </g>
+
+  <!-- bottom right mark -->
+  <text x="1200" y="600" fill="#6b7891" font-size="18" text-anchor="end">github.com/ddtdas/trpg-delivery-trio</text>
+  <text x="80" y="600" fill="#6b7891" font-size="18">交付三件套 · MIT License</text>
+</svg>
