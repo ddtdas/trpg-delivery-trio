@@ -32,6 +32,8 @@
 
 ## 架构总览
 
+![服务端部署与运行总览](docs/images/01-architecture.png)
+
 ```mermaid
 flowchart LR
     subgraph KP["主持端（KP）"]
