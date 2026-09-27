@@ -1,0 +1,136 @@
+diff --git a/scripts/serve.py b/scripts/serve.py
+index b27e048..3f480e7 100644
+--- a/scripts/serve.py
++++ b/scripts/serve.py
+@@ -247,6 +247,43 @@ class Handler(SimpleHTTPRequestHandler):
+             except OSError:
+                 pass
+ 
++    def _serve_html_with_hint(self, path_only: str) -> bool:
++        """未配置服务端时，在页面顶部注入一条中文提示。
++
++        只改本进程的输出，**不改动 client/ 目录里的任何文件** ——
++        client/ 的 6 个文件必须与权威源逐字节一致，不能在打包期改写。
++        返回 True 表示已处理（调用方直接 return）。
++        """
++        if self.server.proxy_target:
++            return False
++        if path_only not in ("/", "/index.html"):
++            return False
++        index = Path(self.directory) / "index.html"
++        if not index.is_file():
++            return False
++        try:
++            html = index.read_text(encoding="utf-8")
++        except OSError:
++            return False
++        if "<body>" not in html:
++            return False
++        banner = (
++            '<div style="margin:0;padding:10px 14px;background:#3a2a12;color:#ffcf7a;'
++            'border-bottom:1px solid #7a5a20;font:14px/1.7 system-ui,"Microsoft YaHei",sans-serif">'
++            '请先启动服务端，或在本页填写服务端地址 —— 双击「TRPG-服务端\\start.bat」启动服务端；'
++            '若两个压缩包不在同一父目录，请在下方「服务器地址」填写服务端地址（如 http://127.0.0.1:9210）后点「测试连接」。'
++            '<br>注意：本页地址栏里的 ?server= 请保持为本页地址，不要改成服务端端口。</div>'
++        )
++        html = html.replace("<body>", "<body>" + banner, 1)
++        payload = html.encode("utf-8")
++        self.send_response(200)
++        self.send_header("Content-Type", "text/html; charset=utf-8")
++        self.send_header("Content-Length", str(len(payload)))
++        self.end_headers()
++        if self.command != "HEAD":
++            self.wfile.write(payload)
++        return True
++
+     def _dispatch(self) -> None:
+         if self.path.split("?")[0] == IDENTITY_PATH:
+             self._send_identity()
+@@ -254,6 +291,8 @@ class Handler(SimpleHTTPRequestHandler):
+ 
+         if not is_proxy_path(self.path):
+             if self.command in ("GET", "HEAD"):
++                if self._serve_html_with_hint(self.path.split("?")[0]):
++                    return
+                 super().do_GET()
+             else:
+                 self._send_json(405, {"ok": False, "error": "method_not_allowed"})
+@@ -265,8 +304,8 @@ class Handler(SimpleHTTPRequestHandler):
+                 "ok": False,
+                 "error": "proxy_target_unknown",
+                 "detail": "未指定服务端地址，无法转发 " + self.path,
+-                "hint": "请用 start.bat <port> <server-url> 启动，"
+-                        "或先启动 trpg-server 以便自动发现。",
++                "hint": "请先启动服务端（双击「TRPG-服务端\\start.bat」），"
++                        "或用 start.bat <port> <server-url> 指定地址。",
+             })
+             return
+ 
+@@ -332,8 +371,11 @@ def resolve_proxy_target(cli_value: str, repo_root: Path) -> str:
+         except (OSError, ValueError):
+             pass
+ 
+-    sibling = repo_root.parent / "trpg-server" / "run" / "server.json"
+-    if sibling.is_file():
++    # 同级目录候选名：开发树叫 trpg-server；交付包解压后叫「TRPG-服务端」。
++    for sib_name in ("trpg-server", "TRPG-服务端"):
++        sibling = repo_root.parent / sib_name / "run" / "server.json"
++        if not sibling.is_file():
++            continue
+         try:
+             obj = json.loads(sibling.read_text(encoding="utf-8"))
+             port = int(obj.get("port") or 0)
+diff --git a/scripts/start.ps1 b/scripts/start.ps1
+index 6883ea2..e3a28c1 100644
+--- a/scripts/start.ps1
++++ b/scripts/start.ps1
+@@ -46,10 +46,17 @@ $ServePy   = Join-Path $ScriptDir 'serve.py'
+ $ClientDir = Join-Path $RepoRoot 'client'
+ $IndexHtml = Join-Path $ClientDir 'index.html'
+ 
+-# 同机服务端发现文件：../trpg-server/run/server.json
++# 同机服务端发现文件：<同级目录>/<服务端目录名>/run/server.json
++# 候选目录名：开发树里叫 trpg-server；交付包解压后叫「TRPG-服务端」（中文目录名）。
+ $SiblingRoot = Split-Path -Parent $RepoRoot
+-$ServerJson  = Join-Path (Join-Path $SiblingRoot 'trpg-server') 'run'
+-$ServerJson  = Join-Path $ServerJson 'server.json'
++$ServerJson  = ''
++foreach ($sibName in @('trpg-server', 'TRPG-服务端')) {
++    $sibCand = Join-Path (Join-Path (Join-Path $SiblingRoot $sibName) 'run') 'server.json'
++    if (Test-Path $sibCand) { $ServerJson = $sibCand; break }
++}
++if (-not $ServerJson) {
++    $ServerJson = Join-Path (Join-Path (Join-Path $SiblingRoot 'trpg-server') 'run') 'server.json'
++}
+ 
+ $PortLow  = 8080
+ $PortHigh = 8090
+@@ -148,12 +155,25 @@ if (-not $py) {
+     Write-Fail 'Python 未安装或不在 PATH 中。请安装 Python 3.12+ 后重试。'
+     exit $EXIT_ENV
+ }
+-$verText = & $py -c "import sys; print('%d.%d' % sys.version_info[:2])" 2>$null
++# 只取「含版本号的那一行」：某些 Python 发行版会在 -c 时向 stdout 多吐一行
++# （发行版 banner / sitecustomize.py），那样 $verText 会变成数组，
++# 直接 [version] 转换会抛未捕获异常，主入口 start.bat 会崩而不是给出中文提示。
++$verRaw  = & $py -c "import sys; print('%d.%d' % sys.version_info[:2])" 2>$null
++$verText = ''
++if ($verRaw) {
++    $vc = @($verRaw) | Where-Object { $_ -match '^\s*\d+\.\d+' } | Select-Object -Last 1
++    if ($vc) { $verText = $vc.ToString().Trim() }
++}
+ if ($LASTEXITCODE -ne 0 -or -not $verText) {
+-    Write-Fail 'Python 无法执行，请检查安装。'
++    Write-Fail 'Python 无法执行或版本号无法解析，请检查安装。'
++    exit $EXIT_ENV
++}
++$ver = $null
++try { $ver = [version]$verText } catch { $ver = $null }
++if (-not $ver) {
++    Write-Fail ('无法解析 Python 版本号（原始输出：' + $verText + '）。请确认 python 可正常执行。')
+     exit $EXIT_ENV
+ }
+-$ver = [version]$verText.Trim()
+ if ($ver -lt [version]'3.12') {
+     Write-Fail ('Python 版本过低：' + $ver + '（需要 3.12+）。')
+     exit $EXIT_ENV
