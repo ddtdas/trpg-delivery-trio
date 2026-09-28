@@ -1,0 +1,117 @@
+/* tokens.wxss —— 设计令牌（唯一令牌源 = tokens.json v2.0；PC 端 app.css 同值）
+ * 令牌值即契约值：颜色 hex/rgba / 圆角 px / 间距 px / 字号 px / 布局 px。
+ * v2.0（R32）：全部取值改为参考站 https://www.cnmods.net/web/ 运行时实测值。
+ *   键名与 v1.31 完全兼容（仅换值），新键为增量追加 —— 不改契约 §2 的键名集合。
+ */
+page {
+  /* color —— 魔都暗色（实测） */
+  --color-bg: #101014;
+  --color-card: #141c23;
+  --color-card-translucent: rgba(20,28,35,0.73);
+  --color-text: rgba(255,255,255,0.82);
+  --color-muted: #b9b9b9;
+  --color-border: rgba(255,255,255,0.24);
+  --color-accent: #ffbb70;
+  --color-accent-text: #3d1b00;
+  --color-ok: #63e2b7;
+  --color-warn: #f2c97d;
+  --color-err: #e88080;
+  --color-focus: #ffbb70;
+  --color-chip-bg: #212625;
+  --color-input: #212625;
+  --color-topbar: #262c31;
+  --color-divider: #32383e;
+  --color-modal: #2c2c32;
+  --color-popover: #48484e;
+  --color-text-strong: rgba(255,255,255,0.90);
+  --color-text-disabled: rgba(255,255,255,0.38);
+  --color-placeholder: rgba(255,255,255,0.38);
+  --color-hover: rgba(255,255,255,0.09);
+  --color-action: rgba(255,255,255,0.06);
+  --color-avatar-bg: rgba(255,255,255,0.18);
+  --color-skeleton: rgba(255,255,255,0.125);
+  --color-accent-hover: #fac583;
+  --color-accent-pressed: #dba45e;
+  --color-accent-soft: rgba(255,187,112,0.10);
+  --color-gold: #ffca58;
+  --color-gold-deep: #ffb542;
+  --color-cream: #e4caa5;
+  --color-ink: #783100;
+  --color-ink-strong: #462500;
+  --color-ink-mid: #623200;
+  --color-ink-active: #3d1b00;
+  --color-link: #57a7ff;
+  --color-err-bar-bg: rgba(232,128,128,0.10);
+  --color-err-bar-border: rgba(232,128,128,0.32);
+  --color-footer-bg: rgba(0,0,0,0.37);
+  /* radius */
+  --radius-card: 4px;
+  --radius-ctl: 3px;
+  --radius-chip: 2px;
+  --radius-sm: 2px;
+  --radius-pill: 999px;
+  --radius-circle: 50%;
+  /* space */
+  --space-xs: 4px;
+  --space-sm: 8px;
+  --space-md: 12px;
+  --space-lg: 16px;
+  --space-xl: 24px;
+  /* font */
+  --font-h1: 20px;
+  --font-h2: 16px;
+  --font-title: 18px;
+  --font-body: 14px;
+  --font-small: 12px;
+  --font-tiny: 11px;
+  --font-line-height: 1.6;
+  --font-weight-normal: 400;
+  --font-weight-strong: 600;
+  --font-weight-bold: 700;
+  --font-stack: HarmonyOS, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", "Helvetica Neue", Arial, sans-serif;
+  /* layout */
+  --layout-max-width: 560px;
+  --layout-sidebar: none;
+  --layout-nav-height: 44px;
+  --layout-nav-item: 40px;
+  --layout-tap-min: 44px;
+  --layout-content: 1120px;
+  --layout-control-tiny: 22px;
+  --layout-control-sm: 28px;
+  --layout-control-md: 34px;
+  --layout-control-lg: 40px;
+  --layout-avatar: 34px;
+  --layout-scrollbar: 5px;
+  --layout-blur: 8px;
+  --layout-grid-gap: 12px;
+  --layout-grid-gap-lg: 20px;
+  /* shadow */
+  --shadow-none: none;
+  --shadow-popover: 0 1px 2px -2px rgba(0,0,0,.24), 0 3px 6px 0 rgba(0,0,0,.18), 0 5px 12px 4px rgba(0,0,0,.12);
+  --shadow-modal: 0 3px 6px -4px rgba(0,0,0,.24), 0 6px 12px 0 rgba(0,0,0,.16), 0 9px 18px 8px rgba(0,0,0,.10);
+  --shadow-float: 0 6px 16px -9px rgba(0,0,0,.08), 0 9px 28px 0 rgba(0,0,0,.05), 0 12px 48px 16px rgba(0,0,0,.03);
+  --shadow-inset-ring: inset 0 0 0 1px rgba(255,255,255,0.24);
+  --focus-glow: 0 0 8px rgba(255,187,112,0.30);
+  /* motion */
+  --motion-ease: cubic-bezier(0.4, 0, 0.2, 1);
+  --motion-fast: 150ms;
+  --motion-base: 200ms;
+  --motion-slow: 300ms;
+  --motion-page: 500ms;
+  --motion-route-shift: translateY(10px);
+}
+
+/* 小程序端形态偏离：参考站主面板为 bg rgba(20,28,35,0.73) + backdrop-filter blur(8px)（无边框/无阴影）。
+ * 微信小程序的 backdrop-filter 在 Android 端支持不稳定，故 MP 的 .card 退化为不透明 --color-card (#141c23，同色同相)。
+ * 令牌仍完整暴露 --color-card-translucent / --layout-blur，供支持 blur 的端使用。 */
+
+/* 契约 §2 驼峰别名（PC 端 app.css 用 kebab；小程序 app.wxss 读驼峰 —— 逐值同源、同值并存） */
+page {
+  --color-accentText: #3d1b00;
+  --color-chipBg: #212625;
+  --color-errBarBg: rgba(232,128,128,0.10);
+  --color-errBarBorder: rgba(232,128,128,0.32);
+  --layout-maxWidth: 560px;
+  --layout-navHeight: 44px;
+  --layout-tapMin: 44px;
+}

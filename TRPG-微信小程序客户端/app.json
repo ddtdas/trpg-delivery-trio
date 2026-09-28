@@ -1,0 +1,36 @@
+{
+  "pages": [
+    "pages/setup/setup",
+    "pages/table/table",
+    "pages/voice/voice"
+  ],
+  "window": {
+    "navigationBarTitleText": "TRPG 跑团玩家端",
+    "navigationBarBackgroundColor": "#262c31",
+    "navigationBarTextStyle": "white",
+    "backgroundColor": "#101014"
+  },
+  "tabBar": {
+    "color": "#b9b9b9",
+    "selectedColor": "#ffbb70",
+    "backgroundColor": "#262c31",
+    "borderStyle": "black",
+    "list": [
+      { "pagePath": "pages/setup/setup", "text": "连接设置" },
+      { "pagePath": "pages/table/table", "text": "桌面" },
+      { "pagePath": "pages/voice/voice", "text": "语音" }
+    ]
+  },
+  "permission": {
+    "scope.record": {
+      "desc": "用于录制玩家语音并上传至主持端服务器（POST /access/player/audio）"
+    }
+  },
+  "networkTimeout": {
+    "request": 15000,
+    "uploadFile": 60000,
+    "connectSocket": 12000
+  },
+  "style": "v2",
+  "sitemapLocation": "sitemap.json"
+}

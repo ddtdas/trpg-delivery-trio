@@ -1,0 +1,5 @@
+id: C-GRADE-03
+clause: grade
+question: 奖励骰/惩罚骰叠加吗？
+ruling: 取最有利/最不利一颗；多重来源不叠加，快判取高者。
+source: local-01ch4-5-plus-model

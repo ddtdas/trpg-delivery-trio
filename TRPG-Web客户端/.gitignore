@@ -1,0 +1,64 @@
+# ===========================================================================
+#  TRPG 客户端 —— .gitignore
+#  规则：忽略运行期端口发现文件、日志、Python 缓存与 IDE 文件。
+# ===========================================================================
+
+# ---- 运行期（本地静态服务器的端口发现文件）--------------------------------
+run/
+*.log
+logs/
+
+# ---- 运行期数据（防御性：客户端本身不产生 DB/var，保持与交付口径一致）------
+var/
+*.db
+*.db-wal
+*.db-shm
+*.sqlite
+*.sqlite3
+
+# ---- Python（scripts/serve.py 为标准库静态服务器）--------------------------
+__pycache__/
+*.py[cod]
+*$py.class
+.Python
+# 锚定到仓库根，避免误伤任何名为 dist 的子目录
+/build/
+/dist/
+*.egg-info/
+.eggs/
+.venv/
+venv/
+env/
+ENV/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.hypothesis/
+.coverage
+.coverage.*
+htmlcov/
+
+# ---- 本地覆盖 / 密钥（不要提交真实 token）--------------------------------
+.env
+.env.*
+!.env.example
+client/tokens.local.json
+
+# ---- 备份 / 截断文件 ------------------------------------------------------
+*.bak*
+*.truncated-*
+
+# ---- 操作系统 / 编辑器 ----------------------------------------------------
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+Thumbs.db
+ehthumbs.db
+desktop.ini
+.idea/
+.vscode/
+*.swp
+*.swo
+*~

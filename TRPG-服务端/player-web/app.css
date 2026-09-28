@@ -1,0 +1,424 @@
+/* TRPG 跑团玩家端 —— 魔都暗色主题（R32）
+   令牌值 = tokens.json v2.0，全部取自参考站 https://www.cnmods.net/web/ 运行时实测
+   （getComputedStyle + 站点 CSS/JS 主题覆盖静态核验；证据见 docs/UI-TOKENS-MODU.md）。
+   零构建、零外部依赖：无 CDN、无外部字体、无图标库。
+   令牌值逐字来自 tokens.json（= docs/CROSS-END-CONTRACT.md §2 唯一令牌源，v2.0）。
+   组件语义类名与小程序端 app.wxss 同名同义（契约 §2 组件规格表）。
+   功能零变化：仅样式，DOM/事件/请求/轮询/WS/文案一律不动。
+   R2 第二阶段（2026-09-27）：排版阶梯 / 间距阶梯 / 四态状态色（色 + 形双通道）/ 克制动效。
+   仍为纯样式改动；令牌键名与取值未变（tokens.json v2.0 与契约 §2 不动）。 */
+
+:root {
+  /* ---- color（魔都暗色：cnmods.net 运行时实测） ---- */
+  --color-bg: #101014;
+  --color-card: #141c23;
+  --color-card-translucent: rgba(20,28,35,0.73);
+  --color-text: rgba(255,255,255,0.82);
+  --color-muted: #b9b9b9;
+  --color-border: rgba(255,255,255,0.24);
+  --color-accent: #ffbb70;
+  --color-accent-text: #3d1b00;
+  --color-ok: #63e2b7;
+  --color-warn: #f2c97d;
+  --color-err: #e88080;
+  --color-focus: #ffbb70;
+  --color-chip-bg: #212625;
+  --color-input: #212625;
+  --color-topbar: #262c31;
+  --color-divider: #32383e;
+  --color-modal: #2c2c32;
+  --color-popover: #48484e;
+  --color-text-strong: rgba(255,255,255,0.90);
+  --color-text-disabled: rgba(255,255,255,0.38);
+  --color-placeholder: rgba(255,255,255,0.38);
+  --color-hover: rgba(255,255,255,0.09);
+  --color-action: rgba(255,255,255,0.06);
+  --color-avatar-bg: rgba(255,255,255,0.18);
+  --color-skeleton: rgba(255,255,255,0.125);
+  --color-accent-hover: #fac583;
+  --color-accent-pressed: #dba45e;
+  --color-accent-soft: rgba(255,187,112,0.10);
+  --color-gold: #ffca58;
+  --color-gold-deep: #ffb542;
+  --color-cream: #e4caa5;
+  --color-ink: #783100;
+  --color-ink-strong: #462500;
+  --color-ink-mid: #623200;
+  --color-ink-active: #3d1b00;
+  --color-link: #57a7ff;
+  --color-err-bar-bg: rgba(232,128,128,0.10);
+  --color-err-bar-border: rgba(232,128,128,0.32);
+  --color-footer-bg: rgba(0,0,0,0.37);
+  /* ---- radius ---- */
+  --radius-card: 4px;
+  --radius-ctl: 3px;
+  --radius-chip: 2px;
+  --radius-sm: 2px;
+  --radius-pill: 999px;
+  --radius-circle: 50%;
+  /* ---- space ---- */
+  --space-xs: 4px;
+  --space-sm: 8px;
+  --space-md: 12px;
+  --space-lg: 16px;
+  --space-xl: 24px;
+  /* ---- font ---- */
+  --font-h1: 20px;
+  --font-h2: 16px;
+  --font-title: 18px;
+  --font-body: 14px;
+  --font-small: 12px;
+  --font-tiny: 11px;
+  --font-line-height: 1.6;
+  --font-weight-normal: 400;
+  --font-weight-strong: 600;
+  --font-weight-bold: 700;
+  --font-stack: HarmonyOS, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", "Helvetica Neue", Arial, sans-serif;
+  /* ---- layout ---- */
+  --layout-max-width: 560px;
+  --layout-sidebar: none;
+  --layout-nav-height: 44px;
+  --layout-nav-item: 40px;
+  --layout-tap-min: 44px;
+  --layout-content: 1120px;
+  --layout-control-tiny: 22px;
+  --layout-control-sm: 28px;
+  --layout-control-md: 34px;
+  --layout-control-lg: 40px;
+  --layout-avatar: 34px;
+  --layout-scrollbar: 5px;
+  --layout-blur: 8px;
+  --layout-grid-gap: 12px;
+  --layout-grid-gap-lg: 20px;
+  /* ---- shadow ---- */
+  --shadow-none: none;
+  --shadow-popover: 0 1px 2px -2px rgba(0,0,0,.24), 0 3px 6px 0 rgba(0,0,0,.18), 0 5px 12px 4px rgba(0,0,0,.12);
+  --shadow-modal: 0 3px 6px -4px rgba(0,0,0,.24), 0 6px 12px 0 rgba(0,0,0,.16), 0 9px 18px 8px rgba(0,0,0,.10);
+  --shadow-float: 0 6px 16px -9px rgba(0,0,0,.08), 0 9px 28px 0 rgba(0,0,0,.05), 0 12px 48px 16px rgba(0,0,0,.03);
+  --shadow-inset-ring: inset 0 0 0 1px rgba(255,255,255,0.24);
+  --focus-glow: 0 0 8px rgba(255,187,112,0.30);
+  /* ---- motion ---- */
+  --motion-ease: cubic-bezier(0.4, 0, 0.2, 1);
+  --motion-fast: 150ms;
+  --motion-base: 200ms;
+  --motion-slow: 300ms;
+  --motion-page: 500ms;
+  --motion-route-shift: translateY(10px);
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  padding: 0;
+  background: var(--color-bg);
+  color: var(--color-text);
+  font-size: var(--font-body);
+  font-family: var(--font-stack);
+  line-height: var(--font-line-height);
+  -webkit-text-size-adjust: 100%;
+}
+
+::selection { background: var(--color-accent-soft); color: var(--color-text); }
+
+/* ============ 顶栏（#262c31 + 1px #32383e 下边框，44px 导航） ============ */
+.topbar {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background: var(--color-topbar);
+  border-bottom: 1px solid var(--color-divider);
+  padding: var(--space-sm) var(--space-lg);
+}
+.topbar-inner {
+  max-width: var(--layout-max-width);
+  margin: 0 auto;
+}
+.brand {
+  font-size: var(--font-h1);
+  font-weight: 600;
+  line-height: 1.3;            /* 阶梯：h1 1.3 < h2 1.4 < 正文 1.6 < 长文 1.7 */
+  letter-spacing: 0.5px;
+  color: var(--color-accent);
+  margin: 0 0 var(--space-sm) 0;
+}
+.nav {
+  display: flex;
+  gap: var(--space-sm);
+  min-height: var(--layout-nav-height);
+  align-items: center;
+}
+.nav-btn {
+  flex: 1 1 0;
+  min-height: var(--layout-tap-min);
+  background: transparent;
+  color: var(--color-muted);
+  border: 1px solid transparent;
+  border-radius: var(--radius-ctl);
+  font-size: var(--font-body);
+  font-family: inherit;
+  cursor: pointer;
+  transition: color var(--motion-fast) var(--motion-ease), background var(--motion-fast) var(--motion-ease);
+}
+.nav-btn:hover {
+  color: var(--color-accent);
+  background: var(--color-accent-soft);
+}
+.nav-btn[aria-current="true"] {
+  /* 参考站实测 .router-link-active：金色底（nav_bg 贴图）+ 墨色字 rgb(61,27,0)，非透明底 */
+  color: var(--color-accent-text);
+  font-weight: 600;
+  background: var(--color-accent);
+}
+.nav-btn[aria-current="true"]:hover {
+  background: var(--color-accent-hover);
+  color: var(--color-accent-text);
+}
+
+/* ============ 页面容器（PC 居中 560px；移动端 100%） ============ */
+.pg {
+  max-width: var(--layout-max-width);
+  margin: 0 auto;
+  padding: var(--space-lg) var(--space-lg) var(--space-xl) var(--space-lg);
+  background: var(--color-bg);
+}
+
+/* ============ 卡片 / 面板 ============
+   参考站实测（/web/moduleDetail）：bg rgba(20,28,35,0.73) + backdrop-filter blur(8px) + radius 4px，
+   **无边框、无 box-shadow** —— 层次靠背景色差 + 模糊，不靠描边/投影。这是该站最关键的风格特征。 */
+.card {
+  background: var(--color-card-translucent);
+  -webkit-backdrop-filter: blur(var(--layout-blur));
+  backdrop-filter: blur(var(--layout-blur));
+  border: none;
+  border-radius: var(--radius-card);
+  padding: var(--space-md);
+  margin-bottom: var(--space-md);
+}
+.card-title {
+  font-size: var(--font-h2);
+  font-weight: 600;
+  line-height: 1.4;
+  letter-spacing: 0.2px;
+  color: var(--color-text);
+  margin: 0 0 var(--space-sm) 0;
+}
+
+/* ============ 按钮（圆角 3px；次要=透明底，主=金底墨字） ============ */
+.btn,
+.btn-primary {
+  min-height: var(--layout-tap-min);
+  border-radius: var(--radius-ctl);
+  font-size: var(--font-body);
+  font-family: inherit;
+  padding: 0 14px;   /* 参考站 n-button--default-type 实测 padding: 0 14px（medium） */
+  cursor: pointer;
+  transition: background var(--motion-fast) var(--motion-ease), border-color var(--motion-fast) var(--motion-ease), color var(--motion-fast) var(--motion-ease);
+}
+.btn {
+  /* 参考站实测 n-button--default-type：bg rgba(0,0,0,0)、border 0px、radius 3px、padding 0 14px、shadow none */
+  background: transparent;
+  color: var(--color-text);
+  border: none;
+}
+.btn:hover {
+  background: var(--color-hover);
+  color: var(--color-text);
+}
+.btn:active { background: var(--color-action); }
+.btn-primary {
+  background: var(--color-accent);
+  color: var(--color-accent-text);
+  border: none;
+  font-weight: 600;
+}
+.btn-primary:hover { background: var(--color-accent-hover); }
+/* 禁用态（两端同名同值；MP 需用 [disabled] 覆盖微信 button 内置浅色样式） */
+.btn:disabled,
+.btn:disabled:hover,
+.btn-primary:disabled,
+.btn-primary:disabled:hover {
+  background: transparent;
+  color: var(--color-text-disabled);
+  border-color: transparent;
+  box-shadow: none;
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* ============ 输入框（#212625 底 + 3px 圆角；默认无可见边框，聚焦转强调色） ============ */
+.input {
+  width: 100%;
+  background: var(--color-input);
+  border: 1px solid transparent;
+  border-radius: var(--radius-ctl);
+  min-height: var(--layout-tap-min);
+  padding: 0 var(--space-md);
+  font-size: var(--font-body);
+  font-family: inherit;
+  color: var(--color-text);
+  transition: border-color var(--motion-fast) var(--motion-ease), box-shadow var(--motion-fast) var(--motion-ease);
+}
+.input:hover:not(:focus) { border-color: var(--color-border); }
+.input::placeholder { color: var(--color-placeholder); }
+.input:focus {
+  outline: none;
+  border-color: var(--color-accent);
+  box-shadow: var(--focus-glow);
+}
+textarea.input {
+  padding: var(--space-sm) var(--space-md);
+  min-height: calc(var(--layout-tap-min) * 1.8);
+  resize: vertical;
+  line-height: var(--font-line-height);
+}
+
+/* ============ 徽章 ============ */
+.chip {
+  display: inline-flex;
+  align-items: center;
+  height: var(--layout-control-tiny);
+  background: var(--color-chip-bg);
+  color: var(--color-text);
+  border-radius: var(--radius-chip);
+  padding: 0 var(--space-sm);
+  font-size: var(--font-small);
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum" 1;
+  margin-right: var(--space-xs);
+}
+
+/* ============ 状态与提示 ============ */
+.status-line,
+.info-line {
+  font-size: var(--font-small);
+  line-height: 1.55;
+  color: var(--color-muted);
+  font-variant-numeric: tabular-nums;   /* 数字等宽：状态里的时间/计数不跳字宽 */
+  font-feature-settings: "tnum" 1;
+}
+/* 信息态：与 .status-line 同几何，仅换色（既有令牌 color.link），不新增令牌 */
+.info-line { color: var(--color-link); }
+.err-bar {
+  background: var(--color-err-bar-bg);
+  border: 1px solid var(--color-err-bar-border);
+  color: var(--color-err);
+  border-radius: var(--radius-ctl);
+  padding: var(--space-sm) var(--space-md);
+  margin-bottom: var(--space-sm);
+  font-size: var(--font-small);
+  line-height: 1.55;
+  word-break: break-word;
+}
+/* ---- 四态双通道：色 + 形（前缀字形），不只靠颜色 ----
+   危险 ✕ / 警告 ⚠ / 成功 ✓ / 信息 ⓘ —— 前缀由 CSS 生成，DOM 与文案零变化。 */
+.err-bar::before { content: "\2715  "; font-weight: 700; letter-spacing: 0; }
+.ok-line, .warn-line, .info-line { font-size: var(--font-small); line-height: 1.55; }
+.ok-line::before   { content: "\2713  "; font-weight: 700; }
+.warn-line::before { content: "\26A0  "; font-weight: 700; }
+.info-line::before { content: "\24D8  "; font-weight: 700; }
+.ok-line { color: var(--color-ok); }
+.warn-line { color: var(--color-warn); }
+
+/* ============ 列表项 / 事件流 ============ */
+.item {
+  background: var(--color-card);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-ctl);
+  padding: var(--space-sm) var(--space-md);
+  font-size: var(--font-body);
+  line-height: 1.65;
+  margin-bottom: var(--space-sm);   /* 阶梯：6px → 8px（4/8/12/16/24） */
+  word-break: break-word;
+}
+.ev-kind {
+  font-size: var(--font-small);
+  font-weight: 600;
+  color: var(--color-muted);
+  margin-right: var(--space-sm);    /* 阶梯：6px → 8px */
+}
+.ev-ts {
+  font-size: var(--font-small);
+  color: var(--color-muted);
+  font-variant-numeric: tabular-nums;   /* 时间戳等宽，纵向对齐 */
+  font-feature-settings: "tnum" 1;
+}
+.ev-item .ev-ts { margin-left: var(--space-sm); }
+.ev-text { margin-top: var(--space-xs); line-height: var(--font-line-height); }
+.events { max-height: 320px; overflow-y: auto; }
+.events::-webkit-scrollbar { width: var(--layout-scrollbar); }
+.events::-webkit-scrollbar-track { background: transparent; }
+.events::-webkit-scrollbar-thumb { background: var(--color-divider); border-radius: var(--radius-chip); }
+
+/* ============ 表单行 / 键值行 ============ */
+.row { margin-bottom: var(--space-sm); }
+.row:last-child { margin-bottom: 0; }
+.label {
+  display: block;
+  font-size: var(--font-small);
+  font-weight: 600;            /* 与正文 400 / 辅助 400 拉开阶梯 */
+  line-height: 1.5;
+  letter-spacing: 0.3px;
+  color: var(--color-muted);
+  margin-bottom: var(--space-xs);
+}
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-sm);
+  margin-top: var(--space-sm);
+}
+.kv {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--space-sm);
+  font-size: var(--font-body);
+  line-height: 1.6;
+  padding: var(--space-xs) 0;       /* 阶梯：2px → 4px */
+}
+.kv .k { color: var(--color-muted); }
+.kv span:last-child {
+  font-variant-numeric: tabular-nums;   /* 数值列右对齐不跳字宽 */
+  font-feature-settings: "tnum" 1;
+}
+
+.hidden { display: none; }
+
+:focus-visible {
+  outline: 2px solid var(--color-focus);
+  outline-offset: 2px;
+}
+
+/* ============ 移动端（PC 居中 560px / MP 100%，为契约允许差异）
+   .pg 的 padding 在**所有视口**恒为 16px 16px 24px，使两端在任意视口下计算样式逐项相同。 ============ */
+@media (max-width: 560px) {
+  .topbar { padding: var(--space-sm) var(--space-md); }
+  .events { max-height: 260px; }
+}
+
+/* ============ 间距工具类（取代 index.html 里的一次性 style="margin-top:Npx"）
+   值全部取自既有令牌阶梯 4/8/12/16/24，不新增令牌。 ============ */
+.mt-xs { margin-top: var(--space-xs); }
+.mt-sm { margin-top: var(--space-sm); }
+.mt-md { margin-top: var(--space-md); }
+
+/* ============ 动效（克制：一次性入场 + hover/active 反馈；无长时循环动画） ============ */
+@keyframes card-in {
+  from { opacity: 0; transform: translateY(4px); }
+  to   { opacity: 1; transform: none; }
+}
+/* 只在可见视图上做一次性入场；切回旧视图时不重放（animation-fill-mode: both） */
+section:not(.hidden) > .card {
+  animation: card-in var(--motion-base) var(--motion-ease) both;
+}
+
+/* 无障碍：系统开启「减弱动态效果」时，全部动效降到 1ms 且不重复 */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 1ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 1ms !important;
+    scroll-behavior: auto !important;
+  }
+}

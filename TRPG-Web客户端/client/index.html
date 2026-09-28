@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>TRPG 跑团玩家端</title>
+<!-- 零构建、零 CDN：仅本地 app.css / app.js -->
+<link rel="stylesheet" href="app.css">
+</head>
+<body>
+
+<header class="topbar">
+  <div class="topbar-inner">
+    <h1 class="brand">TRPG 跑团玩家端</h1>
+    <nav class="nav" id="nav">
+      <button type="button" class="nav-btn" id="navSetup" aria-current="true">连接设置</button>
+      <button type="button" class="nav-btn" id="navTable">桌面</button>
+      <button type="button" class="nav-btn" id="navVoice">语音</button>
+    </nav>
+  </div>
+</header>
+
+<main class="pg">
+
+  <!-- ============ 视图 1：连接设置 ============ -->
+  <section id="viewSetup">
+    <div class="card">
+      <h2 class="card-title">连接设置</h2>
+      <div class="row">
+        <label class="label" for="server">服务器地址</label>
+        <input class="input" id="server" type="text" autocomplete="off" placeholder="服务器地址，如 http://192.168.10.110:9210">
+      </div>
+      <div class="row">
+        <label class="label" for="token">访问 token（mobile 端）</label>
+        <input class="input" id="token" type="password" autocomplete="off" placeholder="访问 token（mobile 端）">
+      </div>
+      <div class="row">
+        <label class="label" for="code">连接码</label>
+        <input class="input" id="code" type="text" autocomplete="off" placeholder="连接码，如 TABLE-XXXX">
+      </div>
+      <div class="row">
+        <label class="label" for="pid">玩家 ID</label>
+        <input class="input" id="pid" type="text" autocomplete="off" placeholder="玩家 ID，如 pl-001">
+      </div>
+      <div class="row">
+        <label class="label" for="pname">昵称</label>
+        <input class="input" id="pname" type="text" autocomplete="off" placeholder="昵称">
+      </div>
+      <div class="actions">
+        <button type="button" class="btn" id="btnTest">测试连接</button>
+        <button type="button" class="btn" id="btnResolve">解析连接码</button>
+        <button type="button" class="btn-primary" id="btnJoin">加入跑团</button>
+      </div>
+      <div class="row mt-md">
+        <div class="info-line" id="setupStatus">连接中…</div>
+        <div id="infoBox" class="hidden"></div>
+      </div>
+      <div id="setupErr" class="err-bar hidden"></div>
+    </div>
+  </section>
+
+  <!-- ============ 视图 2：桌面 ============ -->
+  <section id="viewTable" class="hidden">
+    <div class="card">
+      <h2 class="card-title">我的状态</h2>
+      <div class="kv"><span class="k">玩家 ID</span><span id="rolePid">-</span></div>
+      <div class="kv"><span class="k">昵称</span><span id="roleName">-</span></div>
+      <div class="kv"><span class="k">连接码</span><span id="roleCode">-</span></div>
+      <div class="kv"><span class="k">桌面名称</span><span id="roleTable">-</span></div>
+      <div class="kv"><span class="k">战役</span><span id="roleCampaign">-</span></div>
+      <div class="row mt-sm">
+        <div class="status-line" id="wsStatus">已断开</div>
+      </div>
+      <div class="actions">
+        <button type="button" class="btn" id="btnLeave">离开桌面</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2 class="card-title">回合</h2>
+      <div id="turnLine">尚未开启回合</div>
+      <div class="chip hidden" id="turnChip">行动收集中</div>
+      <div class="status-line" id="turnCounts"></div>
+    </div>
+
+    <div class="card">
+      <h2 class="card-title">行动</h2>
+      <div class="row">
+        <textarea class="input" id="action" placeholder="描述你要做什么…（必填）"></textarea>
+      </div>
+      <div class="row">
+        <input class="input" id="intent" type="text" autocomplete="off" placeholder="意图摘要（选填）">
+      </div>
+      <div class="actions">
+        <button type="button" class="btn-primary" id="btnSubmit" disabled>提交行动</button>
+      </div>
+      <div class="row mt-sm">
+        <div class="status-line" id="submitStatus">当前不在行动收集阶段，请等待主持人开启回合</div>
+      </div>
+      <div id="submitErr" class="err-bar hidden"></div>
+      <div class="ok-line" id="submitOk"></div>
+    </div>
+
+    <div class="card">
+      <h2 class="card-title">事件流</h2>
+      <div class="events" id="events"></div>
+      <div id="eventsErr" class="err-bar hidden"></div>
+    </div>
+  </section>
+
+  <!-- ============ 视图 3：语音 ============ -->
+  <section id="viewVoice" class="hidden">
+    <div class="card">
+      <h2 class="card-title">语音</h2>
+      <div class="row">
+        <div class="status-line" id="recStatus">已断开</div>
+      </div>
+      <div class="actions">
+        <button type="button" class="btn" id="btnRecStart">开始录音</button>
+        <button type="button" class="btn-primary" id="btnRecStop" disabled>停止并上传</button>
+      </div>
+      <div id="recErr" class="err-bar hidden"></div>
+      <div class="row mt-sm">
+        <div class="ok-line" id="recOk"></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2 class="card-title">录音设备</h2>
+      <div class="row">
+        <input class="input" id="deviceId" type="text" autocomplete="off" placeholder="设备 ID">
+      </div>
+      <div class="actions">
+        <button type="button" class="btn" id="btnQuery">查询</button>
+      </div>
+      <div id="deviceOut"></div>
+      <div id="deviceErr" class="err-bar hidden"></div>
+    </div>
+  </section>
+
+</main>
+
+<script src="app.js"></script>
+</body>
+</html>

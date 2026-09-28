@@ -1,0 +1,135 @@
+initial_scene: n_arrival
+nodes:
+  - id: n_arrival
+    label: 雨夜抵达加油站
+    map_ref: m_garage
+    room_ref: r_forecourt
+  - id: n_forecourt
+    label: 前场勘察
+    map_ref: m_garage
+    room_ref: r_forecourt
+  - id: n_shop_search
+    label: 便利店搜证
+    map_ref: m_garage
+    room_ref: r_shop
+    clue_refs:
+      - c_ledger_page
+    npc_refs:
+      - npc_garage_attendant
+  - id: n_store_find
+    label: 后仓发现
+    map_ref: m_garage
+    room_ref: r_store
+    clue_refs:
+      - c_fuel_can
+  - id: n_office_ledger
+    label: 办公室账簿
+    map_ref: m_garage
+    room_ref: r_office
+    clue_refs:
+      - c_ledger_page
+      - c_radio_static
+  - id: n_washroom_clue
+    label: 洗手间镜面
+    map_ref: m_garage
+    room_ref: r_washroom
+    clue_refs:
+      - c_mirror_mark
+  - id: n_roadblock
+    label: 公路封锁
+    map_ref: m_garage
+    room_ref: r_forecourt
+    npc_refs:
+      - npc_deputy
+  - id: n_lobby
+    label: 旅店门厅
+    map_ref: m_house
+    room_ref: r_lobby
+    npc_refs:
+      - npc_innkeeper
+  - id: n_dining_meet
+    label: 餐厅会面
+    map_ref: m_house
+    room_ref: r_dining
+    npc_refs:
+      - npc_trucker
+    clue_refs:
+      - c_trucker_tale
+  - id: n_kitchen_noise
+    label: 厨房异响
+    map_ref: m_house
+    room_ref: r_kitchen
+    clue_refs:
+      - c_burnt_photo
+  - id: n_guest_room
+    label: 客房搜查
+    map_ref: m_house
+    room_ref: r_guest
+    clue_refs:
+      - c_emilia_letter
+    npc_refs:
+      - npc_emilia
+  - id: n_cellar_deadlight
+    label: 地窖死光
+    map_ref: m_house
+    room_ref: r_cellar
+    clue_refs:
+      - c_deadlight_source
+      - c_mirror_mark
+  - id: n_confrontation
+    label: 对峙
+    map_ref: m_house
+    room_ref: r_cellar
+  - id: n_ending
+    label: 终局
+    map_ref: m_house
+    room_ref: r_cellar
+edges:
+  - id: e1
+    from: n_arrival
+    to: n_forecourt
+  - id: e2
+    from: n_forecourt
+    to: n_shop_search
+  - id: e3
+    from: n_forecourt
+    to: n_washroom_clue
+  - id: e4
+    from: n_shop_search
+    to: n_store_find
+  - id: e5
+    from: n_shop_search
+    to: n_office_ledger
+  - id: e6
+    from: n_store_find
+    to: n_roadblock
+  - id: e7
+    from: n_office_ledger
+    to: n_roadblock
+  - id: e8
+    from: n_washroom_clue
+    to: n_roadblock
+  - id: e9
+    from: n_roadblock
+    to: n_lobby
+  - id: e10
+    from: n_lobby
+    to: n_dining_meet
+  - id: e11
+    from: n_dining_meet
+    to: n_kitchen_noise
+  - id: e12
+    from: n_dining_meet
+    to: n_guest_room
+  - id: e13
+    from: n_kitchen_noise
+    to: n_cellar_deadlight
+  - id: e14
+    from: n_guest_room
+    to: n_cellar_deadlight
+  - id: e15
+    from: n_cellar_deadlight
+    to: n_confrontation
+  - id: e16
+    from: n_confrontation
+    to: n_ending

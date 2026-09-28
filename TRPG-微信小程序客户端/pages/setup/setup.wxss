@@ -1,0 +1,7 @@
+/* 连接设置页：仅使用契约 §2 的组件类名（app.wxss 统一提供规格） */
+.setup-hint {
+  font-size: var(--font-small, 12px);
+  color: var(--color-muted, #b9b9b9);
+  line-height: var(--font-line-height, 1.6);
+  margin-bottom: var(--space-sm, 8px);
+}

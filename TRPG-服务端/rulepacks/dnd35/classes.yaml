@@ -1,0 +1,44 @@
+# D&D 3.5e class/occupation pool (MIT data file) - T7 M1-ext.
+# 与 coc7 occupations.yaml 同构；点数 = 技能点数池（由向导按职业/等级算）。
+schema: "dnd.classes.v1"
+classes:
+  - id: fighter
+    name: 战士
+    hit_die: d10
+    primary: STR
+    skills: [athletics, intimidation, knowledge]
+  - id: wizard
+    name: 法师
+    hit_die: d4
+    primary: INT
+    skills: [arcana, history, knowledge, spellcasting]
+  - id: rogue
+    name: 游荡者
+    hit_die: d6
+    primary: DEX
+    skills: [acrobatics, disable_device, hide, move_silently, open_lock]
+  - id: cleric
+    name: 牧师
+    hit_die: d8
+    primary: WIS
+    skills: [knowledge_religion, diplomacy, spellcasting]
+  - id: bard
+    name: 吟游诗人
+    hit_die: d6
+    primary: CHA
+    skills: [acrobatics, diplomacy, perform, persuasion]
+  - id: barbarian
+    name: 野蛮人
+    hit_die: d12
+    primary: STR
+    skills: [athletics, intimidate, survival]
+  - id: druid
+    name: 德鲁伊
+    hit_die: d8
+    primary: WIS
+    skills: [knowledge_nature, perception, survival]
+  - id: monk
+    name: 牧师_武僧
+    hit_die: d8
+    primary: DEX
+    skills: [acrobatics, athletics, move_silently]

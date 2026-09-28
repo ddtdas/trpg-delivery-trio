@@ -1,0 +1,76 @@
+﻿导入前检查清单 —— TRPG 微信小程序客户端
+==========================================
+
+一、导入前必须逐条确认以下文件存在（全部在解压后的 TRPG-微信小程序客户端/ 目录下）
+  [ ] app.json                      （必需：pages 注册 + tabBar，缺了工具直接报错）
+  [ ] app.js                        （必需：App() 入口）
+  [ ] app.wxss                      （必需：全局样式）
+  [ ] sitemap.json                  （必需：app.json 的 sitemapLocation 指向它）
+  [ ] project.config.json           （必需：工程配置，导入对话框靠它识别工程）
+  [ ] project.private.config.json   （可选但已提供）
+  [ ] tokens.wxss                   （设计令牌）
+  [ ] strings.js                    （文案）
+  [ ] strings.json                  （文案，与 strings.js 逐值一致）
+  [ ] lib/api-client.js
+  [ ] lib/config-store.js
+  [ ] lib/event-view.js
+  [ ] lib/req-id.js
+  [ ] lib/strings-map.js
+  [ ] lib/ws-client.js
+  [ ] pages/setup/setup.js   .json   .wxml   .wxss
+  [ ] pages/table/table.js   .json   .wxml   .wxss
+  [ ] pages/voice/voice.js   .json   .wxml   .wxss
+  [ ] README.md                     （开发者文档，非运行必需）
+  [ ] 项目说明.txt                  （说明文档，非运行必需）
+  [ ] 使用说明.txt                  （说明文档，非运行必需）
+  [ ] 导入前检查.txt                （说明文档，非运行必需）
+
+  合计 31 个文件 = 27 个运行必需文件（9 个工程根文件 + lib/ 6 个 + pages/ 12 个）
+                 + 4 份文档（README.md、项目说明.txt、使用说明.txt、导入前检查.txt）。
+
+二、四要素自检（可选，用于确认包完整）
+  · app.json 里 "pages" 列出 3 项：pages/setup/setup、pages/table/table、pages/voice/voice，
+    且每一页在磁盘上都有同名 .js / .json / .wxml / .wxss 四个文件。
+  · 每个 .js 都能通过 node --check 语法解析。
+  · 每个 .json 都能被 JSON.parse 解析（注意：不能有注释、不能有尾随逗号）。
+  · 每个 .wxml 标签成对闭合、每个 .wxss 大括号成对闭合。
+
+三、常见导入失败原因（对照排查）
+  1. 「app.json 未找到 / 未找到 app.json 文件」
+     → 目录选错层级。必须选到直接包含 app.json 的那一层，
+       即 TRPG-微信小程序客户端/ 本身，而不是它的父目录。
+  2. 「请选择小程序项目 / 不是有效的小程序项目」
+     → project.config.json 缺失，或 miniprogramRoot 指向了不存在的目录。
+       本包 miniprogramRoot 为 "./"，即工程根就是本目录。
+  3. 「AppID 不存在，请检查后重新输入」（CLI 报 code 10）
+     → 使用了微信开发者工具 CLI 且未登录。CLI 会拿 AppID 去微信服务器校验，
+       未登录时任何 AppID（含空值与 touristappid）都判为「不存在」。
+       请改用 GUI「导入项目」，或在 CLI 里先执行 cli login 扫码登录并使用自己的真实 AppID。
+  4. 页面空白 / 白屏，控制台报「Page "pages/xxx/xxx" is not found」
+     → app.json 的 pages 与磁盘文件不匹配（缺 .js/.wxml/.json/.wxss 中任意一个）。
+  5. 控制台报「不在以下 request 合法域名列表中」
+     → 未勾选「不校验合法域名」。见《使用说明.txt》第四节。
+  6. 控制台报 JSON 解析错误
+     → .json 文件被编辑器改写成了带注释/尾随逗号的 JSON5，或编码不是 UTF-8。
+       本包全部 .json 均为标准 JSON、UTF-8。
+  7. 提示找不到模块 / 需要 npm 依赖
+     → 本包不依赖任何 npm 包，也没有 node_modules。
+       所有 require 都是相对路径引用包内文件；若报错说明文件被删漏，请对照第一节补齐。
+  8. 真机预览 / 上传失败
+     → 游客模式（touristappid）不支持真机预览与上传，请在导入时改选「测试号」，
+       或在 project.config.json 中填入自己的真实 AppID。
+  9. 不知道服务端在哪、三件套怎么配合
+     → 见同目录《项目说明.txt》第三、四节。
+ 10. README.md 里提到的 tests/、docs/、packaging/、clients/ 等路径在本包里找不到
+     → 那些路径都不在本包内（属源工程或随 TRPG-服务端.zip 交付）。
+       逐条对照表见同目录《项目说明.txt》第七节。
+
+四、关于本包「不包含 tests/」
+  源工程 clients/miniprogram/tests/contract.test.js 是开发期的契约自检脚本
+  （约 36 KB，node 环境运行），不属于小程序运行必需文件：
+    · 小程序运行时不会 require 它，微信开发者工具也不编译它；
+    · 它依赖 node 的 assert/fs/path 与 docs/CROSS-END-CONTRACT.md，
+      在微信运行时环境下无法执行；
+    · 保留它会白白增大包体并在工具里产生「未使用文件」提示。
+  因此本交付包已将其排除。需要复核契约一致性的开发者，请在源工程目录
+  clients/miniprogram 下执行：node tests/contract.test.js

@@ -1,0 +1,141 @@
+# 事件图:《黑水溪》(CoC 7e 官方模组 Blackwater Creek 内容化改编)
+# schema: EventGraph v1 — nodes[] / edges[]; condition 为受限 JSON 表达式
+#   {check:{target:<skill>, level:regular|hard|extreme}} | {clue:<clue_id>} | {node:<node_id>} | {check_fail:{...}}
+# 同层键 AND;或分支用显式 edges(from/to)表达。
+# 结构:三条并行主线(A 教授失踪线 / B 洪水+蛇怪邪教线 / C 矿洞汇合线),
+#   每条含 1 个困难检定节点 + 双出口分支(success/fail),三线在 C 线矿场汇合,
+#   汇合节点 nC3_ritual_hall 指向 3 种结局(nE1 阻止仪式 / nE2 牺牲逃亡 / nE3 全员生还)。
+# 防环:本图为 DAG,无回退边。
+nodes:
+  # ---------- 开场 ----------
+  - id: n1_arrival
+    title: "抵达黑水溪"
+    description: "雨夜,马车停在镇中心泥泞的主街上。警长办公室亮着灯,格雷农场的玛莎·格雷披着油布雨衣在杂货店屋檐下等你。洪水把上游土路冲垮了,出镇的路只有矿场方向还通。KP 朗读世界观后,调查员在此集合,可选三条线索切入。"
+    actions: ["去警长办公室见警长", "与玛莎·格雷交谈", "直接前往黑水矿场"]
+    npc_refs: [npc_sheriff, npc_martha]
+    map_ref: map_blackwater
+  # ---------- A 线:教授失踪线(小镇调查/大学档案/水坝) ----------
+  - id: nA1_town
+    title: "小镇走访"
+    description: "镇中心:公告栏贴着七张泛黄的寻人启事,最新的那张是皮克曼教授(两周前,警长盖章'洪水失踪')。杂货店门口,药店老板皮尔斯热情搭话,话里话外打听调查员的来意。码头工头提到:教授失踪前总往水坝跑,还租过邮局寄存箱。"
+    actions: ["查看公告栏与失踪登记(spot_hidden)", "与药店老板皮尔斯攀谈", "去邮局查寄存箱"]
+    clue_refs: [c1_missing_poster]
+    npc_refs: [npc_pharmacist, npc_sheriff]
+    map_ref: map_blackwater
+  - id: nA2_archive
+    title: "档案与大学联络"
+    description: "邮局的寄存箱里是皮克曼留下的研究笔记;给密斯卡托尼克大学发电报,两天后收到回电。档案拼出全貌:教授受考古学会委托研究弗吉尼亚蛇神崇拜,失踪前最后一封电报说'黑水溪的洪水不是天灾'。笔记里画着水坝下游的泥滩地图。"
+    actions: ["翻阅研究笔记", "等待并阅读大学回电", "按笔记地图前往水坝"]
+    clue_refs: [c2_pickman_notes, c3_univ_telegram]
+    map_ref: map_blackwater
+  - id: nA3_dam
+    title: "水坝勘察(困难检定)"
+    description: "上游水坝:泄洪闸锈死但近期被操作过,坝体有新鲜撬痕。坝下泥滩隐约可见一个浸透的帆布包。洪水随时可能再度上涨——KP 要求一次困难 spot_hidden 检定,在泥水合拢前看清坝下痕迹。"
+    check: {target: spot_hidden, level: hard}
+    actions: ["进行 spot_hidden 困难检定"]
+    map_ref: map_blackwater
+  - id: nA4_discovery
+    title: "坝下泥滩的背包"
+    description: "success 路线:泥滩里捞起皮克曼的帆布背包——笔记本残页浸烂大半,最后一页却画着完整的黑水矿场巷道图,日期正是他失踪当天,旁边一行小字:'他们往矿场去了,今晚满月'。背包是人放在这的,水冲不走它。"
+    actions: ["检查背包与残页", "按巷道图前往矿场"]
+    clue_refs: [c4_pickman_pack]
+    map_ref: map_blackwater
+  - id: nA4b_flood_retreat
+    title: "洪水逼退与扣押的信"
+    description: "fail 路线:泥水合拢,众人被迫撤上坝顶。回镇路上,警长被逼问得词穷,交出他'代为保管'的一封信——皮克曼失踪前一天寄存在警局的信:'矿场里有人在酿'圣酒',我今晚下去看看。若我出事,别信洪水那套说辞。'"
+    actions: ["逼问警长(psychology/intimidate)", "读信后前往矿场"]
+    clue_refs: [c5_sheriff_letter]
+    npc_refs: [npc_sheriff]
+    map_ref: map_blackwater
+  # ---------- B 线:洪水+蛇怪邪教线(教堂/沼泽/蛇崇拜) ----------
+  - id: nB1_church
+    title: "教堂与地下室"
+    description: "镇上的小教堂挤满了躲洪水的镇民,牧师韦斯特主持'守夜'却语焉不详。教堂地下室飘着甜腻的药酒味:一排空酒桶桶底烙着'黑水矿场',教区名册上七名'搬走'的村民名字被划掉,旁边画着同一个蛇形符号。"
+    actions: ["搜索教堂地下室", "盘问牧师守夜的真实目的", "记下蛇形符号"]
+    clue_refs: [c6_church_ledger]
+    npc_refs: [npc_pharmacist]
+    map_ref: map_blackwater
+  - id: nB2_swamp
+    title: "沼泽追踪(困难检定)"
+    description: "教堂名册暗示的沼泽深处,火把油脂与蛇蜕铺成一条'路'。雾气里,成排的鳞片擦过泥水的声响忽远忽近。KP 要求一次困难 track 检定:雨夜沼泽地形复杂,一步踏错就会迷失方向。"
+    check: {target: track, level: hard}
+    actions: ["进行 track 困难检定"]
+    map_ref: map_blackwater
+  - id: nB3_cult_ground
+    title: "沼泽祭坛(蛇神崇拜现场)"
+    description: "success 路线:拨开芦苇,一片空地中央立着石砌祭坛,堆满两米长的蛇蜕与白骨,石台上刻着七道新刻的名字——与教堂名册划掉的完全一致。祭坛边缘压着一张羊皮纸:祭品名单,落款日期是明晚满月,地点标注'矿场仪式大厅'。"
+    actions: ["检查祭坛与蛇蜕", "取下祭品名单", "循祭坛后的路前往矿场"]
+    clue_refs: [c7_serpent_tracks, c9_cult_list]
+    map_ref: map_blackwater
+  - id: nB2b_bootlegger_hut
+    title: "迷途与私酿屋"
+    description: "fail 路线:雨雾中迷失方向,误入沼泽边缘一间月光私酿屋。屋里堆着贴着'圣酒'标签的酒桶,墙上钉着一张运货路线图:黑水矿场水井→教堂地下室→镇上门店;地图角落画着祭坛和满月的日期。角落里还有一双沾满矿泥的鞋——是失踪矿工班头的。"
+    actions: ["搜索私酿屋", "抄下运货路线图", "循路线前往矿场"]
+    clue_refs: [c8_bootlegger_map]
+    map_ref: map_blackwater
+  # ---------- C 线:矿洞汇合线(黑水矿场) ----------
+  - id: nC1_mine_gate
+    title: "黑水矿场入口"
+    description: "矿场栅栏锈蚀,挂锁被撬开又虚掩。工具屋里,炸药与雷管码放整齐(矿工留下的),墙上矿工排班表从六周前断更。矿道深处传来滴水声与低吟。这里也是三线线索汇合的第一站。"
+    actions: ["搜索工具屋(发现炸药)", "沿主矿道深入", "检查排班表与足迹"]
+    clue_refs: [c10_dynamite, c12_henry_whereabouts]
+    map_ref: map_blackwater
+  - id: nC2_mine_shaft
+    title: "矿道深处(困难检定)"
+    description: "主矿道被改造成仪式通道:两侧插满火把,地上铺着蛇蜕。两名披黑袍的信徒执灯巡逻,更深处隐约有人声念诵。KP 要求一次困难 stealth 检定:火把光照下潜行穿过巡逻区,或另寻侧道。"
+    check: {target: stealth, level: hard}
+    actions: ["进行 stealth 困难检定"]
+    map_ref: map_blackwater
+  - id: nC2b_side_tunnel
+    title: "废弃侧道"
+    description: "fail 路线:潜行惊动了巡逻,信徒举灯追来。你们闪入一条废弃侧道,塌方堵住一半,但尽头有条低矮的通风口直通仪式大厅上层——惊险,但绕过了守卫。代价:仪式大厅的方向传来钟声,祭典已经开始。"
+    actions: ["沿通风口潜入仪式大厅上层", "回头强攻巡逻信徒"]
+    clue_refs: [c11_cultist_testimony]
+    map_ref: map_blackwater
+  - id: nC3_ritual_hall
+    title: "仪式大厅(汇合节点)"
+    description: "矿场尽头的巨大溶洞被改造成祭坛:中央石台上盘着蛇形石像,蛇母祭司背对众人低诵,祭品被绑在石柱上——是亨利·格雷,皮克曼教授也被锁在侧室铁笼里。钟声与洪水声共鸣:祭司正准备开闸放水,以整座黑水溪为祭场。调查员掌握的证据决定结局:炸药(c10_dynamite)、正面战斗、或集齐名单(c9_cult_list)后先发制人。"
+    actions: ["引爆炸药,炸毁祭坛与矿道", "正面战斗对抗蛇母祭司", "先发制人救下全部人质", "谈判或断后逃亡"]
+    clue_refs: [c11_cultist_testimony]
+    npc_refs: [npc_cult_leader, npc_pickman, npc_henry]
+    map_ref: map_blackwater
+  # ---------- 结局 ----------
+  - id: nE1_stop_ritual
+    title: "结局:阻止仪式"
+    description: "炸药炸塌了矿道,蛇母祭司连同祭坛一起被埋在碎石下;或祭司被正面击溃。洪水失去操纵者,水位回落。黑水溪恢复平静,幸存村民重建家园。"
+  - id: nE2_sacrifice_flight
+    title: "结局:牺牲逃亡"
+    description: "仪式没能阻止。一名队员自愿留下断后(或开闸淹没矿场),蛇母祭司与祭品一同葬身水底,其余人从侧道逃出生天。黑水溪的蛇神传说就此沉寂,但那份牺牲被永远记住。"
+  - id: nE3_all_survive
+    title: "结局:全员生还"
+    description: "凭借完整的邪教名单与三线证据,调查员在仪式开始前发起突袭:救下亨利与皮克曼,制服祭司,全员撤离。洪水退去,黑水溪重新亮起灯火。"
+edges:
+  # 开场 → 三线
+  - {from: n1_arrival, to: nA1_town, condition: {}, label: "走访小镇(教授失踪线)"}
+  - {from: n1_arrival, to: nB1_church, condition: {}, label: "循蛇形符号去教堂(邪教线)"}
+  - {from: n1_arrival, to: nC1_mine_gate, condition: {}, label: "直奔黑水矿场(汇合线)"}
+  # A 线
+  - {from: nA1_town, to: nA2_archive, condition: {clue: c1_missing_poster}, label: "凭寻人启事与失踪登记,查档案"}
+  - {from: nA1_town, to: nA2_archive, condition: {}, label: "直接去邮局寄存箱/发电报"}
+  - {from: nA2_archive, to: nA3_dam, condition: {clue: c2_pickman_notes}, label: "按笔记地图前往水坝"}
+  - {from: nA3_dam, to: nA4_discovery, condition: {check: {target: spot_hidden, level: hard}}, label: "检定成功:泥滩捞起背包", branch: success}
+  - {from: nA3_dam, to: nA4b_flood_retreat, condition: {check_fail: {target: spot_hidden, level: hard}}, label: "检定失败:洪水逼退,转逼警长交信", branch: fail}
+  - {from: nA4_discovery, to: nC1_mine_gate, condition: {clue: c4_pickman_pack}, label: "按巷道图前往矿场"}
+  - {from: nA4b_flood_retreat, to: nC1_mine_gate, condition: {clue: c5_sheriff_letter}, label: "信中点名矿场,前往汇合"}
+  # B 线
+  - {from: nB1_church, to: nB2_swamp, condition: {clue: c6_church_ledger}, label: "循名册与蛇形符号进沼泽"}
+  - {from: nB2_swamp, to: nB3_cult_ground, condition: {check: {target: track, level: hard}}, label: "检定成功:直达沼泽祭坛", branch: success}
+  - {from: nB2_swamp, to: nB2b_bootlegger_hut, condition: {check_fail: {target: track, level: hard}}, label: "检定失败:迷途误入私酿屋", branch: fail}
+  - {from: nB3_cult_ground, to: nC1_mine_gate, condition: {clue: c9_cult_list}, label: "祭品名单标注矿场,前往汇合"}
+  - {from: nB2b_bootlegger_hut, to: nC1_mine_gate, condition: {clue: c8_bootlegger_map}, label: "运货路线指向矿场,前往汇合"}
+  # C 线
+  - {from: nC1_mine_gate, to: nC2_mine_shaft, condition: {}, label: "沿主矿道深入"}
+  - {from: nC2_mine_shaft, to: nC3_ritual_hall, condition: {check: {target: stealth, level: hard}}, label: "检定成功:潜行直达仪式大厅", branch: success}
+  - {from: nC2_mine_shaft, to: nC2b_side_tunnel, condition: {check_fail: {target: stealth, level: hard}}, label: "检定失败:惊动巡逻,转侧道", branch: fail}
+  - {from: nC2b_side_tunnel, to: nC3_ritual_hall, condition: {}, label: "沿通风口潜入仪式大厅"}
+  # 汇合节点 → 结局
+  - {from: nC3_ritual_hall, to: nE1_stop_ritual, condition: {clue: c10_dynamite}, label: "引爆炸药,炸毁祭坛与矿道"}
+  - {from: nC3_ritual_hall, to: nE1_stop_ritual, condition: {check: {target: fighting, level: regular}}, label: "正面战斗击溃蛇母祭司"}
+  - {from: nC3_ritual_hall, to: nE2_sacrifice_flight, condition: {check_fail: {target: fighting, level: regular}}, label: "战斗失利:一人断后,其余逃亡"}
+  - {from: nC3_ritual_hall, to: nE2_sacrifice_flight, condition: {node: nC2b_side_tunnel}, label: "迟到一步,牺牲一人换取撤离"}
+  - {from: nC3_ritual_hall, to: nE3_all_survive, condition: {clue: c9_cult_list}, label: "集齐名单与证据,先发制人全员生还"}

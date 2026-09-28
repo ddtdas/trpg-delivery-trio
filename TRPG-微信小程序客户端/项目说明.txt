@@ -1,0 +1,97 @@
+﻿TRPG 微信小程序客户端 —— 项目说明
+====================================
+
+一、本包是什么
+  本包是「TRPG 跑团玩家端 · 微信小程序版」，即本次交付的**第三件交付物**。
+  它是一份完整、可直接导入微信开发者工具的**微信小程序工程**（无需 npm install、
+  无需构建、无需任何编译步骤），与另两件交付物配套使用：
+    · TRPG-服务端.zip            主持端服务（FastAPI，默认端口 9210）
+    · TRPG-Web客户端.zip         PC 浏览器玩家端（独立客户端 + 反向代理）
+    · TRPG-微信小程序客户端.zip  ← 本包：手机端玩家端
+
+二、源码出处
+  · 源目录：`trpg_delivery/clients/miniprogram`（当前工作树，非 git 仓）
+  · 实现依据：`docs/CROSS-END-CONTRACT.md` **v1.31（2026-09-26 定稿冻结）**
+    —— 本端的 `tokens.wxss`（设计令牌 28 项）与 `strings.js` / `strings.json`
+    （固定文案 61 条）均与该契约 §2 / §5 **逐值、逐字**一致，并由契约自检脚本复核。
+  · 本包内 28 个源文件与上述源目录**逐字节一致**（SHA256 逐个比对通过），
+    即内容可追溯到源工作树，未做任何换行/编码转换。
+
+三、与权威项目 `黑客松开发文档\trpg` 的关系
+  权威项目 `黑客松开发文档\trpg`（远程主机项目根
+  `C:\Users\Administrator\Desktop\黑客松开发文档\trpg`）是本次交付的**唯一权威源**。
+  本包与它的关系是：
+    · 本包是权威项目中**主持端服务（后端）的「玩家端 · mobile 端」实现**，
+      使用同一套后端契约，**不新增、不修改任何服务端逻辑**；
+    · 它通过 `/access/*` 契约**直连主持端**（默认端口 9210），不经过任何玩家端中转服务；
+    · 主持端（KP 端 `/app`）仍是回合与判定的**唯一权威**；
+    · 小程序只持有 **mobile 端 token**，不持有主持端（webapp）或录音端（recorder）凭据。
+  对应关系一览：
+    权威项目后端（主持端服务，端口 9210）
+      ├─ 主持端 KP UI     → /app/      （在 TRPG-服务端.zip 的 web/dist/ 内）
+      ├─ PC 玩家端         → /player/   （在 TRPG-服务端.zip 的 player-web/ 内；
+                                           也可用 TRPG-Web客户端.zip 独立运行）
+      └─ 微信小程序玩家端  → 本包        （手机端，直连 /access/* 与 /ws）
+
+四、三件套怎么配合（端到端跑通步骤）
+  1. 起服务端：解压 `TRPG-服务端.zip` → 双击 `start.bat`
+     （首次可先双击 `首次运行-安装依赖.bat`）→ 浏览器访问
+     `http://127.0.0.1:9210/api/health` 应返回 200。
+  2. 起 Web 客户端（可选）：解压 `TRPG-Web客户端.zip` → 双击 `start.bat`。
+  3. 用小程序：解压本包 → 微信开发者工具「导入项目」→ 目录选到本目录
+     （即直接包含 app.json 的那一层）→ 在「连接设置」页填：
+         · 服务器地址：`http://<主持端IP>:9210`
+         · mobile token：主持端 `configs/access_config.yaml` 里的 `ends.mobile.token`
+         · 连接码 / 玩家 ID / 昵称
+     → 依次点「测试连接」→「解析连接码」→「加入跑团」。
+  4. 开发阶段需在开发者工具「详情 → 本地设置」勾选「不校验合法域名」；
+     正式发布需把主持端 HTTPS 域名加入 request 与 socket 合法域名。
+
+五、契约与文档索引
+  下列两份文档**不在本包内**，随 `TRPG-服务端.zip` 一同交付（路径以其顶层目录为根）：
+    · `docs/CROSS-END-CONTRACT.md`  跨端契约与设计令牌 v1.31 —— 本端唯一实现依据
+    · `docs/MINIPROGRAM.md`         小程序端专项说明
+  本包内的说明文档：
+    · `使用说明.txt`                导入步骤、字段填写、域名设置、常见问题
+    · `导入前检查.txt`              必备文件清单、自检命令、导入失败原因
+    · `README.md`                   开发者文档（接口清单、功能矩阵、边界与已知限制）
+
+六、本包内容与边界
+  · 全部为运行必需的小程序工程文件：`app.js` / `app.json` / `app.wxss`、`sitemap.json`、
+    `project.config.json`、`project.private.config.json`、`tokens.wxss`、
+    `strings.js` / `strings.json`、`lib/`（6 个）、`pages/setup|table|voice/`（各 4 个）；
+  · 不含 `node_modules`、不含任何图片、不含日志与临时文件；
+  · 不含 `tests/`（开发期契约自检脚本，非运行必需，原因见《导入前检查.txt》第四节）；
+  · **顶层提供 `start.bat`**（纯 ASCII 包装器）+ `scripts/start_wechat.ps1`（UTF-8+BOM，中文逻辑）：
+    用途是「探测微信开发者工具 → 自动 cli open --project 导入本项目」；若未安装工具，
+    则打印清晰中文指引并以非 0 退出码结束（绝不假启动）。这两个文件不属于上文
+    「28 个源文件」，不影响逐字节一致性声明，故第二节口径不变。
+  · **本包不内嵌任何服务端地址或 token**：服务端地址字段默认为空，由使用者在
+    「连接设置」页填写（`lib/config-store.js` 中 `DEFAULT_SERVER = ''`）。
+
+七、关于本包内文档提到的「包外路径」
+  本包只包含小程序运行所需的工程文件。下面这些路径**在 `README.md` / `strings.js` /
+  `tokens.wxss` 等文档或注释里被提到，但它们都不在本包内**，按用途分属另外两处：
+
+  | 文档里提到的路径 | 它实际在哪 | 说明 |
+  |---|---|---|
+  | `tests/contract.test.js` | 源工程 `clients/miniprogram/tests/` | 开发期契约自检脚本，**本交付包已按口径排除**（原因见《导入前检查.txt》第四节） |
+  | `docs/CROSS-END-CONTRACT.md` | `TRPG-服务端.zip` 的 `docs/` | 跨端契约 v1.31，本端唯一实现依据 |
+  | `docs/MINIPROGRAM.md` | `TRPG-服务端.zip` 的 `docs/` | 小程序端专项说明 |
+  | `docs/ROADMAP-DEFERRED.md` | `TRPG-服务端.zip` 的 `docs/` | F11/F12 延期原因记录 |
+  | `configs/access_config.yaml` | `TRPG-服务端.zip` 的 `configs/` | 主持端配置；mobile token 取自其中的 `ends.mobile.token` |
+  | `access.py`、`app/scheduler/branch_guard.py` | `TRPG-服务端.zip` 的 `app/` | 服务端源码路径，仅用于说明 F6 幂等现状 |
+  | `app.css` | PC 玩家端（`TRPG-Web客户端.zip` 或服务端包的 `player-web/`） | `tokens.wxss` 中作为「PC 端同名文件」对照提及 |
+  | `clients/web-player/` | PC 玩家端源码 | 契约 §5 扩展文案与 PC 端逐字收敛的对照对象 |
+  | `clients/miniprogram/` | 源工程目录 | 本包即由该目录打出 |
+  | `evidence/T4-mp.txt` | 构建期验收证据 | 不随任何交付包发布 |
+  | `packaging/t4-live-probe.mjs` | 构建期联调工装 | 不随任何交付包发布 |
+  | `cli.bat` | 构建机上的微信开发者工具 CLI | README 用它说明「CLI 未登录时无法用于编译验证」 |
+  | `首次运行-安装依赖.bat` / `自检.bat` | `TRPG-服务端.zip` / `TRPG-Web客户端.zip` 的顶层 | 微信小程序没有编译依赖与自检工装，本包不提供这两个 |
+
+  本包内 `README.md` 提到的 `tests/contract.test.js` **已按交付口径排除**；
+  如需运行契约自检，请在源工程（`trpg_delivery`）内执行：
+      node clients/miniprogram/tests/contract.test.js
+
+  一句话：**看到本包里没有的路径，按上表到对应包里找，或忽略**；
+  本包自身只需 `使用说明.txt` + `导入前检查.txt` 两份即可完成导入与运行。

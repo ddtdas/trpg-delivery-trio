@@ -1,0 +1,635 @@
+{
+  "clues": [
+    {
+      "id": "c_ledger_page",
+      "kind": "document",
+      "location": "n_office_ledger"
+    },
+    {
+      "id": "c_fuel_can",
+      "kind": "object",
+      "location": "n_store_find"
+    },
+    {
+      "id": "c_radio_static",
+      "kind": "signal",
+      "location": "n_office_ledger"
+    },
+    {
+      "id": "c_mirror_mark",
+      "kind": "mark",
+      "location": "n_washroom_clue"
+    },
+    {
+      "id": "c_trucker_tale",
+      "kind": "testimony",
+      "location": "n_dining_meet"
+    },
+    {
+      "id": "c_burnt_photo",
+      "kind": "object",
+      "location": "n_kitchen_noise"
+    },
+    {
+      "id": "c_emilia_letter",
+      "kind": "document",
+      "location": "n_guest_room"
+    },
+    {
+      "id": "c_deadlight_source",
+      "kind": "phenomenon",
+      "location": "n_cellar_deadlight"
+    }
+  ],
+  "event_graph": {
+    "edges": [
+      {
+        "from": "n_arrival",
+        "id": "e1",
+        "to": "n_forecourt"
+      },
+      {
+        "from": "n_forecourt",
+        "id": "e2",
+        "to": "n_shop_search"
+      },
+      {
+        "from": "n_forecourt",
+        "id": "e3",
+        "to": "n_washroom_clue"
+      },
+      {
+        "from": "n_shop_search",
+        "id": "e4",
+        "to": "n_store_find"
+      },
+      {
+        "from": "n_shop_search",
+        "id": "e5",
+        "to": "n_office_ledger"
+      },
+      {
+        "from": "n_store_find",
+        "id": "e6",
+        "to": "n_roadblock"
+      },
+      {
+        "from": "n_office_ledger",
+        "id": "e7",
+        "to": "n_roadblock"
+      },
+      {
+        "from": "n_washroom_clue",
+        "id": "e8",
+        "to": "n_roadblock"
+      },
+      {
+        "from": "n_roadblock",
+        "id": "e9",
+        "to": "n_lobby"
+      },
+      {
+        "from": "n_lobby",
+        "id": "e10",
+        "to": "n_dining_meet"
+      },
+      {
+        "from": "n_dining_meet",
+        "id": "e11",
+        "to": "n_kitchen_noise"
+      },
+      {
+        "from": "n_dining_meet",
+        "id": "e12",
+        "to": "n_guest_room"
+      },
+      {
+        "from": "n_kitchen_noise",
+        "id": "e13",
+        "to": "n_cellar_deadlight"
+      },
+      {
+        "from": "n_guest_room",
+        "id": "e14",
+        "to": "n_cellar_deadlight"
+      },
+      {
+        "from": "n_cellar_deadlight",
+        "id": "e15",
+        "to": "n_confrontation"
+      },
+      {
+        "from": "n_confrontation",
+        "id": "e16",
+        "to": "n_ending"
+      }
+    ],
+    "initial_scene": "n_arrival",
+    "nodes": [
+      {
+        "id": "n_arrival",
+        "label": "雨夜抵达加油站"
+      },
+      {
+        "id": "n_forecourt",
+        "label": "前场勘察"
+      },
+      {
+        "id": "n_shop_search",
+        "label": "便利店搜证"
+      },
+      {
+        "id": "n_store_find",
+        "label": "后仓发现"
+      },
+      {
+        "id": "n_office_ledger",
+        "label": "办公室账簿"
+      },
+      {
+        "id": "n_washroom_clue",
+        "label": "洗手间镜面"
+      },
+      {
+        "id": "n_roadblock",
+        "label": "公路封锁"
+      },
+      {
+        "id": "n_lobby",
+        "label": "旅店门厅"
+      },
+      {
+        "id": "n_dining_meet",
+        "label": "餐厅会面"
+      },
+      {
+        "id": "n_kitchen_noise",
+        "label": "厨房异响"
+      },
+      {
+        "id": "n_guest_room",
+        "label": "客房搜查"
+      },
+      {
+        "id": "n_cellar_deadlight",
+        "label": "地窖死光"
+      },
+      {
+        "id": "n_confrontation",
+        "label": "对峙"
+      },
+      {
+        "id": "n_ending",
+        "label": "终局"
+      }
+    ]
+  },
+  "maps": [
+    {
+      "id": "m_garage",
+      "interactables": [
+        {
+          "actions": [
+            "inspect",
+            "use",
+            "search"
+          ],
+          "anchor": "anchor_r_forecourt_1",
+          "id": "it_fuel_pump",
+          "map": "m_garage",
+          "name": "加油泵",
+          "room": "r_forecourt",
+          "x": 134.0,
+          "y": 116.0
+        },
+        {
+          "actions": [
+            "inspect",
+            "open",
+            "search"
+          ],
+          "anchor": "anchor_r_forecourt_2",
+          "id": "it_abandoned_car",
+          "map": "m_garage",
+          "name": "被弃置的轿车",
+          "room": "r_forecourt",
+          "x": 267.0,
+          "y": 168.8
+        },
+        {
+          "actions": [
+            "inspect",
+            "read"
+          ],
+          "anchor": "anchor_r_forecourt_3",
+          "id": "it_road_sign",
+          "map": "m_garage",
+          "name": "路牌",
+          "room": "r_forecourt",
+          "x": 331.6,
+          "y": 80.0
+        },
+        {
+          "actions": [
+            "inspect",
+            "search"
+          ],
+          "anchor": "anchor_r_shop_1",
+          "id": "it_counter",
+          "map": "m_garage",
+          "name": "收银台",
+          "room": "r_shop",
+          "x": 126.4,
+          "y": 385.0
+        },
+        {
+          "actions": [
+            "inspect",
+            "open",
+            "take"
+          ],
+          "anchor": "anchor_r_shop_2",
+          "id": "it_cooler",
+          "map": "m_garage",
+          "name": "冷柜",
+          "room": "r_shop",
+          "x": 286.0,
+          "y": 370.0
+        },
+        {
+          "actions": [
+            "inspect",
+            "read"
+          ],
+          "anchor": "anchor_r_shop_3",
+          "id": "it_notice_board",
+          "map": "m_garage",
+          "name": "公告板",
+          "room": "r_shop",
+          "x": 210.0,
+          "y": 496.0
+        },
+        {
+          "actions": [
+            "inspect",
+            "search",
+            "break"
+          ],
+          "anchor": "anchor_r_store_1",
+          "id": "it_crate_stack",
+          "map": "m_garage",
+          "name": "货箱堆",
+          "room": "r_store",
+          "x": 508.0,
+          "y": 163.0
+        },
+        {
+          "actions": [
+            "inspect",
+            "take"
+          ],
+          "anchor": "anchor_r_store_2",
+          "id": "it_spare_parts",
+          "map": "m_garage",
+          "name": "零件架",
+          "room": "r_store",
+          "x": 585.0,
+          "y": 111.0
+        },
+        {
+          "actions": [
+            "inspect",
+            "read",
+            "take"
+          ],
+          "anchor": "anchor_r_office_3",
+          "id": "it_ledger",
+          "map": "m_garage",
+          "name": "账簿",
+          "room": "r_office",
+          "x": 497.0,
+          "y": 417.6
+        },
+        {
+          "actions": [
+            "inspect",
+            "use",
+            "listen"
+          ],
+          "anchor": "anchor_r_office_1",
+          "id": "it_radio",
+          "map": "m_garage",
+          "name": "老式电台",
+          "room": "r_office",
+          "x": 578.4,
+          "y": 482.0
+        },
+        {
+          "actions": [
+            "inspect",
+            "break"
+          ],
+          "anchor": "anchor_r_washroom_2",
+          "id": "it_mirror",
+          "map": "m_garage",
+          "name": "裂开的镜子",
+          "room": "r_washroom",
+          "x": 770.0,
+          "y": 188.0
+        },
+        {
+          "actions": [
+            "inspect",
+            "use"
+          ],
+          "anchor": "anchor_r_washroom_3",
+          "id": "it_sink",
+          "map": "m_garage",
+          "name": "水槽",
+          "room": "r_washroom",
+          "x": 737.0,
+          "y": 400.8
+        }
+      ],
+      "name": "加油站",
+      "rooms": [
+        {
+          "id": "r_forecourt",
+          "name": "前场",
+          "rect": {
+            "h": 240,
+            "w": 380,
+            "x": 20,
+            "y": 20
+          }
+        },
+        {
+          "id": "r_shop",
+          "name": "便利店",
+          "rect": {
+            "h": 300,
+            "w": 380,
+            "x": 20,
+            "y": 280
+          }
+        },
+        {
+          "id": "r_store",
+          "name": "后仓",
+          "rect": {
+            "h": 260,
+            "w": 220,
+            "x": 420,
+            "y": 20
+          }
+        },
+        {
+          "id": "r_office",
+          "name": "办公室",
+          "rect": {
+            "h": 280,
+            "w": 220,
+            "x": 420,
+            "y": 300
+          }
+        },
+        {
+          "id": "r_washroom",
+          "name": "洗手间",
+          "rect": {
+            "h": 560,
+            "w": 220,
+            "x": 660,
+            "y": 20
+          }
+        }
+      ]
+    },
+    {
+      "id": "m_house",
+      "interactables": [
+        {
+          "actions": [
+            "inspect",
+            "read"
+          ],
+          "anchor": "anchor_r_lobby_1",
+          "id": "it_registry",
+          "map": "m_house",
+          "name": "住客登记簿",
+          "room": "r_lobby",
+          "x": 128.8,
+          "y": 111.2
+        },
+        {
+          "actions": [
+            "inspect",
+            "listen"
+          ],
+          "anchor": "anchor_r_lobby_2",
+          "id": "it_stair_clock",
+          "map": "m_house",
+          "name": "落地钟",
+          "room": "r_lobby",
+          "x": 264.8,
+          "y": 152.0
+        },
+        {
+          "actions": [
+            "inspect",
+            "search"
+          ],
+          "anchor": "anchor_r_dining_3",
+          "id": "it_long_table",
+          "map": "m_house",
+          "name": "长餐桌",
+          "room": "r_dining",
+          "x": 173.0,
+          "y": 389.2
+        },
+        {
+          "actions": [
+            "inspect",
+            "open",
+            "take"
+          ],
+          "anchor": "anchor_r_dining_1",
+          "id": "it_sideboard",
+          "map": "m_house",
+          "name": "餐边柜",
+          "room": "r_dining",
+          "x": 285.2,
+          "y": 436.0
+        },
+        {
+          "actions": [
+            "inspect",
+            "use",
+            "light"
+          ],
+          "anchor": "anchor_r_kitchen_2",
+          "id": "it_stove",
+          "map": "m_house",
+          "name": "灶台",
+          "room": "r_kitchen",
+          "x": 460.0,
+          "y": 124.0
+        },
+        {
+          "actions": [
+            "inspect",
+            "open",
+            "search"
+          ],
+          "anchor": "anchor_r_kitchen_3",
+          "id": "it_pantry",
+          "map": "m_house",
+          "name": "食品柜",
+          "room": "r_kitchen",
+          "x": 520.0,
+          "y": 189.0
+        },
+        {
+          "actions": [
+            "inspect",
+            "open",
+            "search"
+          ],
+          "anchor": "anchor_r_guest_1",
+          "id": "it_suitcase",
+          "map": "m_house",
+          "name": "旅行箱",
+          "room": "r_guest",
+          "x": 470.0,
+          "y": 408.0
+        },
+        {
+          "actions": [
+            "inspect",
+            "break"
+          ],
+          "anchor": "anchor_r_guest_2",
+          "id": "it_window",
+          "map": "m_house",
+          "name": "封死的窗",
+          "room": "r_guest",
+          "x": 530.0,
+          "y": 360.0
+        },
+        {
+          "actions": [
+            "inspect",
+            "open",
+            "use"
+          ],
+          "anchor": "anchor_r_cellar_3",
+          "id": "it_trapdoor",
+          "map": "m_house",
+          "name": "地窖活板门",
+          "room": "r_cellar",
+          "x": 681.0,
+          "y": 176.0
+        },
+        {
+          "actions": [
+            "inspect",
+            "light",
+            "take"
+          ],
+          "anchor": "anchor_r_cellar_1",
+          "id": "it_kerosene_lamp",
+          "map": "m_house",
+          "name": "煤油灯",
+          "room": "r_cellar",
+          "x": 690.0,
+          "y": 384.0
+        }
+      ],
+      "name": "公路旅店",
+      "rooms": [
+        {
+          "id": "r_lobby",
+          "name": "门厅",
+          "rect": {
+            "h": 240,
+            "w": 340,
+            "x": 20,
+            "y": 20
+          }
+        },
+        {
+          "id": "r_dining",
+          "name": "餐厅",
+          "rect": {
+            "h": 260,
+            "w": 340,
+            "x": 20,
+            "y": 280
+          }
+        },
+        {
+          "id": "r_kitchen",
+          "name": "厨房",
+          "rect": {
+            "h": 260,
+            "w": 200,
+            "x": 380,
+            "y": 20
+          }
+        },
+        {
+          "id": "r_guest",
+          "name": "客房",
+          "rect": {
+            "h": 240,
+            "w": 200,
+            "x": 380,
+            "y": 300
+          }
+        },
+        {
+          "id": "r_cellar",
+          "name": "地窖",
+          "rect": {
+            "h": 520,
+            "w": 180,
+            "x": 600,
+            "y": 20
+          }
+        }
+      ]
+    }
+  ],
+  "module_id": "dead_light",
+  "name": "死光",
+  "npcs": [
+    {
+      "id": "npc_garage_attendant",
+      "name": "老周",
+      "role": "加油站店员"
+    },
+    {
+      "id": "npc_trucker",
+      "name": "汉克",
+      "role": "卡车司机"
+    },
+    {
+      "id": "npc_innkeeper",
+      "name": "玛莎",
+      "role": "旅店老板"
+    },
+    {
+      "id": "npc_deputy",
+      "name": "科尔",
+      "role": "副警长"
+    },
+    {
+      "id": "npc_emilia",
+      "name": "艾米莉亚·韦伯",
+      "role": "失踪者"
+    }
+  ],
+  "ruleset": "coc7",
+  "schema": "DeadLightCompiled v1",
+  "version": "1.0.0"
+}

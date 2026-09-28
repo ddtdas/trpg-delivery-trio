@@ -1,0 +1,17 @@
+{
+  "compiled_ref": "compiled/dead_light.compiled.json",
+  "compiled_sha256": "cad7efff8d97df406d5a7eb5623da41c7c0083d5b7b26097ea0a0e5044d1fe66",
+  "counts": {
+    "clues": 8,
+    "event_edges": 16,
+    "event_nodes": 14,
+    "interactables": 22,
+    "maps": 2,
+    "npcs": 5,
+    "rooms": 10
+  },
+  "module_id": "dead_light",
+  "save_ref": "compiled/save_state.json",
+  "schema": "DeadLightCompiledMeta v1",
+  "source_ref": "source/PROVENANCE.json"
+}

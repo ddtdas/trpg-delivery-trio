@@ -1,0 +1,67 @@
+{
+  "count": 4,
+  "deleted_count": 0,
+  "entries": [
+    {
+      "deleted": false,
+      "deleted_at": null,
+      "dir": "coc6",
+      "files": 1,
+      "id": "coc6",
+      "name": "Call of Cthulhu 6th Edition (TRPG table pack)",
+      "path": "rulepacks/coc6",
+      "ruleset": "coc6",
+      "schema_version": "2.0.0",
+      "sha256": "1a67d91ed294e6bb9c12126301862153df1777b997fc686971e1a7e63cf7abc3",
+      "size": 6234,
+      "version": "2.0.0"
+    },
+    {
+      "deleted": false,
+      "deleted_at": null,
+      "dir": "coc7",
+      "files": 1,
+      "id": "coc7",
+      "name": "Call of Cthulhu 7th Edition (TRPG table pack)",
+      "path": "rulepacks/coc7",
+      "ruleset": "coc7",
+      "schema_version": "2.0.0",
+      "sha256": "7643096d8a1303d5bc2c02aba384fcd5f13c82e1d92f09dcf3c95161ab9f18aa",
+      "size": 6795,
+      "version": "2.0.0"
+    },
+    {
+      "deleted": false,
+      "deleted_at": null,
+      "dir": "custom",
+      "files": 1,
+      "id": "custom",
+      "name": "Custom homebrew (placeholder — extended per table)",
+      "path": "rulepacks/custom",
+      "ruleset": "custom",
+      "schema_version": "1",
+      "sha256": "3c499d37cb31d6f100730d16a110e31f949c6ada1f279407788e567cf8e1e09a",
+      "size": 618,
+      "version": "0.0.1-placeholder"
+    },
+    {
+      "deleted": false,
+      "deleted_at": null,
+      "dir": "dnd5e",
+      "files": 1,
+      "id": "dnd5e",
+      "name": "Dungeons & Dragons 5th Edition (SRD 5.1 table pack)",
+      "path": "rulepacks/dnd5e",
+      "ruleset": "dnd5e",
+      "schema_version": "2.0.0",
+      "sha256": "ee457d05140c935972d594eafc09a349177efcdccee088f05d3930571c2233d4",
+      "size": 6581,
+      "version": "2.0.0"
+    }
+  ],
+  "fingerprint": "fe8d0c00a25eddceafde89ff00633ede3b6339783880fa526f0c1ce2d6784a69",
+  "generated_at": "2026-09-27T08:10:12.709160+00:00",
+  "kind": "rulepacks",
+  "root": "C:/Users/Administrator/Desktop/黑客松开发文档/TRPG-交付包-三件套/TRPG-服务端/rulepacks",
+  "schema": "RepoIndex v1"
+}

@@ -1,0 +1,193 @@
+# CoC 6th-edition rulepack -- schema v2 (MIT data file).
+#
+# Differences from the 7e pack that the schema has to express:
+#   * no hard/extreme success tiers -- the Keeper applies a flat modifier
+#     to the target instead (resolution.modifiers)
+#   * critical is 01-05 (not just 01); fumble is 96-100 regardless of skill
+#   * "special" success at target/5 is its own tier
+#   * SAN starts at POW x 5 (not POW), HP rounds UP
+#   * derived rolls Idea/Luck/Know = INT x 5 / POW x 5 / EDU x 5
+#   * dodge starts at DEX x 2
+# Self-made registry model: {fn, args} pairs only, no expressions.
+id: coc6
+version: "2.0.0"
+display_name: "Call of Cthulhu 6th Edition (TRPG table pack)"
+license: "MIT (table data compiled by the TRPG project; Chaosium rules text not included)"
+schema: 2
+# t1's repository indexer reads schema_version (string); app.rules reads
+# schema (int). Both must agree -- see docs/RULEPACKS.md section 3.
+schema_version: "2.0.0"
+
+ruleset:
+  family: coc
+  edition: "6"
+  dice: d100
+  resolution_model: coc_classic
+
+attrs:
+  - {name: STR, min: 1, max: 100, abbr: "Strength",     roll: "3d6x5"}
+  - {name: CON, min: 1, max: 100, abbr: "Constitution", roll: "3d6x5"}
+  - {name: SIZ, min: 1, max: 100, abbr: "Size",         roll: "2d6p6x5"}
+  - {name: DEX, min: 1, max: 100, abbr: "Dexterity",    roll: "3d6x5"}
+  - {name: APP, min: 1, max: 100, abbr: "Appearance",   roll: "3d6x5"}
+  - {name: INT, min: 1, max: 100, abbr: "Intelligence", roll: "2d6p6x5"}
+  - {name: POW, min: 1, max: 100, abbr: "Power",        roll: "3d6x5"}
+  - {name: EDU, min: 1, max: 100, abbr: "Education",    roll: "2d6p6x5"}
+  - {name: SAN, min: 0, max: 99}
+  - {name: HP, min: 0, max: 99}
+  - {name: MP, min: 0, max: 99}
+
+# 6e base values (percentile). Note dodge is DEX x 2 on a real sheet --
+# see formulas.dodge_start; the card carries whatever the player wrote.
+skills:
+  accounting: 10
+  anthropology: 1
+  archaeology: 1
+  art: 5
+  astronomy: 1
+  bargain: 5
+  biology: 1
+  chemistry: 1
+  climb: 40
+  computer_use: 1
+  credit_rating: 15
+  cthulhu_mythos: 0
+  disguise: 1
+  dodge: 0
+  drive_auto: 20
+  electrical_repair: 10
+  fast_talk: 5
+  first_aid: 30
+  geology: 1
+  hide: 10
+  history: 20
+  jump: 25
+  law: 5
+  library_use: 25
+  listen: 25
+  locksmith: 1
+  martial_arts: 1
+  mechanical_repair: 20
+  medicine: 5
+  natural_history: 10
+  navigate: 10
+  occult: 5
+  operate_heavy_machinery: 1
+  persuade: 15
+  pharmacy: 1
+  photography: 5
+  physics: 1
+  pilot: 1
+  psychoanalysis: 1
+  psychology: 5
+  ride: 5
+  sneak: 10
+  spot_hidden: 25
+  swim: 25
+  throw: 25
+  track: 10
+  zoology: 1
+
+skill_meta:
+  accounting: {attr: EDU, category: knowledge}
+  anthropology: {attr: EDU, category: knowledge}
+  archaeology: {attr: EDU, category: knowledge}
+  art: {attr: POW, category: technical}
+  astronomy: {attr: EDU, category: knowledge}
+  bargain: {attr: APP, category: social}
+  biology: {attr: EDU, category: knowledge}
+  chemistry: {attr: EDU, category: knowledge}
+  climb: {attr: STR, category: physical}
+  computer_use: {attr: EDU, category: technical}
+  credit_rating: {attr: APP, category: social}
+  cthulhu_mythos: {attr: "-", category: mythos}
+  disguise: {attr: APP, category: social}
+  dodge: {attr: DEX, category: combat}
+  drive_auto: {attr: DEX, category: technical}
+  electrical_repair: {attr: DEX, category: technical}
+  fast_talk: {attr: APP, category: social}
+  first_aid: {attr: EDU, category: knowledge}
+  geology: {attr: EDU, category: knowledge}
+  hide: {attr: DEX, category: physical}
+  history: {attr: EDU, category: knowledge}
+  jump: {attr: STR, category: physical}
+  law: {attr: EDU, category: knowledge}
+  library_use: {attr: EDU, category: knowledge}
+  listen: {attr: "-", category: perception}
+  locksmith: {attr: DEX, category: technical}
+  martial_arts: {attr: STR, category: combat}
+  mechanical_repair: {attr: DEX, category: technical}
+  medicine: {attr: EDU, category: knowledge}
+  natural_history: {attr: EDU, category: knowledge}
+  navigate: {attr: EDU, category: technical}
+  occult: {attr: EDU, category: knowledge}
+  operate_heavy_machinery: {attr: DEX, category: technical}
+  persuade: {attr: APP, category: social}
+  pharmacy: {attr: EDU, category: knowledge}
+  photography: {attr: DEX, category: technical}
+  physics: {attr: EDU, category: knowledge}
+  pilot: {attr: DEX, category: technical}
+  psychoanalysis: {attr: EDU, category: knowledge}
+  psychology: {attr: EDU, category: knowledge}
+  ride: {attr: DEX, category: technical}
+  sneak: {attr: DEX, category: physical}
+  spot_hidden: {attr: "-", category: perception}
+  swim: {attr: STR, category: physical}
+  throw: {attr: DEX, category: physical}
+  track: {attr: "-", category: perception}
+  zoology: {attr: EDU, category: knowledge}
+
+checks:
+  difficulties: [regular]
+  critical: {rule: "roll_le_5"}
+  fumble: {rule: "roll_ge_96"}
+  special: {divisor: 5}
+  opposed: {table: resistance}
+
+resolution:
+  model: coc_classic
+  roll: d100
+  success_rule: roll_le_target
+  difficulties: [regular]
+  modifiers: {easy: 20, average: 0, hard: -20, extreme: -40}
+  special_divisor: 5
+  critical_max: 5
+  fumble_min: 96
+  bonus_penalty_dice: false
+
+combat:
+  initiative: {order_by: dex_desc, tie_break: seeded_d100}
+  attack_default: martial_arts
+  defense_default: dodge
+  damage_default: "1d3"
+  armor: {enabled: true}
+  major_wound: {enabled: false}
+
+growth:
+  model: skill_mark_roll_over
+  cap: 99
+  gain: "1d10"
+  rule: roll_gt_skill
+
+formulas:
+  hp_max: {fn: coc_hp_max_ceil, args: {con: $CON, siz: $SIZ}}
+  mp_max: {fn: coc_mp_max, args: {pow: $POW}}
+  san_start: {fn: coc_san_start_classic, args: {pow: $POW}}
+  idea: {fn: mul, args: {a: $INT, b: 5}}
+  luck: {fn: mul, args: {a: $POW, b: 5}}
+  know: {fn: mul, args: {a: $EDU, b: 5}}
+  dodge_start: {fn: mul, args: {a: $DEX, b: 2}}
+  mov: {fn: coc_mov, args: {str: $STR, dex: $DEX, siz: $SIZ}}
+  damage_bonus: {fn: coc_damage_bonus, args: {str: $STR, siz: $SIZ}}
+
+# v1 compatibility block (original four-function derived registry).
+derived:
+  half_of_listen: {fn: half, args: {of: $listen}}
+  fifth_of_spot_hidden: {fn: fifth, args: {of: $spot_hidden}}
+
+card_rules:
+  required_attrs: [STR, CON, SIZ, DEX, APP, INT, POW, EDU]
+  skill_min: 0
+  skill_max: 99
+  allow_custom_skills: false
+  max_skill_total: 4000

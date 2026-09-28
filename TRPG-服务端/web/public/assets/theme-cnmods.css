@@ -1,0 +1,389 @@
+/* theme-cnmods.css —— GM 端（/app）「魔都暗色」主题覆盖层（R32 三端统一）
+ *
+ * 加载方式：web/dist/index.html 在 bundle CSS <link> 之后追加本文件。
+ *   —— 不改 bundle、不改 web/src（本轮 web/src 不存在）、不改任何 DOM/类名/脚本/行为。
+ *
+ * 令牌值 = tokens.json v2.0（唯一令牌源），全部取自参考站 https://www.cnmods.net/web/
+ *   运行时实测（getComputedStyle）+ 站点自身主题覆盖静态核验：
+ *     primaryColor #FFBB70 / primaryColorHover rgb(250,197,131) / primaryColorPressed rgb(219,164,94)
+ *     inputColor #212625 / fontFamily HarmonyOS
+ *     darkTheme: neutralBody rgb(16,16,20)、neutralCard rgb(24,24,28)、neutralModal rgb(44,44,50)
+ *                alpha2 .82(textColor2)、alpha3 .52、alpha4 .38、alphaDivider .09、alphaBorder .24
+ *     Tailwind:   header #262c31 + 1px #32383e、panel #141C23 + backdrop-blur 8px + radius .25rem
+ *   证据：_r2_work/evidence/t4.md、docs/UI-TOKENS-MODU.md
+ *
+ * 覆盖范围：GM bundle 中全部浅色规则（49 条，已逐条枚举）+ 令牌变量。
+ * 选择器与 bundle 逐字同名，靠"后加载同优先级覆盖"生效；不含 !important。
+ */
+
+/* ---------- 1. 令牌变量（bundle 的 :root 契约名，值换为魔都暗色） ---------- */
+:root {
+  --bg: #101014;
+  --card: #141c23;
+  --text: rgba(255, 255, 255, 0.82);
+  --muted: #b9b9b9;
+  --border: rgba(255, 255, 255, 0.24);
+  --focus: #ffbb70;
+
+  /* 本层自用令牌（与 tokens.json v2.0 同值） */
+  --trpg-card: #141c23;
+  --trpg-card-raised: #2c2c32;
+  --trpg-topbar: #262c31;
+  --trpg-divider: #32383e;
+  --trpg-accent: #ffbb70;
+  --trpg-accent-hover: #fac583;
+  --trpg-accent-pressed: #dba45e;
+  --trpg-accent-soft: rgba(255, 187, 112, 0.10);
+  --trpg-ink: #3d1b00;
+  --trpg-text-strong: rgba(255, 255, 255, 0.90);
+  --trpg-text-3: rgba(255, 255, 255, 0.52);
+  --trpg-text-disabled: rgba(255, 255, 255, 0.38);
+  --trpg-hover: rgba(255, 255, 255, 0.09);
+  --trpg-action: rgba(255, 255, 255, 0.06);
+  --trpg-err: #e88080;
+  --trpg-err-hover: #e98b8b;
+  --trpg-err-pressed: #e57272;
+  --trpg-radius-card: 4px;
+  --trpg-radius-ctl: 3px;
+  --trpg-radius-chip: 2px;
+  --trpg-font-stack: HarmonyOS, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", "Helvetica Neue", Arial, sans-serif;
+  --trpg-motion: 150ms cubic-bezier(0.4, 0, 0.2, 1);
+  --trpg-card-translucent: rgba(20, 28, 35, 0.73);
+  --trpg-blur: 8px;
+  --trpg-font-weight-bold: 700;
+  --trpg-shadow-none: none;
+
+  /* 原生控件（复选框/单选框/滚动条/下拉）随暗色渲染 —— 参考站同为暗色原生控件 */
+  color-scheme: dark;
+}
+
+/* ---------- 2. 根与排版 ---------- */
+body {
+  background-color: var(--bg);
+  color: var(--text);
+  font-family: var(--trpg-font-stack);
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible,
+[tabindex]:focus-visible {
+  outline: 2px solid var(--trpg-accent);
+  outline-offset: 2px;
+  box-shadow: none;
+}
+
+select option {
+  background-color: var(--trpg-card-raised);
+  color: var(--text);
+}
+
+::-webkit-scrollbar { width: 5px; height: 5px; }
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.20);
+  border-radius: 5px;
+  border: 1px solid var(--bg);
+}
+
+/* ---------- 3. 表面 / 文字 / 边框工具类（bundle 中的浅色值 → 魔都暗色） ---------- */
+.bg-white { background-color: var(--trpg-card); }
+.bg-gray-100 { background-color: var(--trpg-action); }
+.bg-gray-200 { background-color: var(--trpg-action); }
+.bg-gray-300 { background-color: var(--trpg-hover); }
+.bg-gray-500 { background-color: var(--trpg-text-disabled); }
+.bg-gray-600 { background-color: var(--trpg-text-3); }
+.bg-black { background-color: var(--bg); }
+.hover\:bg-gray-100:hover { background-color: var(--trpg-hover); }
+
+.text-white { color: var(--trpg-text-strong); }
+.text-gray-900 { color: var(--trpg-text-strong); }
+.text-gray-800 { color: var(--text); }
+.text-gray-700 { color: var(--text); }
+.text-gray-600 { color: var(--trpg-text-3); }
+.text-gray-500 { color: var(--trpg-text-3); }
+
+.border-black { border-color: var(--border); }
+.border-t-black { border-top-color: var(--border); }
+.border-gray-200 { border-color: var(--border); }
+.border-gray-300 { border-color: var(--border); }
+.border-gray-400 { border-color: var(--border); }
+
+.shadow-sm { box-shadow: var(--trpg-shadow-none); }
+
+/* ---------- 4. 组件形态（与 PC/小程序同名同义同规格） ---------- */
+/* 参考站实测（/web/moduleDetail）：bg rgba(20,28,35,0.73) + backdrop-filter blur(8px) + radius 4px，
+   **无边框、无 box-shadow** —— 层次靠背景色差 + 模糊。 */
+.panel {
+  background-color: var(--trpg-card-translucent);
+  -webkit-backdrop-filter: blur(var(--trpg-blur));
+  backdrop-filter: blur(var(--trpg-blur));
+  border: none;
+  border-radius: var(--trpg-radius-card);
+  padding: 16px;
+  box-shadow: var(--trpg-shadow-none);
+}
+.panel-title {
+  color: var(--trpg-text-strong);
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 0.025em;
+  margin-bottom: 12px;
+}
+
+.btn {
+  /* 参考站实测 n-button--default-type：bg rgba(0,0,0,0)、border 0px、radius 3px、padding 0 14px、shadow none */
+  background-color: transparent;
+  border: none;
+  min-height: 44px;
+  border-radius: var(--trpg-radius-ctl);
+  padding: 0 14px;
+  font-size: 14px;
+  line-height: 1;
+  font-weight: 400;
+  transition: color var(--trpg-motion), background-color var(--trpg-motion), border-color var(--trpg-motion);
+}
+/* P2 移动端触击目标：仅移动导航 ☰（GM 端唯一 .btn.fixed 样例，md:hidden 仅 <768px 可见）。
+   不做全局 min-width —— 会撑宽地图 ± / -5+5 / 回车落位等小按钮并改动 R33 碰撞断言面。 */
+.btn.fixed { min-width: 44px; }
+
+.btn:focus-visible { outline: 2px solid var(--trpg-accent); outline-offset: 2px; box-shadow: none; }
+
+.btn-primary {
+  background-color: var(--trpg-accent);
+  color: var(--trpg-ink);
+  font-weight: 600;
+}
+.btn-primary:hover { background-color: var(--trpg-accent-hover); }
+.btn-primary:active { background-color: var(--trpg-accent-pressed); }
+
+.btn-secondary {
+  background-color: transparent;
+  border: none;
+  color: var(--text);
+}
+.btn-secondary:hover { background-color: var(--trpg-hover); }
+.btn-secondary:active { background-color: var(--trpg-action); }
+
+.btn-danger {
+  background-color: var(--trpg-err);
+  color: #101014;
+  font-weight: 600;
+}
+.btn-danger:hover { background-color: var(--trpg-err-hover); }
+.btn-danger:active { background-color: var(--trpg-err-pressed); }
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  height: 22px;
+  background-color: #212625;
+  border: 1px solid var(--border);
+  border-radius: var(--trpg-radius-chip);
+  padding: 0 8px;
+  font-size: 12px;
+  line-height: 1;
+  color: var(--text);
+}
+
+.empty {
+  background-color: transparent;
+  border: 1px dashed var(--border);
+  border-radius: var(--trpg-radius-card);
+  color: var(--trpg-text-3);
+}
+
+.input {
+  /* 参考站 .n-input__border 实测 1px solid rgba(0,0,0,0)：默认无可见边框，聚焦转强调色 */
+  background-color: #212625;
+  border: 1px solid transparent;
+  border-radius: var(--trpg-radius-ctl);
+  padding: 8px 12px;
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--text);
+}
+.input::placeholder { color: var(--trpg-text-disabled); }
+.input:focus-visible { outline: 2px solid var(--trpg-accent); outline-offset: 1px; }
+
+/* ---------- 5. 侧栏导航 ---------- */
+.sidebar {
+  background-color: var(--trpg-card);
+  border-right: 1px solid var(--border);
+}
+.sidebar-link {
+  border-radius: var(--trpg-radius-ctl);
+  color: var(--text);
+}
+.sidebar-link:hover { background-color: var(--trpg-hover); color: var(--trpg-accent); }
+.sidebar-link:focus-visible { outline: 2px solid var(--trpg-accent); outline-offset: 1px; }
+.sidebar-link-active {
+  /* 参考站 .router-link-active 实测：金色底（nav_bg 贴图）+ 墨色字 rgb(61,27,0) */
+  background-color: var(--trpg-accent);
+  color: var(--trpg-ink);
+  font-weight: 600;
+}
+.sidebar-link-active:hover { background-color: var(--trpg-accent-hover); color: var(--trpg-ink); }
+
+/* ---------- 6. 其它 ---------- */
+.drawer-overlay { background-color: rgba(0, 0, 0, 0.66); }
+.skip-link:focus {
+  background: var(--trpg-accent);
+  color: var(--trpg-ink);
+  border-radius: var(--trpg-radius-ctl);
+  border: 2px solid var(--trpg-accent);
+}
+.rounded { border-radius: var(--trpg-radius-card); }
+.rounded-md { border-radius: var(--trpg-radius-ctl); }
+.rounded-lg { border-radius: var(--trpg-radius-card); }
+
+/* ---------- 7. 全量浅色规则扫描补漏（bundle 中所有 rgb>180 的规则，共 24 条） ---------- */
+.bg-gray-50 { background-color: var(--trpg-action); }
+.bg-red-50 { background-color: rgba(232, 128, 128, 0.10); }
+.hover\:bg-red-100:hover { background-color: rgba(232, 128, 128, 0.16); }
+.accent-gray-900 { accent-color: var(--trpg-accent); }
+
+/* ---------- 8. R34 补漏：Tailwind 默认调色板未覆盖的色值（ui 实测 2026-09-27） ----------
+   漏因：第 7 节只扫描了 bundle 中 rgb>180 的浅色规则，把 gray-400/red-400/red-600
+        这一类中低亮度色值漏掉了。
+   缺陷：.text-red-600 在 --bg #101014 上实测 3.93:1，低于 WCAG AA 的 4.5:1。
+   处置：按色族一次性收口（不只补实测到的 3 个类），避免下次再漏同族。
+   对比度：rgb(232,128,128) on #101014 = 7.13:1  PASS(AA)；#b9b9b9 更高。 */
+.bg-gray-400 { background-color: var(--muted); }
+.bg-gray-500 { background-color: var(--muted); }
+.bg-red-400  { background-color: rgb(232, 128, 128); }
+.bg-red-500  { background-color: rgb(232, 128, 128); }
+.text-red-400, .text-red-500, .text-red-600, .text-red-700 { color: rgb(232, 128, 128); }
+
+/* ---------- 9. R2-UI v1.2 收口补漏（ui-gm 2026-09-27）----------
+ * 方法：把 bundle（index-DAU2_EXr.css，270 条规则）的全部 color/background-color/border-color
+ *       声明逐条算出相对亮度，与本覆盖层的选择器全集做差集（不靠人工清单），再回到 bundle JS
+ *       （index-DsfUF84T.js）用 IndexOf 定位每个类的真实 className 用法与命中数。
+ * 结论：v1.0 第 7/8 节按「rgb>180」口径扫描，漏掉同族中低亮度色值与 preflight 默认色共 11 处。
+ *       其中 2 处是真缺陷（不是风格偏好），其余是同一语义两种颜色的不一致：
+ *   ① .bg-amber-50 #FFFBEB —— 「⑤ 事件与线索 / 待审队列」条目底色（JS @59138：li.rounded.bg-amber-50
+ *      承载 m.text），近白底 + 继承文字 var(--text) rgba(255,255,255,.82) = 实测 1.03:1（AA 需 ≥4.5:1）。
+ *   ② .text-red-800 #991B1B —— 错误横幅 className 为 border-red-300 + bg-red-50 + text-red-800
+ *      (JS @1256 / @80805)。bg-red-50 已被本层暗化，暗红压暗底 = 实测 1.85:1。
+ *   ③ .border-gray-100 #F3F4F6 —— 玩家表行分隔线（JS @57949 border-b border-gray-100）→ 暗底白线眩光。
+ *   ④ .border-red-300/.border-red-400/.border-red-500 —— 错误横幅与 NARRATION_REJECTED 徽标的亮色描边。
+ *   ⑤ .text-red-300 / .bg-red-600 / .text-gray-400 —— 与同族已收口值不一致（同一语义两种红/灰）。
+ *   ⑥ Tailwind preflight 的 *,::before,::after{border-color:#e5e7eb} —— 裸 .border（无 *-color 工具类）
+ *      用法 15 处（409 个 className 中）会拿到近白描边。
+ *   ⑦ ::-webkit-scrollbar-thumb:hover{#9ca3af}（bundle 自带）未被 v1.0 覆盖 → 悬停滚动条变浅灰。
+ * 统一口径：红族一律 rgb(232,128,128)（= --trpg-err；在 --bg #101014 上 7.08:1，在错误横幅暗底上 5.74:1）；
+ *           红描边用其 55% 透明；琥珀底用 --trpg-accent 的 14% 透明（继承文字实测 9.40:1）。
+ * v1.2 相对 v1.1 的两点收敛（均不改任何已生效色值）：
+ *   · 令牌纪律：本节不再出现魔法色值，全部走 :root 令牌（--trpg-err / --trpg-warn-soft /
+ *     --trpg-err-border / --trpg-focus-ring / --trpg-selection / --trpg-scroll-*）；
+ *   · 减少动效（技能包 §8）：bundle 只有 .animate-pulse(2s infinite) 与 .animate-spin(1s linear
+ *     infinite) 两条 CSS 动画且**全树无 prefers-reduced-motion 处理**（实测 grep: false），
+ *     本节按整族关闭；.btn/.sidebar-link/.input/.chip/a 的 150ms 过渡一并压到 0.01ms。
+ * 约束：全部为「后加载同优先级覆盖」，不含 !important；不改 DOM/类名/脚本/协议帧；不改 bundle CSS；
+ *       本节属性仅限 paint 层（color/background*/border-color/outline*/animation*/transition*）——
+ *       不含任何 width/height/min/max/padding/margin/border-width/font-size/line-height/gap，
+ *       故盒模型度量零变化、R33 碰撞几何对本层不变。
+ * 证据：_r2_work/UI-GM.md（before/after 字节数 + sha256 ×2 + r2_dist_integrity.ps1 原始输出 + 对比度自算）。
+ */
+
+/* 9.1 间距阶梯令牌（4/8/12/16/24/32）与本节色值令牌。间距值取自本文件既有声明，不改视觉，只把阶梯显式化。 */
+:root {
+  --trpg-sp-1: 4px;
+  --trpg-sp-2: 8px;
+  --trpg-sp-3: 12px;
+  --trpg-sp-4: 16px;
+  --trpg-sp-5: 24px;
+  --trpg-sp-6: 32px;
+  /* 状态/交互色令牌（值 = 既有声明，避免魔法色值散落） */
+  --trpg-warn-soft: rgba(255, 187, 112, 0.14);
+  --trpg-err-border: rgba(232, 128, 128, 0.55);
+  --trpg-err-hover-soft: rgba(232, 128, 128, 0.16);
+  --trpg-focus-ring: rgba(255, 187, 112, 0.35);
+  --trpg-selection: rgba(255, 187, 112, 0.30);
+  --trpg-scroll-thumb: rgba(255, 255, 255, 0.20);
+  --trpg-scroll-thumb-hover: rgba(255, 255, 255, 0.32);
+  /* 原生控件（复选框/单选框/进度条）取强调色，避免浏览器默认蓝，保持状态色精准 */
+  accent-color: var(--trpg-accent);
+  /* Firefox 滚动条；Chromium 走 ::-webkit-scrollbar。两条路径同色，避免一深一浅 */
+  scrollbar-width: thin;
+  scrollbar-color: var(--trpg-scroll-thumb) transparent;
+}
+
+/* 9.2 色族收口补漏（每族一次收口，不只补实测命中的那一个类） */
+.bg-amber-50 { background-color: var(--trpg-warn-soft); }
+.text-red-300, .text-red-800 { color: var(--trpg-err); }
+.bg-red-600 { background-color: var(--trpg-err); }
+.border-red-300, .border-red-400, .border-red-500 { border-color: var(--trpg-err-border); }
+.border-gray-100 { border-color: var(--trpg-divider); }
+.text-gray-400 { color: var(--trpg-text-3); }
+.hover\:bg-red-100:hover { background-color: var(--trpg-err-hover-soft); }
+
+/* 9.3 preflight 默认描边色（* #e5e7eb → --border）：裸 .border 元素不再出现近白描边 */
+*, ::before, ::after { border-color: var(--border); }
+
+/* 9.4 滚动条（bundle 自带 10px 宽 + thumb #d1d5db + thumb:hover #9ca3af，v1.0 只覆盖了静止态） */
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-corner { background: var(--bg); }
+::-webkit-scrollbar-thumb { background: var(--trpg-scroll-thumb); }
+::-webkit-scrollbar-thumb:hover { background: var(--trpg-scroll-thumb-hover); }
+
+/* 9.5 选区与容器焦点（v1.0 已有 :focus-visible；此处补 ::selection 与键盘焦点所在面板） */
+::selection { background: var(--trpg-selection); color: #ffffff; }
+.panel:has(:focus-visible) { outline: 1px solid var(--trpg-focus-ring); outline-offset: 0; }
+
+/* 9.6 减少动效（技能包 §8 明确要求；实测 bundle/全树均无 prefers-reduced-motion 处理） */
+@media (prefers-reduced-motion: reduce) {
+  [class*="animate-"] { animation: none; }
+  .btn, .sidebar-link, .input, .chip, a { transition-duration: 0.01ms; }
+}
+
+/* ---------- 10. R2-UI v1.3 —— 移动端几何修正（<768px，与 bundle 的 md: 断点一致）----------
+ * 触发依据：verify2 对 GM 总览 #map @390x844 的改动前实测
+ *   越界 1：CANVAS 600x380 落在 390px 视口内（x=34,y=424,w=600,h=380）
+ *   文本溢出 4：P.mt-1「缩放 / 拖背景平移 / 落位坐标」sw=348>cw=321；SECTION.panel sw=364>cw=353；
+ *               w-20 输入框容器 sw=601>cw=319 与 sw=600>cw=317
+ *   重叠 4：P.mt-1[缩放/拖背景平移] <> SPAN[85 %]；LABEL[Y] / INPUT[80] / BUTTON[回车落位] <> H2.panel-title[迷雾（需 KP 批准）]
+ * 源码级根因（在 index-DsfUF84T.js 内实测定位，不是猜）：
+ *   ① 地图 stage 由常量建立 —— 代码里 'const Q=20, ve=600, _e=380'，Konva 把容器 .konvajs-content
+ *      与 canvas 的宽高**写成行内样式**，class 选择器优先级低于行内样式 → 只能靠 !important 压过；
+ *      因此本节是全文件唯一使用 !important 的地方，且**整体被限制在 max-width:767px 内**，
+ *      1920x1080 / 1440x900 / 1366x768 三档完全不受影响。
+ *      容器比值取自 bundle 常量 600:380，用 aspect-ratio 固定，避免 canvas 绝对定位时容器塌高。
+ *   ② 缩放行是 'p.mt-1.flex.items-center.gap-2'：文本 + 2×btn + input[type=range] + btn + span，
+ *      不换行且含固定宽度控件 → 撑破 panel（sw 348/601 > cw 321/319）。面板内 flex 行补 flex-wrap，
+ *      子项补 min-width:0（flex 项默认 min-width:auto 会拒绝收缩）。
+ *   ③ 文本溢出用 overflow-wrap:anywhere 兜底（仅在必须断行时生效）。
+ * 副作用披露：Konva 的命中检测按容器矩形换算指针坐标，画布被 CSS 缩放后，移动端小视口下的
+ *   点选命中会有偏移（桌面三档不受影响，因为宽度足够、缩放比为 1）。这是纯 CSS 方案无法回避的
+ *   取舍；若要根治需改 JS（本轮禁止重建）。已在 _r2_work/UI-GM.md 记录为该层已知局限。
+ */
+@media (max-width: 767px) {
+  /* 10.1 画布收进视口：容器按 600:380 定比例，宽度跟随父面板 */
+  .konvajs-content {
+    width: 100% !important;
+    height: auto !important;
+    max-width: 100% !important;
+    aspect-ratio: 600 / 380;
+  }
+  .konvajs-content canvas {
+    width: 100% !important;
+    height: 100% !important;
+    max-width: 100% !important;
+    display: block;
+  }
+
+  /* 10.2 面板内 flex 行换行 + 子项可收缩（修 sw>cw 的文本溢出与元素越界） */
+  .panel .flex { flex-wrap: wrap; }
+  .panel .flex > * { min-width: 0; }
+  .panel input[type="range"] { flex: 1 1 120px; min-width: 0; max-width: 100%; }
+  .panel .btn { max-width: 100%; }
+
+  /* 10.3 长串文本兜底（仅必要时断行，不改变桌面排版） */
+  .panel p, .panel label, .panel summary { overflow-wrap: anywhere; }
+
+  /* 10.4 面板自身不得横向溢出 */
+  .panel { max-width: 100%; }
+}

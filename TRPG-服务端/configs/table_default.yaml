@@ -1,0 +1,13 @@
+# TRPG default table config (MIT). Frozen after W-A per build_plan_v1.
+table_id: tbl_demo
+rulepack: coc7
+module: sample_coc
+server:
+  host: "0.0.0.0"
+  port: 9210
+turn:
+  window_secs: 120
+  max_players: 6
+paths:
+  data_dir: "data"
+  var_dir: "var"

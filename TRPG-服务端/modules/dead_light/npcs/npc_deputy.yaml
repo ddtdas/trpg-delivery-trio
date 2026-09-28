@@ -1,0 +1,11 @@
+id: npc_deputy
+name: 科尔
+role: 副警长
+visibility: public
+lines:
+  - 公路封了，谁都别想走。
+  - 这是命令。
+traits:
+  nerve: authoritative
+  knows:
+    - c_radio_static

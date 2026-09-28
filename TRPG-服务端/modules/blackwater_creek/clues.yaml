@@ -1,0 +1,87 @@
+# 线索池:《黑水溪》(12 条:物证/证言/文书)
+# schema: CluePool v1 — 每条:位置/发现方式/揭示文本/指向节点/scope;多线索多路可达。
+clues:
+  - id: c1_missing_poster
+    kind: 物证
+    location: nA1_town
+    found_by: "查看镇中心公告栏或警长办公室失踪登记簿(spot_hidden 常规)"
+    text: "七张泛黄的寻人启事:六周内七名村民'搬走'——矿工班头塞德里克、两个寡妇、杂货店伙计、皮克曼教授……失踪登记簿最后一页的备注写着'洪水失踪,待核'。"
+    points_to: nA2_archive
+    scope: public
+  - id: c2_pickman_notes
+    kind: 文书
+    location: nA2_archive
+    found_by: "打开邮局寄存箱(皮克曼租的),翻阅研究笔记"
+    text: "皮克曼的研究笔记:受考古学会委托研究弗吉尼亚蛇神崇拜;笔记里画着沼泽祭坛、蛇形符号,以及一张'水坝下游泥滩'的草图,页边写着'他们说是洪水,可水坝的泄洪闸是锈的——最近却有人动过'。"
+    points_to: nA3_dam
+    scope: public
+  - id: c3_univ_telegram
+    kind: 文书
+    location: nA2_archive
+    found_by: "给密斯卡托尼克大学发电报后收到回电(需等待或自付加急费)"
+    text: "大学回电:'皮克曼教授受考古学会委托研究弗吉尼亚蛇神崇拜。失踪前最后一封电报称:黑水溪的洪水不是天灾,有人故意开闸。已通知州警,望协助。'"
+    points_to: nA3_dam
+    scope: public
+  - id: c4_pickman_pack
+    kind: 物证
+    location: nA4_discovery
+    found_by: "水坝困难 spot_hidden 检定成功后,在坝下泥滩捞起背包"
+    text: "皮克曼的帆布背包:笔记本残页浸烂大半,最后一页画着完整的黑水矿场巷道图,日期正是他失踪当天,旁注:'他们往矿场去了,今晚满月。若我出事,别信洪水那套说辞。'——背包是被人故意放在坝下的。"
+    points_to: nC1_mine_gate
+    scope: public
+  - id: c5_sheriff_letter
+    kind: 文书
+    location: nA4b_flood_retreat
+    found_by: "水坝检定失败退回镇上后,逼问警长(psychology/intimidate)让他交出扣押的信"
+    text: "皮克曼失踪前一天寄存在警局的信:'矿场里有人在酿'圣酒',我今晚下去看看。若我出事,别信洪水那套说辞。'信封背面有警长仓促划掉的'待洪水退后转交州警'字样。"
+    points_to: nC1_mine_gate
+    scope: whisper
+  - id: c6_church_ledger
+    kind: 文书
+    location: nB1_church
+    found_by: "搜索教堂地下室(spot_hidden 常规)"
+    text: "教区名册:七名'搬走'的村民名字被划掉,旁边画着同一个蛇形符号;地下室角落堆着空酒桶,桶底烙印'黑水矿场'。牧师韦斯特对地下室的用途闪烁其词。"
+    points_to: nB2_swamp
+    scope: public
+  - id: c7_serpent_tracks
+    kind: 物证
+    location: nB2_swamp
+    found_by: "沼泽追踪困难检定成功后,或主动搜索泥地(spot_hidden 困难)"
+    text: "成排的蛇蜕与火把残迹铺成一条'路':蛇蜕近两米长,远超本地蛇类;火把油脂掺着教堂祭典用的圣油。蛇蜕尽头的泥地上有拖拽重物的沟痕。"
+    points_to: nB3_cult_ground
+    scope: public
+  - id: c8_bootlegger_map
+    kind: 文书
+    location: nB2b_bootlegger_hut
+    found_by: "追踪失败误入私酿屋后搜索墙面(spot_hidden 常规)"
+    text: "月光私酿屋墙上的运货路线图:黑水矿场水井→教堂地下室→镇上门店,标注'圣酒';角落画着祭坛与满月日期,并一行小字:'满月夜,矿场仪式大厅,开闸为号'。角落还有失踪矿工班头的靴子。"
+    points_to: nC1_mine_gate
+    scope: public
+  - id: c9_cult_list
+    kind: 文书
+    location: nB3_cult_ground
+    found_by: "检查沼泽祭坛石台(发现祭坛后自动取得)"
+    text: "羊皮纸祭品名单:七个名字与教堂名册划掉的一致,落款'蛇母之舌',日期是明晚满月,地点标注'矿场仪式大厅';名单背面画着泄洪闸操纵杆的位置图。"
+    points_to: nC1_mine_gate
+    scope: whisper
+  - id: c10_dynamite
+    kind: 物证
+    location: nC1_mine_gate
+    found_by: "搜索矿场工具屋(发现炸药,spot_hidden 常规)"
+    text: "矿工遗留的炸药与雷管,成色完好,约可炸塌一处巷道或一座泄洪闸。工具屋墙上写着班头塞德里克的最后排班:'炸岩计划,等水退'——如今水不会退了。"
+    points_to: nC3_ritual_hall
+    scope: public
+  - id: c11_cultist_testimony
+    kind: 证言
+    location: nC2_mine_shaft
+    found_by: "制服巡逻信徒(charm 安抚/fighting 制服)后盘问"
+    text: "被俘信徒供述:'祭司是塞拉斯·韦恩,蛇母的舌头。洪水是他叫我们开的闸——水涨起来,河谷就是祭场。满月夜,祭品要送到仪式大厅,明晚开祭。'他画出了仪式大厅的位置。"
+    points_to: nC3_ritual_hall
+    scope: whisper
+  - id: c12_henry_whereabouts
+    kind: 证言
+    location: nC1_mine_gate
+    found_by: "玛莎被说服后告知地窖地道,或获救矿工遗属的提示(persuade 常规)"
+    text: "亨利·格雷的下落:他被关在矿场第三层巷道的水牢,作为满月祭品。格雷农场地窖有一条废弃矿道直通第三层巷道——救人的捷径,也是潜入仪式大厅的暗门。"
+    points_to: nC3_ritual_hall
+    scope: whisper

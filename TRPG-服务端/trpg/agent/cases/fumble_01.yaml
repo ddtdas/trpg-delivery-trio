@@ -1,0 +1,5 @@
+id: C-FUMBLE-01
+clause: fumble_crit
+question: 01和00恒定吗？
+ruling: 01恒大成功，00恒大失败，不受技能高低影响。
+source: local-01ch4-5-plus-model

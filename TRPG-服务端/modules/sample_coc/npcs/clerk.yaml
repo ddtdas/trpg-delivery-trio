@@ -1,0 +1,15 @@
+# NPC:管理员瑟琳娜(目击者)
+# schema: NpcCard v1
+id: npc_clerk
+name: "瑟琳娜·莫尔"
+role: "前台管理员(目击者)"
+description: "二十多岁,细心胆小。闭馆前最后离开古籍室的人,看到'一个不该在馆内的人影'闪进书库,因害怕馆长责罚而不敢说。"
+lines:
+  - "我、我那晚……真的锁了门,我检查了两遍的!"
+  - "闭馆铃响后,我好像看到……不,可能是我眼花了。"
+  - "(被安抚后)好吧……我看到维克多先生的鞋,沾着红泥,进了古籍室方向。"
+traits: {trust: 70, fear: 50, irritate: 10}
+secret: "掌握关键目击证言 c4_testimony;需要 PL 安抚(charm/persuade)或 KP 引导才会说出。"
+stance: "配合但怯懦;被安抚后转为合作,主动提示通风管道(检定失败兜底)。"
+hooks: ["n1_front_desk:登记引导", "n3_rare_room:钥匙说明", "n6_npc_talk:说出证言"]
+visibility: kp_only

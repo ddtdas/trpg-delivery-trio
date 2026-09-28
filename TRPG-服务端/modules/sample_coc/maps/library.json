@@ -1,0 +1,24 @@
+{
+  "schema": "MapAsset v1: 坐标系 Konva 像素,原点左上,单位 px; rooms 为房间矩形 {id,name,x,y,w,h}; doors 为门 {id,from,to,x,y}",
+  "id": "map_library",
+  "name": "密斯卡托尼克大学图书馆(一层)",
+  "rooms": [
+    {"id": "r_lobby", "name": "前厅/前台", "x": 20, "y": 20, "w": 200, "h": 140},
+    {"id": "r_reading", "name": "阅览区", "x": 240, "y": 20, "w": 320, "h": 140},
+    {"id": "r_rare", "name": "古籍室", "x": 240, "y": 180, "w": 200, "h": 160},
+    {"id": "r_secret", "name": "密室(暗门后)", "x": 460, "y": 180, "w": 100, "h": 160},
+    {"id": "r_corridor", "name": "走廊", "x": 20, "y": 180, "w": 200, "h": 160}
+  ],
+  "doors": [
+    {"id": "d1", "from": "r_lobby", "to": "r_reading", "x": 230, "y": 90},
+    {"id": "d2", "from": "r_reading", "to": "r_rare", "x": 340, "y": 170},
+    {"id": "d3", "from": "r_corridor", "to": "r_rare", "x": 230, "y": 260},
+    {"id": "d_secret", "from": "r_rare", "to": "r_secret", "x": 450, "y": 260}
+  ],
+  "tokens_start": [
+    {"token": "kp", "room": "r_lobby"},
+    {"token": "npc_director", "room": "r_lobby"},
+    {"token": "npc_clerk", "room": "r_lobby"},
+    {"token": "npc_borrower", "room": "r_reading"}
+  ]
+}

@@ -1,0 +1,54 @@
+# ===========================================================================
+#  TRPG 服务端 —— pyproject.toml
+#  仅用于项目元数据与工具配置；运行不依赖本文件（见 requirements.txt）。
+# ===========================================================================
+
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "trpg-server"
+version = "1.0.0"
+description = "TRPG 跑团辅助系统服务端（主持端服务器 + 玩家端页面托管）"
+readme = "README.md"
+requires-python = ">=3.12"
+license = { file = "LICENSE" }
+authors = [{ name = "TRPG Delivery Team" }]
+keywords = ["trpg", "virtual-tabletop", "fastapi", "websocket", "coc7"]
+classifiers = [
+  "Development Status :: 5 - Production/Stable",
+  "License :: OSI Approved :: MIT License",
+  "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: 3.13",
+  "Topic :: Games/Entertainment :: Role-Playing",
+]
+dependencies = [
+  "fastapi==0.136.3",
+  "uvicorn[standard]==0.51.0",
+  "pydantic>=2.0",
+  "aiosqlite>=0.19.0",
+  "PyYAML>=6.0",
+  "python-multipart>=0.0.9",
+  "httpx>=0.28.1",
+]
+
+[project.optional-dependencies]
+# 仅在使用 LLM 建议（/access/advice）或云端 STT 时需要
+llm = ["openai==2.24.0"]
+# 运行测试才需要
+dev = ["pytest==9.1.1", "pytest-asyncio>=0.23", "hypothesis>=6.0"]
+
+[project.urls]
+Documentation = "docs/DEPLOY.md"
+
+[tool.setuptools.packages.find]
+# 显式限定顶层包，避免把 web/ player-web/ 等静态目录误当 Python 包。
+include = ["app*", "trpg*"]
+namespaces = true
+
+[tool.pytest.ini_options]
+# tests/ 位于源仓库（交付包打包排除 tests/、scripts/sim、scripts/evolve）；
+# 在交付包内运行 pytest 会因目录不存在而失败，属预期，请到源仓库执行。
+testpaths = ["tests"]
+asyncio_mode = "auto"

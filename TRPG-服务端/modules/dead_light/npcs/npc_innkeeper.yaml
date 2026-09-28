@@ -1,0 +1,11 @@
+id: npc_innkeeper
+name: 玛莎
+role: 旅店老板
+visibility: public
+lines:
+  - 地窖锁了二十年。
+  - 钥匙不在我这儿。
+traits:
+  nerve: guarded
+  knows:
+    - c_burnt_photo

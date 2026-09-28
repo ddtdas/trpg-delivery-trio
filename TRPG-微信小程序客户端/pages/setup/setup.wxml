@@ -1,0 +1,56 @@
+<view class="pg">
+  <view class="h1">{{T.nav_setup}}</view>
+  <view class="status-line">{{T.title}}</view>
+
+  <view class="card">
+    <view class="card-title">{{T.nav_setup}}</view>
+    <view class="setup-hint">{{T.st_connected}} 后即可解析连接码并加入跑团；{{T.ext_ph_token}} 只保存在本机。</view>
+
+    <view class="row">
+      <text class="label">{{T.ph_server}}</text>
+      <input class="input" data-key="server" bindinput="onField" value="{{profile.server}}" placeholder="{{T.ph_server}}" />
+    </view>
+
+    <view class="row">
+      <text class="label">{{T.ext_ph_token}}</text>
+      <input class="input" password="{{true}}" data-key="token" bindinput="onField" value="{{profile.token}}" placeholder="{{T.ext_ph_token}}" />
+    </view>
+
+    <view class="row">
+      <text class="label">{{T.ph_code}}</text>
+      <input class="input" data-key="code" bindinput="onField" value="{{profile.code}}" placeholder="{{T.ph_code}}" />
+    </view>
+
+    <view class="row">
+      <text class="label">{{T.ph_playerId}}</text>
+      <input class="input" data-key="playerId" bindinput="onField" value="{{profile.playerId}}" placeholder="{{T.ph_playerId}}" />
+    </view>
+
+    <view class="row">
+      <text class="label">{{T.ph_playerName}}</text>
+      <input class="input" data-key="playerName" bindinput="onField" value="{{profile.playerName}}" placeholder="{{T.ph_playerName}}" />
+    </view>
+
+    <view class="err-bar" wx:if="{{error}}">{{error}}</view>
+    <view class="ok-line" wx:if="{{result}}">{{result}}</view>
+    <view class="item" wx:if="{{info}}">{{T.ext_lbl_version}}：{{info.service}} {{info.version}}</view>
+    <view class="item" wx:if="{{info}}">{{T.ext_lbl_ends}}：{{info.endsText}}</view>
+    <view class="item" wx:if="{{resolved}}">{{T.ext_lbl_table}}：{{resolved.name}}</view>
+    <view class="item" wx:if="{{resolved}}">{{T.ext_lbl_campaign}}：{{resolved.campaign}}</view>
+
+    <view class="actions">
+      <button class="btn" bindtap="onTest" loading="{{testing}}">{{T.btn_test}}</button>
+      <button class="btn" bindtap="onResolve" loading="{{resolving}}">{{T.btn_resolve}}</button>
+    </view>
+    <button class="btn-primary" bindtap="onJoin" loading="{{joining}}">{{T.btn_join}}</button>
+  </view>
+
+  <view class="card">
+    <view class="card-title">{{T.sec_role}}</view>
+    <view class="item">{{T.ph_playerId}}：{{profile.playerId}}</view>
+    <view class="item">{{T.ph_playerName}}：{{profile.playerName}}</view>
+    <view class="item">{{T.ext_lbl_table}}：{{profile.tableId}}</view>
+    <view class="item">{{T.ext_lbl_campaign}}：{{profile.campaign}}</view>
+    <view class="status-line">{{T.sec_turn}} / {{T.sec_action}} / {{T.sec_events}} / {{T.sec_voice}} / {{T.sec_device}} 均在「{{T.nav_table}}」与「{{T.nav_voice}}」页</view>
+  </view>
+</view>

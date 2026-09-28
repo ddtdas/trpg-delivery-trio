@@ -1,0 +1,53 @@
+# trpg agent allowlist — frozen v1 (DESIGN §2.6, W-A3).
+# 部署主机 110 运维操作。W-C3 用此文件驱动执行网关；改动只 edit，需队长批准。
+version: 1
+frozen: true
+source: trpg_agent/DESIGN.md §2.6
+
+allow:
+  - id: health_check
+    op: health 检查
+    scope: "GET http://127.0.0.1:9210/health、GET /app 状态码"
+    note: 只读
+  - id: log_collect
+    op: 日志采集
+    scope: "trpg/var/*.log 读＋tail"
+    note: 只读，不含 key 文件
+  - id: service_control
+    op: 服务启停
+    scope: "start.bat / stop.bat 指定命令"
+    note: 仅白名单内精确命令行
+  - id: file_rw
+    op: 文件读写
+    scope: "trpg/data/**、trpg/var/**、trpg/modules/**（禁 configs/*key*、禁系统盘外）"
+    note: 写操作先记审计
+  - id: run_sim
+    op: 跑团模拟
+    scope: "scripts/sim/* 指定脚本"
+    note: 参数白名单
+
+deny:
+  - id: read_secrets
+    op: 读 env/密钥
+    scope: "*KEY*、*SECRET*、*TOKEN*"
+    note: 默认拒绝＋审计留痕
+  - id: edit_llm_config
+    op: 改 configs/llm_providers.yaml
+    scope: "configs/llm_providers.yaml"
+    note: 默认拒绝＋审计留痕
+  - id: write_outside_sysdrive
+    op: 系统盘外写
+    scope: "系统盘外任意写"
+    note: 默认拒绝＋审计留痕
+  - id: schedtask_registry
+    op: schtasks/服务注册表修改
+    scope: "schtasks、服务注册表"
+    note: 默认拒绝＋审计留痕
+  - id: egress
+    op: 任意出站联网（除 LLM provider 配置地址）
+    scope: "出站联网（LLM provider 配置地址除外）"
+    note: 默认拒绝＋审计留痕
+  - id: priv_esc_raw_ps
+    op: 提权/powerShell 任意编码命令直调（必须走封装脚本）
+    scope: "提权、PowerShell 任意编码命令直调"
+    note: 默认拒绝＋审计留痕

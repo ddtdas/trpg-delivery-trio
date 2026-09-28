@@ -1,0 +1,1 @@
+"""TRPG scheduler subpackage (MIT)."""

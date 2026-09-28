@@ -1,0 +1,25 @@
+<view class="pg">
+  <view class="h1">{{T.nav_voice}}</view>
+
+  <view class="card">
+    <view class="card-title">{{T.sec_voice}}</view>
+    <view class="timer">{{duration}} 秒</view>
+    <view class="status-line" wx:if="{{recording}}">{{T.ext_st_recording}}</view>
+    <view class="status-line">整段录音（最长 10 分钟，MP3 / 16kHz / 单声道），停止后自动上传。</view>
+    <view class="err-bar" wx:if="{{error}}">{{error}}</view>
+    <view class="ok-line" wx:if="{{result}}">{{result}}</view>
+    <button class="{{recording ? 'btn' : 'btn-primary'}}" bindtap="onRecord">{{recording ? T.btn_recStop : T.btn_recStart}}</button>
+    <view class="item" wx:if="{{filePath}}">file_ref：{{filePath}} · {{fileSize}} bytes</view>
+    <view class="status-line" wx:if="{{uploading}}">{{T.st_connecting}}</view>
+  </view>
+
+  <view class="card">
+    <view class="card-title">{{T.sec_device}}</view>
+    <view class="row">
+      <text class="label">{{T.ph_deviceId}}</text>
+      <input class="input" value="{{deviceId}}" bindinput="onDeviceId" placeholder="{{T.ph_deviceId}}" />
+    </view>
+    <view class="item" wx:if="{{deviceText}}">{{deviceText}}</view>
+    <button class="btn" bindtap="onQuery">{{T.btn_query}}</button>
+  </view>
+</view>

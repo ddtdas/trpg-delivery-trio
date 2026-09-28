@@ -1,0 +1,24 @@
+# Custom rulepack placeholder (MIT).
+# Minimal loadable file for homebrew tables. Copy coc7/rulepack.yaml and
+# adapt attrs/skills/card_rules; derived entries must stay {fn, args}.
+id: custom
+version: "0.0.1-placeholder"
+display_name: "Custom homebrew (placeholder — extended per table)"
+license: "MIT"
+placeholder: true
+todo: "Copy coc7/rulepack.yaml as a starting point for homebrew rules."
+
+attrs:
+  - {name: ATTR_A, min: 1, max: 100}
+
+skills:
+  custom_skill: 10
+
+checks:
+  difficulties: [regular, hard, extreme]
+
+card_rules:
+  required_attrs: [ATTR_A]
+  skill_min: 0
+  skill_max: 100
+  allow_custom_skills: true

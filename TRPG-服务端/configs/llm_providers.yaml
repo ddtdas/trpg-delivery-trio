@@ -1,0 +1,37 @@
+# TRPG LLM providers (MIT). Keys via env only — never plaintext here.
+# T31: max_tokens / empty-output retry are configurable; defaults 512 / 1 retry.
+defaults:
+  max_tokens: 512
+  empty_retry: 1
+  min_text_chars: 1
+primary:
+  name: newapi
+  model: deepseek-v4-flash
+  base_url: "${NEWAPI_BASE_URL:-https://zzzxin.xin/v1}"  # TD-1: 默认端点已探测可达 (401=鉴权位)
+  api_key: "${NEWAPI_API_KEY}"
+  max_tokens: 512
+fallback:
+  name: deepseek
+  model: deepseek-chat
+  base_url: "${DEEPSEEK_BASE_URL:-https://api.deepseek.com/v1}"  # SY-1: DeepSeek 官方第二通道 (已验通)
+  api_key: "${DEEPSEEK_API_KEY}"
+  max_tokens: 512
+# SY-1: gavinchen 当前 503 不可用，仅作可选第三级预留
+tertiary:
+  name: gpt5
+  model: gpt-5.6-luna
+  base_url: "${GPT5_BASE_URL:-https://api.gavinchen.top/v1}"
+  api_key: "${GPT5_API_KEY}"
+local:
+  name: lm_studio
+  model: local-model
+  base_url: "${LMSTUDIO_BASE_URL:-http://127.0.0.1:1234/v1}"
+  api_key: "${LMSTUDIO_API_KEY:-lm-studio}"
+# EX-STT (D1): 服务端 STT 通道命名段 —— 读取方 app/voice/stt_service.py。
+# key/base_url 一律走环境变量 (STT_API_KEY / STT_BASE_URL), 不在本文件明文。
+# 未配置 key 时服务端 STT 自动降级为占位文本 (status=degraded), 不阻断上传/转写流程。
+stt:
+  name: openai-whisper
+  model: whisper-1
+  base_url: "${STT_BASE_URL:-https://api.openai.com/v1}"
+  api_key: "${STT_API_KEY}"

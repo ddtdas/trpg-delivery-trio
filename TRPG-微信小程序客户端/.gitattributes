@@ -1,0 +1,17 @@
+
+*.whl     binary
+*.modpkg  binary
+*.exe     binary
+*.dll     binary
+*.pyd     binary
+*.tar     binary
+*.7z      binary
+*.gz      binary
+*.woff    binary
+*.woff2   binary
+*.ttf     binary
+*.otf     binary
+*.png     binary
+*.jpg     binary
+*.jpeg    binary
+*.ico     binary

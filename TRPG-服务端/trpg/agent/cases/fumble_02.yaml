@@ -1,0 +1,5 @@
+id: C-FUMBLE-02
+clause: fumble_crit
+question: 96-99算大失败吗？
+ruling: 技能≥50时仅00大失败；技能<50时96+即失败（按COC7版房规模板公示）。
+source: local-01ch4-5-plus-model

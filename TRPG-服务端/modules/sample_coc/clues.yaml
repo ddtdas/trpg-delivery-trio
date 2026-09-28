@@ -1,0 +1,45 @@
+# 线索池:《图书馆搜证》(6 条:物证/证言/文书)
+# schema: CluePool v1 — 每条:位置/发现方式/揭示文本/指向节点/scope
+clues:
+  - id: c1_torn_slip
+    kind: 物证
+    location: n2_reading_room
+    found_by: "搜索阅览区书桌(spot_hidden 常规)或拼合碎纸"
+    text: "半张撕碎的借书单:借阅人署名'V.A',书名《美洲植物志》,日期正是失窃前夜。"
+    points_to: n3_rare_room
+    scope: public
+  - id: c2_mud_print
+    kind: 物证
+    location: n3_rare_room
+    found_by: "检查古籍室地面(spot_hidden 常规)"
+    text: "一枚沾着红色泥土的鞋印,尺码偏大。馆员都穿软底室内鞋——这双鞋来自馆外,雨后只有馆舍东侧小径有这种红泥。"
+    points_to: n6_npc_talk
+    scope: public
+  - id: c3_candle
+    kind: 物证
+    location: n5_secret_room
+    found_by: "进入密室后自动发现"
+    text: "半截尚未冷却的蜡烛与一小撮灰烬:有人在此停留到不久前,并烧掉了什么(账页一角)。"
+    points_to: n7_clue_chain
+    scope: public
+  - id: c4_testimony
+    kind: 证言
+    location: n6_npc_talk
+    found_by: "安抚管理员瑟琳娜(charm/persuade)后说出"
+    text: "瑟琳娜证言:'闭馆铃响后,我看到维克多先生的鞋,沾着红泥,进了古籍室方向。'"
+    points_to: n7_clue_chain
+    scope: whisper
+  - id: c5_ledger
+    kind: 文书
+    location: n5_secret_room
+    found_by: "密室书架第二层(发现密室后搜索)"
+    text: "馆藏账本缺了一页,缺页编号与密信展品编号相邻——窃贼熟悉馆内编号体系,或有人内部配合。"
+    points_to: n7_clue_chain
+    scope: public
+  - id: c6_letter
+    kind: 文书
+    location: n9_truth
+    found_by: "n8_showdown 对峙成功后,在密室暗格起获"
+    text: "失窃的 17 世纪密信原件,完好无损。信文提及'雾夜集会之所',可作后续长团钩子。"
+    points_to: n9_truth
+    scope: public

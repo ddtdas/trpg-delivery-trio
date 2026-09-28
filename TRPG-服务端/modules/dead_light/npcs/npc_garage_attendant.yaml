@@ -1,0 +1,11 @@
+id: npc_garage_attendant
+name: 老周
+role: 加油站店员
+visibility: public
+lines:
+  - 今晚别往北边开。
+  - 灯……灯又灭了。
+traits:
+  nerve: shaken
+  knows:
+    - c_ledger_page

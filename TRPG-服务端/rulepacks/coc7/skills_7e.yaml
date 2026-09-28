@@ -1,0 +1,83 @@
+# CoC 7th-edition official skill list (MIT data file) - additive single source.
+#
+# 【队长裁决 2026-09-28】UI 展示与引擎校验都以本文件为单一事实数据源。
+# 来源: Call of Cthulhu 7th Edition Investigator Handbook skill list (official);
+#      base values per 7e IH skill table (编译表数据, 不含 Chaosium 规则原文)。
+# rulepack 已有的 42 项照旧保留 (以本文件为准), 新增技能按 7e 默认值校验。
+#
+# 结构: schema: "coc.skills_7e.v1"; skills: {skill_id: {base: int, attr: str, category: str}}
+schema: "coc.skills_7e.v1"
+skills:
+  accounting: {base: 5, attr: EDU, category: knowledge}
+  anthropology: {base: 1, attr: EDU, category: knowledge}
+  appraise: {base: 5, attr: EDU, category: knowledge}
+  archaeology: {base: 1, attr: EDU, category: knowledge}
+  art_craft: {base: 5, attr: DEX, category: technical}
+  charm: {base: 15, attr: APP, category: social}
+  climb: {base: 20, attr: STR, category: physical}
+  credit_rating: {base: 0, attr: APP, category: social}
+  cthulhu_mythos: {base: 0, attr: "-", category: mythos}
+  disguise: {base: 5, attr: APP, category: social}
+  dodge: {base: 0, attr: DEX, category: combat}
+  drive_auto: {base: 20, attr: DEX, category: technical}
+  electrical_repair: {base: 10, attr: DEX, category: technical}
+  fast_talk: {base: 5, attr: APP, category: social}
+  fighting_brawl: {base: 25, attr: STR, category: combat}
+  firearms_handgun: {base: 20, attr: DEX, category: combat}
+  firearms_rifle_shotgun: {base: 25, attr: DEX, category: combat}
+  first_aid: {base: 30, attr: EDU, category: knowledge}
+  history: {base: 5, attr: EDU, category: knowledge}
+  intimidate: {base: 15, attr: STR, category: social}
+  jump: {base: 20, attr: STR, category: physical}
+  language_own: {base: 0, attr: EDU, category: knowledge}
+  law: {base: 5, attr: EDU, category: knowledge}
+  library_use: {base: 20, attr: EDU, category: knowledge}
+  listen: {base: 20, attr: "-", category: perception}
+  locksmith: {base: 1, attr: DEX, category: technical}
+  mechanical_repair: {base: 10, attr: DEX, category: technical}
+  medicine: {base: 1, attr: EDU, category: knowledge}
+  natural_world: {base: 10, attr: EDU, category: knowledge}
+  navigate: {base: 10, attr: EDU, category: technical}
+  occult: {base: 5, attr: EDU, category: knowledge}
+  persuade: {base: 10, attr: APP, category: social}
+  pilot: {base: 1, attr: DEX, category: technical}
+  psychology: {base: 10, attr: EDU, category: knowledge}
+  ride: {base: 5, attr: DEX, category: technical}
+  science: {base: 1, attr: EDU, category: knowledge}
+  sleight_of_hand: {base: 10, attr: DEX, category: technical}
+  spot_hidden: {base: 25, attr: "-", category: perception}
+  stealth: {base: 20, attr: DEX, category: physical}
+  swim: {base: 20, attr: STR, category: physical}
+  throw: {base: 20, attr: DEX, category: physical}
+  track: {base: 10, attr: "-", category: perception}
+  # ---- 7e IH 新增技能 (rulepack 未含, 官方清单) ----
+  art_craft_acting: {base: 5, attr: APP, category: technical}
+  art_craft_painting: {base: 5, attr: DEX, category: technical}
+  art_craft_photography: {base: 5, attr: DEX, category: technical}
+  art_craft_writing: {base: 5, attr: DEX, category: technical}
+  firearms_smg: {base: 15, attr: DEX, category: combat}
+  firearms_heavy: {base: 10, attr: DEX, category: combat}
+  fighting_sword: {base: 20, attr: DEX, category: combat}
+  fighting_axe: {base: 15, attr: STR, category: combat}
+  fighting_knife: {base: 25, attr: DEX, category: combat}
+  fighting_chain: {base: 10, attr: DEX, category: combat}
+  fighting_garrote: {base: 15, attr: DEX, category: combat}
+  fighting_flail: {base: 10, attr: DEX, category: combat}
+  fighting_spear: {base: 20, attr: STR, category: combat}
+  fighting_whip: {base: 5, attr: DEX, category: combat}
+  language_other: {base: 0, attr: EDU, category: knowledge}
+  language_other2: {base: 0, attr: EDU, category: knowledge}
+  demolitions: {base: 1, attr: INT, category: technical}
+  survival: {base: 10, attr: INT, category: knowledge}
+  hypnosis: {base: 1, attr: INT, category: social}
+  astronomy: {base: 1, attr: EDU, category: knowledge}
+  biology: {base: 1, attr: EDU, category: knowledge}
+  chemistry: {base: 1, attr: EDU, category: knowledge}
+  geology: {base: 1, attr: EDU, category: knowledge}
+  mathematics: {base: 1, attr: EDU, category: knowledge}
+  physics: {base: 1, attr: EDU, category: knowledge}
+  pharmacy: {base: 1, attr: EDU, category: knowledge}
+  cryptography: {base: 1, attr: EDU, category: knowledge}
+  forensic_medicine: {base: 1, attr: EDU, category: knowledge}
+  read_lips: {base: 1, attr: INT, category: perception}
+  psychoanalysis: {base: 1, attr: EDU, category: knowledge}

@@ -1,0 +1,5 @@
+id: C-COMBAT-05
+clause: combat
+question: 战斗中想逃跑怎么判？
+ruling: 过DEX或潜行摆脱，追击者过追踪/DEX对抗；逃跑成功脱战但时钟+1。
+source: local-01ch4-5-plus-model

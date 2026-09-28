@@ -1,0 +1,78 @@
+{
+  "doors": [
+    {
+      "from": "r_forecourt",
+      "id": "d_fc_shop",
+      "to": "r_shop"
+    },
+    {
+      "from": "r_shop",
+      "id": "d_shop_office",
+      "to": "r_office"
+    },
+    {
+      "from": "r_store",
+      "id": "d_store_office",
+      "to": "r_office"
+    },
+    {
+      "from": "r_washroom",
+      "id": "d_wash_court",
+      "to": "r_forecourt"
+    }
+  ],
+  "h": 600,
+  "id": "m_garage",
+  "name": "加油站",
+  "rooms": [
+    {
+      "h": 240,
+      "id": "r_forecourt",
+      "name": "前场",
+      "w": 380,
+      "x": 20,
+      "y": 20
+    },
+    {
+      "h": 300,
+      "id": "r_shop",
+      "name": "便利店",
+      "w": 380,
+      "x": 20,
+      "y": 280
+    },
+    {
+      "h": 260,
+      "id": "r_store",
+      "name": "后仓",
+      "w": 220,
+      "x": 420,
+      "y": 20
+    },
+    {
+      "h": 280,
+      "id": "r_office",
+      "name": "办公室",
+      "w": 220,
+      "x": 420,
+      "y": 300
+    },
+    {
+      "h": 560,
+      "id": "r_washroom",
+      "name": "洗手间",
+      "w": 220,
+      "x": 660,
+      "y": 20
+    }
+  ],
+  "tokens_start": [
+    {
+      "id": "pc1",
+      "room": "r_forecourt",
+      "x": 120,
+      "y": 140
+    }
+  ],
+  "w": 900
+}

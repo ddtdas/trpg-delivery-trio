@@ -1,0 +1,40 @@
+# COC7 character wizard configuration (MIT data file) - additive.
+# T1 design: everything the rulepack does NOT declare lives here.
+# 官方规则以 7e KRB / 7e IH 为准；社区变体标注「需用户确认」。
+
+point_buy:
+  enabled: true          # 购点法开关（社区变体，需用户确认数值：总点/上下限）
+  total: 460
+  min: 15
+  max: 90
+  per_attr_cost: linear  # 1 点=1 属性点；分段成本为可选社区变体
+  exclude: [LUCK]        # 购点默认不含 LUCK；LUCK 单独给点
+
+# 【队长裁决 2026-09-28】7e 官方年龄修正表：只修 INT 与 EDU，不修 SIZ（队长预置）。
+age_rule:
+  apply: true            # 软门：默认应用年龄修正；关闭=不修正
+  min_investigator_age: 15
+  int_mod_variant: false # 变体：40+ 加 INT+1d4（社区，需确认，默认关）
+  cap: 99                # 修正后 EDU/INT 上限 99
+  age_mods:
+    - {min: 15, max: 19, int: 0, edu: -5}
+    - {min: 20, max: 39, int: 0, edu: 0}
+    - {min: 40, max: 49, int: 1, edu: 1}
+    - {min: 50, max: 59, int: 1, edu: 2}
+    - {min: 60, max: 69, int: 2, edu: 3}
+    - {min: 70, max: 79, int: 3, edu: 4}
+    - {min: 80, max: 999, int: 4, edu: 5}
+
+# 创建阶段技能上限 75%（官方），信用评级与克苏鲁神话豁免；可关。
+skill_creation_cap75: true
+max_skill_total: 4000   # rulepack card_rules 同值
+
+# 克苏鲁神话扣 SAN 上限（SAN <= 99-CM）7e 可选规则，默认关。
+cm_san_cap: false
+
+# 随机背景表（background_tables.yaml）默认关；主持人可开启。
+random_background_enabled: false
+
+# 【队长裁决 2026-09-28】规则版本兼容开关：默认 7e（MP=POW/10）；
+# 设为 "6e"/"legacy"/"classic" 回退旧逻辑（MP=POW/5，tester 回归旧卡不崩）。
+ruleset_version: "7e"

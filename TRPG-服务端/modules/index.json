@@ -1,0 +1,53 @@
+{
+  "count": 3,
+  "deleted_count": 0,
+  "entries": [
+    {
+      "deleted": false,
+      "deleted_at": null,
+      "dir": "blackwater_creek",
+      "files": 10,
+      "id": "blackwater_creek",
+      "name": "黑水溪",
+      "path": "modules/blackwater_creek",
+      "ruleset": "coc7",
+      "schema_version": "1",
+      "sha256": "fff3672271087d0a8a7149e74d10a4c7262dd45d4198e9f228b350578335c91d",
+      "size": 34002,
+      "version": "1.0.0"
+    },
+    {
+      "deleted": false,
+      "deleted_at": null,
+      "dir": "dead_light",
+      "files": 16,
+      "id": "dead_light",
+      "name": "死光",
+      "path": "modules/dead_light",
+      "ruleset": "coc7",
+      "schema_version": "1.0.0",
+      "sha256": "fd6a0211e04b4c7525073b76d6fadb180960b9fb8e7996ca7152aaac5d6e5353",
+      "size": 39439,
+      "version": "1.0.0"
+    },
+    {
+      "deleted": false,
+      "deleted_at": null,
+      "dir": "sample_coc",
+      "files": 7,
+      "id": "sample_coc",
+      "name": "图书馆搜证",
+      "path": "modules/sample_coc",
+      "ruleset": "coc7",
+      "schema_version": "1",
+      "sha256": "f18feb32c62bb2d9ea8a4990b09dd9bf1b22248d74e3d1324af5eca4b6a21549",
+      "size": 12055,
+      "version": "1.0.0"
+    }
+  ],
+  "fingerprint": "926900c7d296e391a0159d96795d5e68a023e2a091180d7649c5a086b1597901",
+  "generated_at": "2026-09-27T14:03:14.667206+00:00",
+  "kind": "modules",
+  "root": "C:/Users/Administrator/Desktop/黑客松开发文档/TRPG-交付包-三件套/TRPG-服务端/modules",
+  "schema": "RepoIndex v1"
+}

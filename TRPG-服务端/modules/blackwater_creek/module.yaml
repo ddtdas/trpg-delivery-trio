@@ -1,0 +1,25 @@
+# 模组《黑水溪》(CoC 7e 官方模组 Blackwater Creek 内容化改编)
+# schema: ModuleManifest v1 — 纯内容文件,无代码。
+# 引用关系: event_graph.yaml (nodes/edges) -> clues.yaml (clue id) / npcs/*.yaml (npc id) / maps/*.json (map id)
+id: blackwater_creek
+ruleset: coc7
+mode: trpg
+version: "1.0.0"
+license: "改编自 Chaosium CoC 7e 官方模组《Blackwater Creek》(Doors to Darkness);本文件为项目自研内容化格式,供内部 TRPG 平台使用"
+name: "黑水溪"
+era: "1920s 美国弗吉尼亚州黑水溪"
+players: "1 KP + 3 PL"
+duration_min: 210
+summary: "暴雨后的弗吉尼亚山区,黑水溪洪水未退:历史学教授皮克曼在镇上失踪,官方说法是'被洪水冲走',但随后村民接连失踪。调查员受玛莎·格雷之邀进镇,循三条线索——教授失踪、洪水与蛇神邪教、黑水矿场——最终在矿洞深处的仪式大厅面对蛇母祭司,决定黑水溪的命运。"
+world_intro: "1925 年 4 月,弗吉尼亚山区连降暴雨,黑水溪河水暴涨冲垮了上游土路。密斯卡托尼克大学的历史学教授皮克曼三个月前来到这个与世隔绝的山村研究地方传说,如今失踪两周,警长向大学发电报称'洪水冲走了他'。可村里的人不相信:先是教授,然后是矿工班头、两个寡妇、杂货店的伙计……六周内七个人'搬走了'。洪水退去的夜晚,你能听见矿场方向传来不似人声的低吟,和沼泽里鳞片摩擦的沙沙声。"
+initial_scene: n1_arrival
+starting_nodes: [n1_arrival]
+endings:
+  - {id: e1_stop_ritual, label: "阻止仪式", condition: "抵达 nC3_ritual_hall 后,以炸药(c10_dynamite)炸毁祭坛/矿道,或正面战斗成功击溃蛇母祭司,仪式被阻止,洪水退去。"}
+  - {id: e2_sacrifice_flight, label: "牺牲逃亡", condition: "仪式未能阻止,一名队员自愿断后牺牲(或开闸淹没矿场),其余人从侧道逃出;黑水溪的蛇神传说就此沉寂,但代价惨重。"}
+  - {id: e3_all_survive, label: "全员生还", condition: "集齐三线关键证据(含 c9_cult_list 邪教名单),在仪式开始前突袭矿场仪式大厅,救出全部人质并全员撤离。"}
+files:
+  event_graph: "event_graph.yaml"
+  clues: "clues.yaml"
+  npcs: ["npcs/martha.yaml", "npcs/henry.yaml", "npcs/pickman.yaml", "npcs/sheriff.yaml", "npcs/pharmacist.yaml", "npcs/cult_leader.yaml"]
+  maps: ["maps/blackwater.json"]

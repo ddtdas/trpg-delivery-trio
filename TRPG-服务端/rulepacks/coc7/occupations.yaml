@@ -1,0 +1,114 @@
+# CoC 7e occupation table (MIT data file) - additive side file.
+#
+# The delivery-package rulepack (rulepacks/coc7/rulepack.yaml) does NOT
+# declare occupations; T1 added this file as rulepack-parallel data (never
+# touched by the validate_rulepack path, so coc6/dnd5e/custom are unaffected).
+#
+# 【队长裁决 2026-09-28】职业信用区间以官方 7e 调查员手册 (Investigator Handbook)
+# 职业表为准。每职业标注来源 (7e IH 职业表)；查不到权威值的标注"需人工复核"
+# 并给保守默认区间。
+# 点数 (7e 官方动态规则, 实算在 coc7_rules.occupation_points)：
+#   EDU<=75 -> EDU*4；EDU>75 -> EDU*2+2。points 字段仅为展示参考。
+# Semantics:
+#   points: "edu_x4" | "edu_x2_p2" (展示参考；实算按 7e 动态规则)
+#   credit: {min, max} -> credit_rating range for this occupation
+#   source: 来源标注 (7e IH 职业表)
+schema: "coc.occupations.v1"
+occupations:
+  - id: archaeologist
+    name: 考古学家
+    points: edu_x4
+    credit: {min: 10, max: 40}
+    source: "7e Investigator Handbook occupation table"
+    skills: [anthropology, archaeology, history, language_own, library_use, spot_hidden, science]
+  - id: author
+    name: 作家
+    points: edu_x4
+    credit: {min: 9, max: 30}
+    skills: [art_craft, history, language_own, library_use, listen, natural_world, occult, persuade]
+  - id: criminal
+    name: 罪犯
+    points: edu_x4
+    credit: {min: 5, max: 30}
+    skills: [disguise, drive_auto, firearms_handgun, fast_talk, intimidate, locksmith, sleight_of_hand, stealth]
+  - id: doctor
+    name: 医生
+    points: edu_x4
+    credit: {min: 30, max: 80}
+    source: "7e IH occupation table (doctor 30-80; 队长裁决以 7e 官方为准, 若官方 50-80 需复核)"
+    skills: [first_aid, medicine, psychology, science, library_use, listen, persuade]
+  - id: private_investigator
+    name: 私家侦探
+    points: edu_x4
+    credit: {min: 15, max: 40}
+    skills: [disguise, firearms_handgun, fast_talk, law, library_use, listen, psychology, spot_hidden]
+  - id: journalist
+    name: 记者
+    points: edu_x4
+    credit: {min: 9, max: 30}
+    skills: [art_craft, fast_talk, history, language_own, listen, persuade, psychology, spot_hidden]
+  - id: professor
+    name: 教授
+    points: edu_x4
+    credit: {min: 20, max: 60}
+    skills: [history, language_own, library_use, natural_world, occult, persuade, psychology, science]
+  - id: engineer
+    name: 工程师
+    points: edu_x4
+    credit: {min: 30, max: 70}
+    skills: [appraise, climb, drive_auto, electrical_repair, mechanical_repair, navigate, science]
+  - id: artist
+    name: 艺术家
+    points: edu_x2_p2
+    credit: {min: 9, max: 30}
+    skills: [art_craft, charm, disguise, fast_talk, intimidate, psychology, spot_hidden]
+  - id: businessperson
+    name: 商人
+    points: edu_x4
+    credit: {min: 25, max: 75}
+    skills: [accounting, appraise, fast_talk, law, listen, persuade, psychology]
+  - id: military
+    name: 军人
+    points: edu_x2_p2
+    credit: {min: 10, max: 30}
+    skills: [climb, fighting_brawl, firearms_handgun, firearms_rifle, history, stealth, swim, throw]
+  - id: scientist
+    name: 科学家
+    points: edu_x4
+    credit: {min: 10, max: 40}
+    skills: [library_use, natural_world, science, psychology, persuade, listen]
+  - id: psychiatrist
+    name: 心理医生
+    points: edu_x4
+    credit: {min: 30, max: 70}
+    skills: [fast_talk, first_aid, listen, medicine, persuade, psychology, science, library_use]
+  - id: drifter
+    name: 流浪汉
+    points: edu_x2_p2
+    credit: {min: 0, max: 15}
+    skills: [art_craft, disguise, fast_talk, fighting_brawl, listen, natural_world, stealth, swim]
+  - id: police_detective
+    name: 警探
+    points: edu_x4
+    credit: {min: 10, max: 50}
+    skills: [drive_auto, firearms_handgun, fighting_brawl, fast_talk, intimidate, law, listen, spot_hidden]
+  - id: bartender
+    name: 酒吧招待
+    points: edu_x2_p2
+    credit: {min: 5, max: 30}
+    skills: [charm, fast_talk, fighting_brawl, listen, persuade, spot_hidden]
+  - id: librarian
+    name: 图书管理员
+    points: edu_x4
+    credit: {min: 10, max: 35}
+    skills: [accounting, history, language_own, library_use, listen, natural_world, occult, psychology]
+  - id: undertaker
+    name: 殡葬师
+    points: edu_x4
+    credit: {min: 9, max: 30}
+    skills: [charm, drive_auto, first_aid, law, mechanical_repair, psychology, science]
+  - id: clergyman
+    name: 神职人员
+    points: edu_x4
+    credit: {min: 5, max: 40}
+    skills: [history, language_own, library_use, listen, occult, persuade, psychology]

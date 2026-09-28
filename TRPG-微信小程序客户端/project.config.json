@@ -1,0 +1,39 @@
+{
+  "description": "TRPG 跑团玩家端微信小程序（直连主持端服务器 /access 契约）",
+  "appid": "touristappid",
+  "projectname": "trpg-player-miniprogram",
+  "compileType": "miniprogram",
+  "miniprogramRoot": "./",
+  "libVersion": "3.5.0",
+  "setting": {
+    "es6": true,
+    "enhance": true,
+    "minified": false,
+    "postcss": false,
+    "compileWorklet": false,
+    "uglifyFileName": false,
+    "uploadWithSourceMap": true,
+    "packNpmManually": false,
+    "packNpmRelationList": [],
+    "minifyWXSS": true,
+    "minifyWXML": true,
+    "localPlugins": false,
+    "disableUseStrict": false,
+    "useCompilerPlugins": false,
+    "condition": false,
+    "swc": false,
+    "disableSWC": true,
+    "urlCheck": false,
+    "babelSetting": {
+      "ignore": [],
+      "disablePlugins": [],
+      "outputPath": ""
+    }
+  },
+  "simulatorPluginLibVersion": {},
+  "packOptions": {
+    "ignore": [],
+    "include": []
+  },
+  "editorSetting": {}
+}

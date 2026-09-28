@@ -1,0 +1,36 @@
+{
+  "copyright_notice": "《死光》(Dead Light) 是 Chaosium Inc. 的商业出版模组, 受版权保护。本包**不包含**其正文、地图、插图或任何受版权保护的表达。",
+  "fetched_at": "2026-09-27T05:00:00Z",
+  "fetched_by": "captain (实测) + implementer-module (落盘)",
+  "included": [
+    "公开可溯源元数据 (标题 / 原题 / 出版方 / 年份 / 规则体系)",
+    "出处 URL 与抓取时间",
+    "许可与版权说明",
+    "自撰内容摘要 (非原文摘录)"
+  ],
+  "legal_basis": "经 captain 实测 (裁决 D-05): 魔都模组站主站 https://www.cnmods.net/web/ 站内搜索「死光」仅 2 条无关命中 (《欢迎来到好运旅店》keyId=1013、《偶像爆破》keyId=83, 其作者署名恰为「破坏死光」, 是人名); 关于《死光》的只有 wiki 一篇点评页 https://wiki.cnmods.org/user/47/死光 (点评人 47, 2019-07-25)。魔都模组站无《死光》合法公开全文, 故无法收录原版本体文档。",
+  "not_included": [
+    "模组正文文本",
+    "官方地图与插图",
+    "任何受版权保护的表达"
+  ],
+  "original_title": "Dead Light",
+  "original_year": 2014,
+  "publisher": "Chaosium Inc.",
+  "ruleset": "Call of Cthulhu 7th Edition",
+  "schema": "ModSourceProvenance v1",
+  "source_type": "public_metadata_only",
+  "sources": [
+    {
+      "kind": "mod_site_home",
+      "note": "魔都模组站主站 (Vue 3 + Naive UI); 站内搜索「死光」无合法全文命中。",
+      "url": "https://www.cnmods.net/web/"
+    },
+    {
+      "kind": "review_page",
+      "note": "魔都 Wiki 点评页, 点评人 47, 上传日期 2019-07-25; 非全文。",
+      "url": "https://wiki.cnmods.org/user/47/死光"
+    }
+  ],
+  "title": "死光"
+}

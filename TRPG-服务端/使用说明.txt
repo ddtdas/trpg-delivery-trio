@@ -1,0 +1,78 @@
+============================================================
+ TRPG 服务端 —— 使用说明（解压即可运行）
+============================================================
+
+【一、这是什么】
+本压缩包是 TRPG（跑团）服务端，内含主持端（KP/DM）界面与玩家端网页。
+解压后无需任何手工安装即可运行；顶层目录为 TRPG-服务端\。
+
+【二、三步开始】
+
+1) 自检（可选但推荐）：双击  自检.bat
+   它会依次检查：Python 版本 / 依赖是否齐全 / 9210-9230 端口区间是否空闲 /
+   关键文件是否完整，最后打印一行 自检结果: PASS 或 FAIL。
+
+2) 启动：双击  start.bat
+   - 不带参数时，自动从 9210 起挑选第一个空闲端口（9210-9230）；
+   - 也可指定端口：在命令行里执行   start.bat 9260
+   - 启动成功后，窗口会打印本机地址与局域网地址，并写入 run\server.json。
+
+3) 打开浏览器：
+   - 主持端（KP/DM 用）: http://<本机IP>:<端口>/app/?token=<WEBAPP_TOKEN>
+      ※ 必须带 ?token=，否则主持端会一直显示「连接中断，正在重连…」（WebSocket 需 token 鉴权）。
+        token 取 configs/access_config.yaml 里 webapp 端的值。
+      ※ 「GM 总览」还需 URL 带战役参数：#/overview?campaign=<战役ID>
+   - 玩家端（浏览器/手机）: http://<本机IP>:<端口>/player/
+   本机自测直接用 127.0.0.1 即可，例如 http://127.0.0.1:9210/app/?token=<WEBAPP_TOKEN>
+   玩家端样式表 http://127.0.0.1:9210/player/app.css 可直接访问验证。
+
+【三、停止】
+双击  stop.bat 即可停止（读取 run\server.port 定位端口，等待端口释放后清理发现文件）。
+也可指定端口：stop.bat 9260
+
+【四、提示缺少依赖怎么办】
+若 start.bat 提示「缺少运行依赖（fastapi / uvicorn）」，请先双击  首次运行-安装依赖.bat。
+   - 有网络时：它自动执行   python -m pip install -r requirements.txt
+   - 无网络时：它自动改用随包内置的 wheels\ 目录离线安装
+       python -m pip install --no-index --find-links wheels -r requirements.txt
+   - 若内置 wheels 与你的 Python 版本不匹配（wheel 文件名里的 cp312 / cp313 标签
+     必须与目标机 Python 版本一致），请在有网机器上执行下面命令后，把 wheels\ 整个目录拷过来：
+       python -m pip download -r requirements.txt -d wheels --only-binary=:all:
+   包内 wheels\ 已同时包含 cp312 与 cp313 两套二进制 wheel，覆盖 Python 3.12 / 3.13。
+
+【五、环境要求】
+- Windows 10 / 11
+- Python 3.12 或更高（实测 3.12.10 / 3.13.1）；安装 Python 时请勾选 "Add Python to PATH"
+- 首次启动会在解压目录下自动创建 run\ 目录（存放日志与端口发现文件）
+
+【六、目录速览】
+start.bat / stop.bat        启动 / 停止（双击即用）
+首次运行-安装依赖.bat       安装 Python 依赖（含离线兜底）
+自检.bat                    解压后自检，输出 PASS / FAIL
+使用说明.txt                本文件
+wheels\                     随包内置的离线依赖 wheel（cp312 + cp313）
+app\  trpg\  modules\      服务端运行代码
+configs\                    配置文件（YAML）
+rulepacks\  skills\         规则包与技能
+data\                       数据库 data\trpg.db 与 data\tables_registry.json
+web\dist\                   主持端（KP）界面（预构建，无需 npm）
+player-web\                 玩家端网页（6 个文件，零构建）
+scripts\                    start.ps1 / stop.ps1 / _serve.py
+docs\                       交付文档（含 R2 新增 BUILD-WEB.md / BUILD-LOG.md / RULEPACKS.md /
+                             UI-TOKENS-MODU.md / R2-NPC-CONTRACT-CHANGE.md 等）
+README.md                   项目说明
+
+【七、局域网联机】
+同局域网其它设备访问，需要在 Windows 防火墙上放行入站 TCP <端口>，例如：
+  netsh advfirewall firewall add rule name="trpg-9210" dir=in action=allow protocol=TCP localport=9210 remoteip=192.168.0.0/16
+（建议限定来源网段，不要对任意来源开放。）
+
+【八、本轮（R2）新增了什么】
+- 玩家端（/player/）多了一块「地点交互」面板：加入桌面后自动出现。点房间里的柜子 / 抽屉 / 门等**热区**，
+  就会出现「查看 / 搜索 / 撬锁」等动作；其中**敏感动作**（撬锁、取走）不会直接生效，
+  而是**先上报主持人**，面板显示「已上报待主持人」，主持人允许后才出结果 —— 拍板前玩家看不到任何结果正文。
+- 主持端（/app/）会看到统一待审队列（敏感交互 / 字幕 / 旁白），拍板后结果只下发给对应玩家。
+- docs\ 内新增本轮构建与规则包说明（BUILD-WEB.md、BUILD-LOG.md、RULEPACKS.md、UI-TOKENS-MODU.md 等）。
+  - 小提示：更新前端后若浏览器仍显示旧界面，请**强制刷新**（Ctrl+F5）。
+            （R2 起静态资源已设 Cache-Control：内容哈希资产长缓存、无哈希资产 no-cache。）
+- 已知限制：交付包内不含 tests\（自动化测试留在源仓库），故包内直接跑 pytest 会失败，属预期。

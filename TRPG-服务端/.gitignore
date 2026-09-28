@@ -1,0 +1,89 @@
+# ===========================================================================
+#  TRPG 服务端 —— .gitignore
+#  规则：忽略运行期数据、日志、缓存与 IDE 文件；但保留 data/.gitkeep 占位。
+# ===========================================================================
+
+# ---- Python --------------------------------------------------------------
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+# 注意：必须锚定到仓库根，否则会误伤 web/dist/（主持端预构建 UI，必须入库）
+/build/
+/dist/
+develop-eggs/
+downloads/
+eggs/
+.eggs/
+lib64/
+parts/
+sdist/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# ---- 虚拟环境 -------------------------------------------------------------
+.venv/
+venv/
+env/
+ENV/
+.python-version
+
+# ---- 测试 / 类型 / 检查 缓存 ----------------------------------------------
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.hypothesis/
+.tox/
+.nox/
+.coverage
+.coverage.*
+htmlcov/
+coverage.xml
+*.cover
+
+# ---- 运行期数据（首次启动自建，禁止入库）----------------------------------
+run/
+var/
+*.db
+*.db-wal
+*.db-shm
+*.sqlite
+*.sqlite3
+data/*
+!data/.gitkeep
+
+# ---- 日志 -----------------------------------------------------------------
+*.log
+logs/
+
+# ---- 本地配置 / 密钥（不要提交真实 token）---------------------------------
+configs/*.local.yaml
+configs/access_config.local.yaml
+.env
+.env.*
+!.env.example
+
+# ---- 操作系统 / 编辑器 ----------------------------------------------------
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+Thumbs.db
+ehthumbs.db
+desktop.ini
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# ---- 运行时战役数据（服务端运行期生成，禁止入库）----
+campaigns/
+*.bak-*
+*.bak*
+*.truncated-*

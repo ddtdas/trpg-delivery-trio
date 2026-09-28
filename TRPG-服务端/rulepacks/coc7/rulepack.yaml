@@ -1,0 +1,196 @@
+# CoC 7th-edition rulepack -- schema v2 (MIT data file).
+#
+# Self-made registry model: YAML only configures {fn, args} pairs -- no
+# expressions, no eval/exec. Unknown fn names are rejected at load.
+#
+# Schema v2 additions over the v1 file this replaces:
+#   schema / ruleset / resolution  -> the ruleset declares HOW it resolves,
+#                                     so one engine can host several rulesets
+#   formulas                       -> per-ruleset derived sheet fields
+#   skill_meta                     -> governing attribute + category per skill
+# Every v1 key keeps its v1 shape, so app.rules.arbiter.validate_rulepack
+# still accepts this file unchanged.
+id: coc7
+version: "2.0.0"
+display_name: "Call of Cthulhu 7th Edition (TRPG table pack)"
+license: "MIT (table data compiled by the TRPG project; Chaosium rules text not included)"
+schema: 2
+# t1's repository indexer reads schema_version (string); app.rules reads
+# schema (int). Both must agree -- see docs/RULEPACKS.md section 3.
+schema_version: "2.0.0"
+
+ruleset:
+  family: coc
+  edition: "7"
+  dice: d100
+  resolution_model: coc_percentile
+
+attrs:
+  - {name: STR, min: 1, max: 100, abbr: "Strength",     roll: "3d6x5"}
+  - {name: CON, min: 1, max: 100, abbr: "Constitution", roll: "3d6x5"}
+  - {name: SIZ, min: 1, max: 100, abbr: "Size",         roll: "2d6p6x5"}
+  - {name: DEX, min: 1, max: 100, abbr: "Dexterity",    roll: "3d6x5"}
+  - {name: APP, min: 1, max: 100, abbr: "Appearance",   roll: "3d6x5"}
+  - {name: INT, min: 1, max: 100, abbr: "Intelligence", roll: "2d6p6x5"}
+  - {name: POW, min: 1, max: 100, abbr: "Power",        roll: "3d6x5"}
+  - {name: EDU, min: 1, max: 100, abbr: "Education",    roll: "2d6p6x5"}
+  - {name: LUCK, min: 1, max: 100, abbr: "Luck",        roll: "3d6x5"}
+  - {name: SAN, min: 0, max: 99}
+  - {name: HP, min: 0, max: 99}
+  - {name: MP, min: 0, max: 99}
+
+# Base values for a fresh investigator; card skills must stay 0..100.
+skills:
+  accounting: 5
+  anthropology: 1
+  appraise: 5
+  archaeology: 1
+  art_craft: 5
+  charm: 15
+  climb: 20
+  credit_rating: 0
+  cthulhu_mythos: 0
+  disguise: 5
+  dodge: 0
+  drive_auto: 20
+  electrical_repair: 10
+  fast_talk: 5
+  fighting_brawl: 25
+  firearms_handgun: 20
+  firearms_rifle: 25
+  first_aid: 30
+  history: 5
+  intimidate: 15
+  jump: 20
+  language_own: 0
+  law: 5
+  library_use: 20
+  listen: 20
+  locksmith: 1
+  mechanical_repair: 10
+  medicine: 1
+  natural_world: 10
+  navigate: 10
+  occult: 5
+  persuade: 10
+  pilot: 1
+  psychology: 10
+  ride: 5
+  science: 1
+  sleight_of_hand: 10
+  spot_hidden: 25
+  stealth: 20
+  swim: 20
+  throw: 20
+  track: 10
+
+# v2: governing attribute + category, used for sheet grouping and for
+# "which attribute feeds this skill" hints. Purely descriptive.
+skill_meta:
+  accounting: {attr: EDU, category: knowledge}
+  anthropology: {attr: EDU, category: knowledge}
+  appraise: {attr: EDU, category: knowledge}
+  archaeology: {attr: EDU, category: knowledge}
+  art_craft: {attr: DEX, category: technical}
+  charm: {attr: APP, category: social}
+  climb: {attr: STR, category: physical}
+  credit_rating: {attr: APP, category: social}
+  cthulhu_mythos: {attr: "-", category: mythos}
+  disguise: {attr: APP, category: social}
+  dodge: {attr: DEX, category: combat}
+  drive_auto: {attr: DEX, category: technical}
+  electrical_repair: {attr: DEX, category: technical}
+  fast_talk: {attr: APP, category: social}
+  fighting_brawl: {attr: STR, category: combat}
+  firearms_handgun: {attr: DEX, category: combat}
+  firearms_rifle: {attr: DEX, category: combat}
+  first_aid: {attr: EDU, category: knowledge}
+  history: {attr: EDU, category: knowledge}
+  intimidate: {attr: STR, category: social}
+  jump: {attr: STR, category: physical}
+  language_own: {attr: EDU, category: knowledge}
+  law: {attr: EDU, category: knowledge}
+  library_use: {attr: EDU, category: knowledge}
+  listen: {attr: "-", category: perception}
+  locksmith: {attr: DEX, category: technical}
+  mechanical_repair: {attr: DEX, category: technical}
+  medicine: {attr: EDU, category: knowledge}
+  natural_world: {attr: EDU, category: knowledge}
+  navigate: {attr: EDU, category: technical}
+  occult: {attr: EDU, category: knowledge}
+  persuade: {attr: APP, category: social}
+  pilot: {attr: DEX, category: technical}
+  psychology: {attr: EDU, category: knowledge}
+  ride: {attr: DEX, category: technical}
+  science: {attr: EDU, category: knowledge}
+  sleight_of_hand: {attr: DEX, category: technical}
+  spot_hidden: {attr: "-", category: perception}
+  stealth: {attr: DEX, category: physical}
+  swim: {attr: STR, category: physical}
+  throw: {attr: DEX, category: physical}
+  track: {attr: "-", category: perception}
+
+checks:
+  difficulties: [regular, hard, extreme]
+  critical: {rule: "roll_eq_1"}
+  fumble:
+    skilled_threshold: 50
+    skilled_rule: "roll_eq_100"
+    unskilled_rule: "roll_ge_96"
+  opposed: {tie_break: [level, skill, roll]}
+
+# v2: the resolution contract the engine dispatches on.
+resolution:
+  model: coc_percentile
+  roll: d100
+  success_rule: roll_le_target
+  difficulties: [regular, hard, extreme]
+  tier_divisors: {regular: 1, hard: 2, extreme: 5}
+  critical: roll_eq_1
+  fumble_skilled_threshold: 50
+  fumble_skilled: roll_eq_100
+  fumble_unskilled: roll_ge_96
+  bonus_penalty_dice: true
+
+combat:
+  initiative: {order_by: dex_desc, tie_break: seeded_d100}
+  attack_default: fighting_brawl
+  defense_default: dodge
+  damage_default: "1d6"
+  armor: {enabled: true}
+  major_wound: {enabled: true, threshold_divisor: 2}
+
+growth:
+  model: skill_mark_roll_over
+  cap: 99
+  gain: "1d10"
+  rule: roll_gt_skill
+
+# v2 per-ruleset derived sheet fields. Declaration order matters: a later
+# formula may $ref an earlier one.
+formulas:
+  hp_max: {fn: coc_hp_max, args: {con: $CON, siz: $SIZ}}
+  mp_max: {fn: coc_mp_max_7e, args: {pow: $POW}}  # 【队长裁决 2026-09-28】7e 官方 = POW/10
+  san_start: {fn: coc_san_start, args: {pow: $POW}}
+  mov: {fn: coc_mov, args: {str: $STR, dex: $DEX, siz: $SIZ}}
+  build: {fn: coc_build, args: {str: $STR, siz: $SIZ}}
+  damage_bonus: {fn: coc_damage_bonus, args: {str: $STR, siz: $SIZ}}
+  dodge_default: {fn: half, args: {of: $DEX}}
+  spot_hidden_hard: {fn: half, args: {of: $spot_hidden}}
+  spot_hidden_extreme: {fn: fifth, args: {of: $spot_hidden}}
+  luck_half: {fn: half, args: {of: $LUCK}}
+
+# v1 compatibility block: the original four-function derived registry.
+# Kept verbatim so app.rules.arbiter.validate_rulepack still accepts this file.
+derived:
+  hard_of_spot_hidden: {fn: half, args: {of: $spot_hidden}}
+  extreme_of_spot_hidden: {fn: fifth, args: {of: $spot_hidden}}
+  dodge_from_dex: {fn: half, args: {of: $DEX}}
+  spot_hidden_thresholds: {fn: skill_threshold, args: {skill: $spot_hidden}}
+
+card_rules:
+  required_attrs: [STR, CON, SIZ, DEX, APP, INT, POW, EDU]
+  skill_min: 0
+  skill_max: 100
+  allow_custom_skills: false
+  max_skill_total: 4000

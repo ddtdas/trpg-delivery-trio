@@ -1,0 +1,19 @@
+# TRPG 服务端运行依赖 (封装版, 只列运行必需)
+# 安装: python -m pip install -r requirements.txt
+# Python 3.12+ (实测 3.12.10 / 3.13.1)
+
+fastapi==0.136.3
+uvicorn[standard]==0.51.0      # ASGI 服务器; [standard] 含 websockets (WS /ws 必需)
+pydantic>=2.0
+aiosqlite>=0.19.0              # 事件库 (SQLite WAL)
+PyYAML>=6.0                    # configs/*.yaml
+python-multipart>=0.0.9        # multipart/form-data (POST /access/player/audio 必需)
+httpx>=0.28.1                  # STT/TTS 云端调用 (无 key 时自动降级)
+
+# 可选: 仅在使用 LLM 建议 (/access/advice) / 云端 STT 时安装
+openai==2.24.0
+
+# 开发/自测可选 (封装包内含 tests/, 运行 pytest 才需要):
+# pytest==9.1.1
+# pytest-asyncio>=0.23
+# hypothesis>=6.0

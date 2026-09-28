@@ -1,0 +1,78 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* UI-R1: 灰白黑设计令牌（替换旧品牌色/深色变量） */
+:root {
+  --bg: #f5f6f7;      /* 浅灰页面底色 */
+  --card: #ffffff;    /* 卡片白 */
+  --text: #111827;   /* 主文字黑 */
+  --muted: #6b7280;   /* 次要灰 */
+  --border: #e5e7eb;  /* 边框浅灰 */
+  --focus: #000;      /* 焦点黑强调 */
+}
+
+body {
+  @apply bg-[var(--bg)] text-[var(--text)];
+  font-family: system-ui, -apple-system, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+}
+
+@layer components {
+  /* 按钮：8px 圆角、灰白黑、黑强调 */
+  .btn {
+    @apply inline-flex min-h-[40px] items-center justify-center gap-1 rounded-lg px-4 py-2 text-sm font-medium transition-colors
+      focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-black focus-visible:ring-2 focus-visible:ring-black/30
+      disabled:cursor-not-allowed disabled:opacity-50;
+  }
+  .btn-primary { @apply bg-black font-semibold text-white hover:bg-gray-800 active:bg-gray-900; }
+  .btn-secondary { @apply border border-gray-300 bg-white text-gray-700 hover:bg-gray-100 active:bg-gray-200; }
+  .btn-danger { @apply bg-red-600 font-semibold text-white hover:bg-red-500 active:bg-red-700; }
+
+  /* 卡片 */
+  .panel { @apply rounded-lg border border-gray-200 bg-white p-4 shadow-sm; }
+  .panel-title { @apply mb-3 text-sm font-semibold tracking-wide text-gray-900; }
+
+  /* 输入 */
+  .input {
+    @apply w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 placeholder:text-gray-400
+      focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-black focus:border-gray-400;
+  }
+
+  /* 标签 chip */
+  .chip { @apply inline-flex min-h-[28px] items-center gap-1 rounded-full border border-gray-300 bg-white px-2 py-0.5 text-xs text-gray-600; }
+
+  .sr-only-table { @apply sr-only; }
+
+  /* 空态 */
+  .empty { @apply rounded-lg border border-dashed border-gray-300 bg-white px-3 py-6 text-center text-sm text-gray-500; }
+
+  /* 侧边栏（左栏固定 208px；窄屏抽屉复用同组件） */
+  .sidebar {
+    @apply fixed inset-y-0 left-0 z-40 flex w-52 flex-col gap-1 overflow-y-auto border-r border-gray-200 bg-white p-3;
+  }
+  .sidebar-link {
+    @apply block rounded-lg px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100
+      focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-black;
+  }
+  .sidebar-link-active { @apply bg-black font-semibold text-white hover:bg-gray-800; }
+  .drawer-overlay { @apply fixed inset-0 z-30 bg-black/40 md:hidden; }
+}
+
+@layer base {
+  /* 焦点环：黑实线 + 晕（UI-2 d7 保留，黑色强调） */
+  a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible, [tabindex]:focus-visible {
+    outline: 2px solid #000;
+    outline-offset: 2px;
+    box-shadow: 0 0 0 4px rgba(0, 0, 0, 0.35);
+  }
+  select option { @apply bg-white text-gray-900; }
+  /* 滚动条细化（灰白黑） */
+  ::-webkit-scrollbar { width: 10px; height: 10px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: #d1d5db; border-radius: 6px; border: 2px solid var(--bg); }
+  ::-webkit-scrollbar-thumb:hover { background: #9ca3af; }
+}
+
+/* UI-2 d7: skip-link 仅键盘聚焦可见（灰白黑配色） */
+.skip-link { position: absolute; left: -9999px; top: 0; z-index: 60; }
+.skip-link:focus { left: 8px; top: 8px; background: #fff; color: #000; padding: 8px 12px; border-radius: 8px; border: 2px solid #000; }

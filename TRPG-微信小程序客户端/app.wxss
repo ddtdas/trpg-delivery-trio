@@ -1,0 +1,278 @@
+@import "tokens.wxss";
+
+/* app.wxss —— 组件语义类名（契约 §2）：PC 与小程序同名同义，规格逐值一致。
+ * v2.0（R32）：令牌值全部改为参考站 https://www.cnmods.net/web/ 运行时实测值
+ *   （tokens.wxss = tokens.json v2.0；PC 端 app.css 同值）。
+ * 两端差异只允许契约 §2 已列的两条：容器宽度自适应、导航形态（小程序底部 tabBar，见 app.json）。
+ * 本文件只改样式：不改任何绑定、事件、文案，也不引入外部字体/图标/CDN。
+ */
+
+/* 页面根：bg=color.bg，正文色/字号/字体栈与 PC 端 body 同值 */
+page {
+  background: var(--color-bg, #101014);
+  color: var(--color-text, rgba(255,255,255,0.82));
+  font-size: var(--font-body, 14px);
+  font-family: var(--font-stack, HarmonyOS, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", "Helvetica Neue", Arial, sans-serif);
+  line-height: var(--font-line-height, 1.6);
+  -webkit-text-size-adjust: 100%;
+}
+
+/* 页面容器 .pg：max-width 560px，左右 padding 16px，bg=color.bg
+ * 两端差异之一：PC 居中 560px，移动端宽度 100%（由 max-width 自然退化）。
+ * 取值与 PC 端一致：PC 已把 .pg padding 固定为所有视口恒 16px 16px 24px（web 2026-09-26），
+ * 故小程序侧同步为同一值，使任意视口下两端计算样式逐项相同。 */
+.pg {
+  box-sizing: border-box;
+  max-width: var(--layout-maxWidth, 560px);
+  margin: 0 auto;
+  padding: var(--space-lg, 16px) var(--space-lg, 16px) var(--space-xl, 24px) var(--space-lg, 16px);
+  background: var(--color-bg, #101014);
+}
+
+/* 卡片 .card：bg=card，border 1px color.border，radius=card，padding 12px，margin-bottom 12px */
+.card {
+  box-sizing: border-box;
+  /* MP 端不用 backdrop-filter（Android 支持不稳定），保留不透明面板 */
+  background: var(--color-card, #141c23);
+  border: 1px solid var(--color-border, rgba(255,255,255,0.24));
+  border-radius: var(--radius-card, 4px);
+  padding: var(--space-md, 12px);
+  margin-bottom: var(--space-md, 12px);
+}
+
+/* 卡片标题 .card-title：color=text（中性，不用琥珀），font-size h2，font-weight 600，margin-bottom 8px */
+.card-title {
+  font-size: var(--font-h2, 16px);
+  font-weight: 600;
+  color: var(--color-text, rgba(255,255,255,0.82));
+  margin: 0 0 var(--space-sm, 8px) 0;
+}
+
+/* 主按钮 .btn-primary：bg=accent，color=accentText，radius=ctl，min-height 44px，font-size body，无边框，weight 600
+ * hover/active：bg=accent-hover(#fac583)；focus：柔和辉光（--focus-glow）
+ * padding 与 PC 端同值（0 16px）
+ * v1.31 队长裁决：不设 line-height（PC 不设 → 计算值 normal）；显式 display:block（与 PC 一致）。
+ * 注：小程序基础库的 button 自带 line-height(2.5555)，移除本处覆盖后会回落到它 —— 见报告 §9。 */
+.btn-primary {
+  box-sizing: border-box;
+  background: var(--color-accent, #ffbb70);
+  color: var(--color-accentText, #3d1b00);
+  border: none;
+  border-radius: var(--radius-ctl, 3px);
+  display: block;
+  min-height: var(--layout-tapMin, 44px);
+  font-size: var(--font-body, 14px);
+  font-family: inherit;
+  font-weight: 600;
+  padding: 0 var(--space-lg, 16px);
+  margin: var(--space-sm, 8px) 0 0;
+  width: 100%;
+  transition: background var(--motion-fast, 150ms) var(--motion-ease, cubic-bezier(0.4, 0, 0.2, 1)), border-color var(--motion-fast, 150ms) var(--motion-ease, cubic-bezier(0.4, 0, 0.2, 1)), color var(--motion-fast, 150ms) var(--motion-ease, cubic-bezier(0.4, 0, 0.2, 1));
+}
+.btn-primary::after { border: 0; }
+.btn-primary:hover,
+.btn-primary:active {
+  background: var(--color-accent-hover, #fac583);
+  color: var(--color-accentText, #3d1b00);
+}
+.btn-primary:focus {
+  box-shadow: var(--focus-glow, 0 0 8px rgba(255,187,112,0.3));
+  outline: 2px solid var(--color-focus, #ffbb70);
+  outline-offset: 2px;
+}
+
+/* 次按钮 .btn：bg=card，color=text，border 1px color.border，radius=ctl，min-height 44px
+ * hover/active：color=accent，border-color=accent-hover(#fac583)；padding 与 PC 端同值（0 16px） */
+.btn {
+  box-sizing: border-box;
+  /* 参考站实测 n-button--default-type：bg rgba(0,0,0,0)、border 0px、radius 3px、padding 0 14px、shadow none */
+  background: transparent;
+  color: var(--color-text, rgba(255,255,255,0.82));
+  border: none;
+  border-radius: var(--radius-ctl, 3px);
+  display: block;
+  min-height: var(--layout-tapMin, 44px);
+  font-size: var(--font-body, 14px);
+  font-family: inherit;
+  padding: 0 14px;
+  margin: var(--space-sm, 8px) 0 0;
+  width: 100%;
+  transition: background var(--motion-fast, 150ms) var(--motion-ease, cubic-bezier(0.4, 0, 0.2, 1)), border-color var(--motion-fast, 150ms) var(--motion-ease, cubic-bezier(0.4, 0, 0.2, 1)), color var(--motion-fast, 150ms) var(--motion-ease, cubic-bezier(0.4, 0, 0.2, 1));
+}
+.btn::after { border: 0; }
+.btn:hover { background: var(--color-hover, rgba(255,255,255,0.09)); color: var(--color-text, rgba(255,255,255,0.82)); }
+.btn:active { background: var(--color-action, rgba(255,255,255,0.06)); }
+.btn:focus {
+  box-shadow: var(--focus-glow, 0 0 8px rgba(255,187,112,0.3));
+  outline: 2px solid var(--color-focus, #ffbb70);
+  outline-offset: 2px;
+}
+
+/* 禁用态：声明值与 PC 端**逐字相同**（含 :hover 覆盖，避免 hover 时露回琥珀底）
+ *   background=chipBg / color=muted / border-color=border / box-shadow=none / opacity=.5
+ * 选择器形态是小程序的平台必要差异：微信 button[disabled] 自带浅色样式，
+ * 需用 button.btn[disabled] 提升优先级才能压过去；PC 不需要这层。 */
+.btn[disabled], .btn[disabled]:hover,
+.btn-primary[disabled], .btn-primary[disabled]:hover,
+button.btn[disabled], button.btn[disabled]:hover,
+button.btn-primary[disabled], button.btn-primary[disabled]:hover {
+  background: var(--color-chipBg, #212625);
+  color: var(--color-muted, #b9b9b9);
+  border-color: var(--color-border, rgba(255,255,255,0.24));
+  box-shadow: none;
+  opacity: 0.5;
+}
+
+/* 输入框 .input：bg=card，border 1px color.border，radius=ctl(4px)，min-height 44px，padding 0 12px，font-size body
+ * :focus：border-color=accent + box-shadow 0 0 8px rgba(255,187,112,0.3)；placeholder=rgba(255,255,255,0.38) */
+.input {
+  box-sizing: border-box;
+  background: var(--color-input, #212625);
+  border: 1px solid var(--color-border, rgba(255,255,255,0.24));
+  border-radius: var(--radius-ctl, 3px);
+  min-height: var(--layout-tapMin, 44px);
+  padding: 0 var(--space-md, 12px);
+  font-size: var(--font-body, 14px);
+  font-family: inherit;
+  color: var(--color-text, rgba(255,255,255,0.82));
+  width: 100%;
+  transition: border-color var(--motion-fast, 150ms) var(--motion-ease, cubic-bezier(0.4, 0, 0.2, 1)), box-shadow var(--motion-fast, 150ms) var(--motion-ease, cubic-bezier(0.4, 0, 0.2, 1));
+}
+.input:focus {
+  border-color: var(--color-accent, #ffbb70);
+  box-shadow: var(--focus-glow, 0 0 8px rgba(255,187,112,0.3));
+  outline: 0;
+}
+.input::placeholder {
+  color: var(--color-placeholder, rgba(255,255,255,0.38));
+}
+
+/* 多行输入 .input-area：与 PC 端 textarea.input 同规格 */
+.input-area {
+  box-sizing: border-box;
+  background: var(--color-input, #212625);
+  border: 1px solid var(--color-border, rgba(255,255,255,0.24));
+  border-radius: var(--radius-ctl, 3px);
+  min-height: calc(var(--layout-tapMin, 44px) * 1.8);
+  padding: var(--space-sm, 8px) var(--space-md, 12px);
+  font-size: var(--font-body, 14px);
+  font-family: inherit;
+  line-height: var(--font-line-height, 1.6);
+  color: var(--color-text, rgba(255,255,255,0.82));
+  width: 100%;
+  transition: border-color var(--motion-fast, 150ms) var(--motion-ease, cubic-bezier(0.4, 0, 0.2, 1)), box-shadow var(--motion-fast, 150ms) var(--motion-ease, cubic-bezier(0.4, 0, 0.2, 1));
+}
+.input-area:focus {
+  border-color: var(--color-accent, #ffbb70);
+  box-shadow: var(--focus-glow, 0 0 8px rgba(255,187,112,0.3));
+  outline: 0;
+}
+.input-area::placeholder {
+  color: var(--color-placeholder, rgba(255,255,255,0.38));
+}
+
+/* 徽章 .chip：bg=chipBg(#212625)，color=text，radius=chip，padding 2px 10px，font-size small */
+.chip {
+  display: inline-flex;
+  align-items: center;
+  height: var(--layout-control-tiny, 22px);
+  background: var(--color-chipBg, #212625);
+  color: var(--color-text, rgba(255,255,255,0.82));
+  border-radius: var(--radius-chip, 2px);
+  padding: 0 var(--space-sm, 8px);
+  font-size: var(--font-small, 12px);
+  line-height: 1;
+  margin-right: var(--space-xs, 4px);
+}
+
+/* 状态行 .status-line：font-size small，color=muted */
+.status-line {
+  font-size: var(--font-small, 12px);
+  color: var(--color-muted, #b9b9b9);
+}
+
+/* 错误条 .err-bar：bg rgba(232,128,128,0.10)，border 1px rgba(232,128,128,0.32)，color=err，radius=ctl，padding 8px 12px，font-size small */
+.err-bar {
+  background: var(--color-errBarBg, rgba(232,128,128,0.10));
+  border: 1px solid var(--color-errBarBorder, rgba(232,128,128,0.32));
+  color: var(--color-err, #e88080);
+  border-radius: var(--radius-ctl, 3px);
+  padding: var(--space-sm, 8px) var(--space-md, 12px);
+  margin-bottom: var(--space-sm, 8px);
+  font-size: var(--font-small, 12px);
+  word-break: break-word;
+}
+
+/* 成功行 .ok-line：color=ok，font-size small */
+.ok-line {
+  color: var(--color-ok, #63e2b7);
+  font-size: var(--font-small, 12px);
+}
+
+/* 警告行 .warn-line：color=warn，font-size small */
+.warn-line {
+  color: var(--color-warn, #f2c97d);
+  font-size: var(--font-small, 12px);
+}
+
+/* 列表项 .item：bg=card，border 1px color.border，radius=ctl，padding 8px 12px，font-size body，margin-bottom 6px */
+.item {
+  box-sizing: border-box;
+  /* MP 端不用 backdrop-filter（Android 支持不稳定），保留不透明面板 */
+  background: var(--color-card, #141c23);
+  border: 1px solid var(--color-border, rgba(255,255,255,0.24));
+  border-radius: var(--radius-ctl, 3px);
+  padding: var(--space-sm, 8px) var(--space-md, 12px);
+  font-size: var(--font-body, 14px);
+  margin-bottom: 6px;
+  word-break: break-word;
+}
+
+/* 事件类型标签 .ev-kind：font-size small，color=muted，margin-right 6px */
+.ev-kind {
+  font-size: var(--font-small, 12px);
+  color: var(--color-muted, #b9b9b9);
+  margin-right: 6px;
+}
+
+/* 时间戳 .ev-ts：font-size small，color=muted */
+.ev-ts {
+  font-size: var(--font-small, 12px);
+  color: var(--color-muted, #b9b9b9);
+}
+
+/* 事件正文 .ev-text：与 PC 端 .ev-text 同规格（word-break 由父级 .item 继承） */
+.ev-text {
+  margin-top: var(--space-xs, 4px);
+}
+
+/* 页面标题（三页同名：连接设置 / 桌面 / 语音；底部 tabBar 见 app.json）
+ * 对应 PC 端顶栏 .brand 的角色（小程序无顶栏，导航为原生 tabBar）→ 文字色 accent，与 web 附则第 6 条一致 */
+.h1 { font-size: var(--font-h1, 20px); font-weight: 600; color: var(--color-accent, #ffbb70); margin: var(--space-md, 12px) 0 var(--space-sm, 8px); }
+
+/* 表单行 .row（纵向字段容器）与标签 .label：与 PC 端 .row / .label **同名同义同规格**
+ * v1.31 类名对齐（队长批准）：旧 MP .field 承担 PC .row 的角色 → 已改名为 .row */
+.row { margin-bottom: var(--space-sm, 8px); }
+.row:last-child { margin-bottom: 0; }
+.label { display: block; font-size: var(--font-small, 12px); color: var(--color-muted, #b9b9b9); margin-bottom: var(--space-xs, 4px); }
+
+/* 按钮行 .actions：与 PC 端 .actions **同名同义同规格**
+ * v1.31 类名对齐（队长批准）：旧 MP .row 承担 PC .actions 的角色 → 已改名为 .actions
+ * 行内按钮 margin-top 归零，避免与 .actions 的 margin-top + gap 叠加（PC 的按钮无 margin-top）。 */
+.actions { display: flex; flex-wrap: wrap; gap: var(--space-sm, 8px); margin-top: var(--space-sm, 8px); }
+.actions .btn, .actions .btn-primary { width: auto; flex: 1; margin-top: 0; }
+
+/* 与 PC 端 app.css 的 `* { box-sizing: border-box; }` 对齐。
+ * PC 是全局规则；小程序侧改为等价类名枚举，避免 `*` 在 WXSS 中对原生组件（input/textarea/button）
+ * 的不可预期行为 —— 那几个已各自显式声明 box-sizing。 */
+.card-title, .chip, .status-line, .err-bar, .ok-line, .warn-line,
+.ev-kind, .ev-ts, .ev-text, .label, .row, .actions, .kv, .h1 {
+  box-sizing: border-box;
+}
+
+/* 键值行 .kv：与 PC 端 .kv 同规格（小程序页面用 .item 呈现同类信息） */
+.kv { display: flex; justify-content: space-between; gap: var(--space-sm, 8px); font-size: var(--font-body, 14px); padding: 2px 0; }
+.kv .k { color: var(--color-muted, #b9b9b9); box-sizing: border-box; }
+/* 注：.kv / .kv .k 目前 MP 的 pages/*.wxml 未使用（小程序用 .item 呈现同类信息）；保留是为与 PC 端 .kv 同名同义。
+ * .kv .k 的 box-sizing 补在此处：box-sizing 不继承，PC 由全局 `*` 覆盖到每个元素，MP 需逐类枚举
+ * —— 该缺口由 web 真实浏览器实测发现（.kv .k 两端 box-sizing 不一致）。 */

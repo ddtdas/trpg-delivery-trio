@@ -1,0 +1,11 @@
+id: npc_trucker
+name: 汉克
+role: 卡车司机
+visibility: public
+lines:
+  - 我在路上看见它了。
+  - 那不是光。
+traits:
+  nerve: steady
+  knows:
+    - c_trucker_tale

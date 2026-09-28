@@ -1,0 +1,5 @@
+id: C-SAN-02
+clause: san
+question: SAN扣多少成功和失败各算？
+ruling: 成功扣1或0（KP快判），失败扣骰面值；不定性疯狂=5轮内失5点。
+source: local-01ch4-5-plus-model

@@ -1,0 +1,8 @@
+/* 语音页：组件规格全部来自 app.wxss（契约 §2） */
+.timer {
+  font-size: var(--font-h1, 20px);
+  font-weight: 600;
+  text-align: center;
+  color: var(--color-text, rgba(255,255,255,0.82));
+  margin-bottom: var(--space-sm, 8px);
+}

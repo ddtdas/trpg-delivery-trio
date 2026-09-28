@@ -1,0 +1,78 @@
+{
+  "doors": [
+    {
+      "from": "r_lobby",
+      "id": "d_lobby_dining",
+      "to": "r_dining"
+    },
+    {
+      "from": "r_kitchen",
+      "id": "d_kitchen_dining",
+      "to": "r_dining"
+    },
+    {
+      "from": "r_guest",
+      "id": "d_guest_dining",
+      "to": "r_dining"
+    },
+    {
+      "from": "r_cellar",
+      "id": "d_cellar_kitchen",
+      "to": "r_kitchen"
+    }
+  ],
+  "h": 560,
+  "id": "m_house",
+  "name": "公路旅店",
+  "rooms": [
+    {
+      "h": 240,
+      "id": "r_lobby",
+      "name": "门厅",
+      "w": 340,
+      "x": 20,
+      "y": 20
+    },
+    {
+      "h": 260,
+      "id": "r_dining",
+      "name": "餐厅",
+      "w": 340,
+      "x": 20,
+      "y": 280
+    },
+    {
+      "h": 260,
+      "id": "r_kitchen",
+      "name": "厨房",
+      "w": 200,
+      "x": 380,
+      "y": 20
+    },
+    {
+      "h": 240,
+      "id": "r_guest",
+      "name": "客房",
+      "w": 200,
+      "x": 380,
+      "y": 300
+    },
+    {
+      "h": 520,
+      "id": "r_cellar",
+      "name": "地窖",
+      "w": 180,
+      "x": 600,
+      "y": 20
+    }
+  ],
+  "tokens_start": [
+    {
+      "id": "pc1",
+      "room": "r_lobby",
+      "x": 100,
+      "y": 120
+    }
+  ],
+  "w": 800
+}

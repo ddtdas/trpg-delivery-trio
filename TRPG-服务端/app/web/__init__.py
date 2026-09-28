@@ -1,0 +1,1 @@
+"""TRPG web subpackage (MIT)."""

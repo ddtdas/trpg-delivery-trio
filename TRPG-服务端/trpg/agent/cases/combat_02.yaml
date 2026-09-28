@@ -1,0 +1,5 @@
+id: C-COMBAT-02
+clause: combat
+question: 闪避和格挡能否同时用？
+ruling: 一次攻击只能二选一；闪避成功全避，格挡成功按武器减伤。
+source: local-01ch4-5-plus-model

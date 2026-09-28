@@ -1,0 +1,10 @@
+/* 桌面页：组件规格全部来自 app.wxss（契约 §2） */
+.turn-line {
+  font-size: var(--font-h1, 20px);
+  font-weight: 600;
+  color: var(--color-text, rgba(255,255,255,0.82));
+  margin-bottom: var(--space-xs, 4px);
+}
+.ev-item { margin-bottom: 6px; }
+.ev-item .ev-ts { margin-left: var(--space-sm, 8px); }
+.ev-text { margin-top: var(--space-xs, 4px); }

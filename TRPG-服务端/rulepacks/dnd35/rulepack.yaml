@@ -1,0 +1,93 @@
+# D&D 3.5e ruleset template (MIT table data) - T7 M1-ext (additive, optional).
+#
+# 非预设角色模板：向导只提供「规则 + 职业/技能池」，玩家自由分配点数。
+# 与 coc7 rulepack 同构（schema v2），走既有 rules/arbiter 校验路径。
+# 来源: D&D 3.5e SRD 核心规则（编译表数据，不含 Wizards 规则原文）。
+id: dnd35
+version: "1.0.0"
+display_name: "D&D 3.5e (TRPG table pack, optional template)"
+license: "MIT (table data compiled by the TRPG project)"
+schema: 2
+schema_version: "1.0.0"
+
+ruleset:
+  family: dnd
+  edition: "3.5"
+  dice: d20
+  resolution_model: d20_dc
+
+attrs:
+  - {name: STR, min: 1, max: 20, abbr: "Strength",     roll: "4d6p3"}
+  - {name: DEX, min: 1, max: 20, abbr: "Dexterity",    roll: "4d6p3"}
+  - {name: CON, min: 1, max: 20, abbr: "Constitution", roll: "4d6p3"}
+  - {name: INT, min: 1, max: 20, abbr: "Intelligence", roll: "4d6p3"}
+  - {name: WIS, min: 1, max: 20, abbr: "Wisdom",       roll: "4d6p3"}
+  - {name: CHA, min: 1, max: 20, abbr: "Charisma",     roll: "4d6p3"}
+
+skills:
+  acrobatics: 0
+  animal_handle: 0
+  arcana: 0
+  athletics: 0
+  bluff: 0
+  diplomacy: 0
+  dungeoneering: 0
+  end_turn: 0
+  history: 0
+  insight: 0
+  intimidate: 0
+  knowledge: 0
+  listen: 0
+  move_silently: 0
+  nature_sense: 0
+  perception: 0
+  perform: 0
+  persuasion: 0
+  religion: 0
+  search: 0
+  stealth: 0
+  survival: 0
+  spellcasting: 0
+
+skill_meta:
+  acrobatics: {attr: DEX, category: physical}
+  athletics: {attr: STR, category: physical}
+  perception: {attr: "-", category: perception}
+  insight: {attr: WIS, category: perception}
+  diplomacy: {attr: CHA, category: social}
+
+checks:
+  difficulties: [easy, normal, hard]
+  critical: {rule: "nat_max"}
+  fumble: {rule: "nat_min"}
+
+resolution:
+  model: d20_dc
+  roll: d20
+  difficulties: [easy, normal, hard]
+  critical: nat_max
+  fumble: nat_min
+
+combat:
+  initiative: {order_by: dex_desc, tie_break: seeded_d100}
+  attack_default: unarmed
+  defense_default: dodge
+  damage_default: "1d3"
+  armor: {enabled: true}
+  major_wound: {enabled: true, threshold_divisor: 2}
+
+growth:
+  model: level_advancement
+  cap: 20
+
+formulas:
+  ability_mod: {fn: dnd_ability_mod, args: {score: $STR}}
+  dnd_hp_max: {fn: dnd_hp_max, args: {con: $CON, level: 1}}
+  dnd_ac: {fn: dnd_ac, args: {dex: $DEX}}
+
+card_rules:
+  required_attrs: [STR, CON, DEX, INT, WIS, CHA]
+  skill_min: 0
+  skill_max: 20
+  allow_custom_skills: false
+  max_skill_total: 200

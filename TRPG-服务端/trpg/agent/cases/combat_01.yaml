@@ -1,0 +1,5 @@
+id: C-COMBAT-01
+clause: combat
+question: 先攻相同DEX也相同谁先手？
+ruling: 双方重骰1d100比小，胜者先手；仍平则PC优先，快判不耗时。
+source: local-01ch4-5-plus-model

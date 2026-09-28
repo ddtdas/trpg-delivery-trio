@@ -1,0 +1,41 @@
+clues:
+  - id: c_ledger_page
+    kind: document
+    location: n_office_ledger
+    points_to: n_store_find
+    scope: public
+  - id: c_fuel_can
+    kind: object
+    location: n_store_find
+    points_to: n_roadblock
+    scope: public
+  - id: c_radio_static
+    kind: signal
+    location: n_office_ledger
+    points_to: n_roadblock
+    scope: kp
+  - id: c_mirror_mark
+    kind: mark
+    location: n_washroom_clue
+    points_to: n_cellar_deadlight
+    scope: kp
+  - id: c_trucker_tale
+    kind: testimony
+    location: n_dining_meet
+    points_to: n_guest_room
+    scope: public
+  - id: c_burnt_photo
+    kind: object
+    location: n_kitchen_noise
+    points_to: n_cellar_deadlight
+    scope: public
+  - id: c_emilia_letter
+    kind: document
+    location: n_guest_room
+    points_to: n_cellar_deadlight
+    scope: kp
+  - id: c_deadlight_source
+    kind: phenomenon
+    location: n_cellar_deadlight
+    points_to: n_confrontation
+    scope: kp

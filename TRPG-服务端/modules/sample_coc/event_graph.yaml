@@ -1,0 +1,69 @@
+# 事件图:《图书馆搜证》(CoC 短剧本)
+# schema: EventGraph v1 — nodes[] / edges[]; condition 为受限 JSON 表达式
+#   {check:{target:<skill>, level:regular|hard|extreme}} | {clue:<clue_id>} | {node:<node_id>}
+# 同层键 AND;或分支用显式 edges(from/to)表达。consequences only: clue_grant / npc_hook / map_reveal。
+# 防环:本图为 DAG(仅 n4->n3 回退边一条,且带 once:true),无环。
+nodes:
+  - id: n1_front_desk
+    title: "图书馆前台"
+    description: "闭馆前的大厅。管理员瑟琳娜在前台登记,馆长霍华德焦急地踱步。KP 朗读世界观后,调查员在此集合。"
+    actions: ["询问馆长案情", "查看借阅登记簿", "前往阅览区"]
+    npc_refs: [npc_director, npc_clerk]
+    map_ref: map_library
+  - id: n2_reading_room
+    title: "阅览区搜证"
+    description: "长桌与绿色台灯。失窃前夜有人在此久坐:桌角留下一枚烟灰与半张撕碎的借书单。"
+    actions: ["搜索桌面(spot_hidden)", "拼合借书单", "询问附近的学生"]
+    clue_refs: [c1_torn_slip]
+    map_ref: map_library
+  - id: n3_rare_room
+    title: "古籍室"
+    description: "失窃现场。展柜锁芯完好,没有撬痕——说明窃贼有钥匙或熟悉内部流程。地上有一枚不属于馆员的泥脚印。"
+    actions: ["检查展柜(spot_hidden)", "比对脚印", "询问管理员钥匙去向"]
+    clue_refs: [c2_mud_print]
+    npc_refs: [npc_clerk]
+    map_ref: map_library
+  - id: n4_check_node
+    title: "锁芯鉴定(困难检定)"
+    description: "锁匠视角:展柜的弹子锁是否有被技术开启的痕迹?需要一次困难 locksmith 检定。"
+    check: {target: locksmith, level: hard}
+    actions: ["进行 locksmith 困难检定"]
+  - id: n5_secret_room
+    title: "密室发现"
+    description: "古籍室书架后传来空洞回声—— success 路线:挪开《美洲植物志》整排,暗门滑开,密室里点着半截蜡烛。fail 路线:暂时找不到机关,但管理员想起通风管道可窥见隔壁动静。"
+    actions: ["进入密室", "检查蜡烛与灰烬", "改走通风管道"]
+    clue_refs: [c3_candle, c5_ledger]
+    map_ref: map_library
+  - id: n6_npc_talk
+    title: "NPC 对话"
+    description: "三位相关人齐聚走廊:馆长催促结案,管理员欲言又止,神秘借阅人维克多主动攀谈。KP 依次演出,PL 可分组问话。"
+    actions: ["追问馆长债务", "安抚管理员说出所见", "试探借阅人"]
+    npc_refs: [npc_director, npc_clerk, npc_borrower]
+  - id: n7_clue_chain
+    title: "线索串联"
+    description: "把借书单残片、泥脚印、蜡烛灰、账本缺页拼在一起:所有痕迹指向一个在闭馆后仍留在馆内的人。"
+    actions: ["KP 引导复述时间线", "投票锁定嫌疑人"]
+    clue_refs: [c1_torn_slip, c2_mud_print, c3_candle, c4_testimony, c5_ledger]
+  - id: n8_showdown
+    title: "对峙"
+    description: "在密室门口堵住真凶。KP 按之前锁定的嫌疑人演出对峙;若指认错误,真凶趁乱吹熄蜡烛遁入暗道(转入追逐,难度上升)。"
+    actions: ["出示证据指认", " psychology 读人", "阻止其逃跑"]
+    npc_refs: [npc_borrower]
+    map_ref: map_library
+  - id: n9_truth
+    title: "真相揭示与结尾"
+    description: "密信在密室暗格完好无损。KP 揭晓动机与手法,按是否找回密信与是否指认真凶结算 good/bad 结局。"
+    clue_refs: [c6_letter]
+edges:
+  - {from: n1_front_desk, to: n2_reading_room, condition: {}, label: "前往阅览区"}
+  - {from: n1_front_desk, to: n3_rare_room, condition: {}, label: "直赴古籍室"}
+  - {from: n2_reading_room, to: n3_rare_room, condition: {clue: c1_torn_slip}, label: "凭借书单残片前往古籍室"}
+  - {from: n3_rare_room, to: n4_check_node, condition: {}, label: "鉴定锁芯"}
+  # 分支:困难检定成功/失败双出口
+  - {from: n4_check_node, to: n5_secret_room, condition: {check: {target: locksmith, level: hard}}, label: "检定成功:发现暗门机关", branch: success}
+  - {from: n4_check_node, to: n5_secret_room, condition: {check_fail: {target: locksmith, level: hard}}, label: "检定失败:管理员提示通风管道", branch: fail}
+  - {from: n5_secret_room, to: n6_npc_talk, condition: {}, label: "带线索走出密室问话"}
+  - {from: n4_check_node, to: n3_rare_room, condition: {once: true}, label: "回古籍室再查(一次性回退,防环)", branch: retry}
+  - {from: n6_npc_talk, to: n7_clue_chain, condition: {clue: c4_testimony}, label: "管理员证言到手,串联线索"}
+  - {from: n7_clue_chain, to: n8_showdown, condition: {}, label: "锁定嫌疑人,对峙"}
+  - {from: n8_showdown, to: n9_truth, condition: {clue: c6_letter}, label: "寻回密信,揭晓真相"}

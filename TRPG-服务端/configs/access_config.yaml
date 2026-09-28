@@ -1,0 +1,24 @@
+version: 1
+ends:
+  mobile:
+    enabled: true
+    token: f06e4ec6701544eaea87f19bcb02a4f4
+    ai:
+      provider: newapi
+      model: deepseek-v4-flash
+  webapp:
+    enabled: true
+    token: f4a8dc5748eb07f871789ccac9d4a8e3
+    ai:
+      provider: newapi
+      model: deepseek-v4-flash
+  recorder:
+    enabled: true
+    token: 6b52cd78a66bbd0c5b8eb856a37037e3
+    ai:
+      provider: newapi
+      model: deepseek-v4-flash
+auto_connect:
+  enabled: true
+  poll_interval_s: 2
+

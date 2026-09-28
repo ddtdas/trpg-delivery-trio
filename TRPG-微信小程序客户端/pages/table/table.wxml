@@ -1,0 +1,75 @@
+<view class="pg">
+  <view class="h1">{{T.nav_table}}</view>
+
+  <view class="card">
+    <view class="card-title">{{T.sec_role}}</view>
+    <view class="item">{{T.ph_playerId}}：{{profile.playerId}}</view>
+    <view class="item">{{T.ph_playerName}}：{{profile.playerName}}</view>
+    <view class="item">table_id：{{profile.tableId}} · campaign：{{profile.campaign}}</view>
+    <view class="status-line">{{connection}}</view>
+  </view>
+
+  <view class="card">
+    <view class="card-title">{{T.sec_turn}}</view>
+    <block wx:if="{{turn}}">
+      <view class="turn-line">{{turnLine}}</view>
+      <view class="chip" wx:if="{{turn.state === 'COLLECTING'}}">{{T.st_collecting}}</view>
+    </block>
+    <view class="status-line" wx:else>{{T.st_noTurn}}</view>
+    <view class="status-line" wx:if="{{countsText}}">{{countsText}}</view>
+  </view>
+
+  <view class="card">
+    <view class="card-title">{{T.sec_action}}</view>
+    <view class="status-line" wx:if="{{!canSubmit}}">{{T.st_notCollecting}}</view>
+    <view class="row">
+      <text class="label">{{T.ph_action}}</text>
+      <textarea class="input-area" value="{{actionText}}" bindinput="onAction" maxlength="500" placeholder="{{T.ph_action}}" />
+    </view>
+    <view class="row">
+      <text class="label">{{T.ph_intent}}</text>
+      <input class="input" value="{{intent}}" bindinput="onIntent" maxlength="100" placeholder="{{T.ph_intent}}" />
+    </view>
+    <view class="err-bar" wx:if="{{error}}">{{error}}</view>
+    <view class="ok-line" wx:if="{{lastSubmit}}">{{lastSubmit}}</view>
+    <button class="btn-primary" bindtap="onSubmit" loading="{{submitting}}" disabled="{{!canSubmit}}">{{T.btn_submit}}</button>
+  </view>
+
+  <view class="card">
+    <view class="card-title">{{T.sec_events}}</view>
+    <view class="status-line" wx:if="{{!events.length}}">{{T.st_noTurn}}</view>
+    <view class="item ev-item" wx:for="{{events}}" wx:key="id">
+      <text class="ev-kind">{{item.kind}}</text>
+      <text class="ev-ts">#{{item.seq}} {{item.time}}</text>
+      <view class="ev-text">{{item.text}}</view>
+    </view>
+  </view>
+
+  <view class="card">
+    <view class="card-title">{{T.chat_sec}}</view>
+    <view class="status-line">{{chatBadge}}</view>
+    <view class="row">
+      <picker range="{{chatPlayerNames}}" value="{{chatTargetIndex}}" bindchange="onChatTargetChange">
+        <view class="input picker-view">{{chatTargetName || T.chat_targetPlaceholder}}</view>
+      </picker>
+    </view>
+    <view class="row">
+      <input class="input chat-input" value="{{chatText}}" bindinput="onChatInput" maxlength="2000" placeholder="{{chatInputPlaceholder}}" />
+    </view>
+    <button class="btn-primary" bindtap="onChatSend" loading="{{chatSending}}" disabled="{{chatInputDisabled}}">{{T.chat_send}}</button>
+    <view class="err-bar" wx:if="{{chatErr}}">{{chatErr}}</view>
+    <view class="ok-line" wx:if="{{chatOk}}">{{chatOk}}</view>
+    <view class="item ev-item" wx:for="{{chatLog}}" wx:key="seq">
+      <text class="ev-kind">{{item.kind}}</text>
+      <text class="ev-ts">{{item.who}}</text>
+      <view class="ev-text">{{item.text}}</view>
+    </view>
+  </view>
+
+  <view class="card">
+    <view class="card-title">{{T.sec_voice}}</view>
+    <view class="status-line">{{T.sec_voice}} / {{T.sec_device}} 在「{{T.nav_voice}}」页</view>
+    <button class="btn" bindtap="onNavVoice">{{T.nav_voice}}</button>
+    <button class="btn" bindtap="onLeave">{{T.btn_leave}}</button>
+  </view>
+</view>

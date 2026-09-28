@@ -1,0 +1,1 @@
+"""TRPG store subpackage (MIT)."""

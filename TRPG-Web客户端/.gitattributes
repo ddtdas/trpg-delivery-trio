@@ -1,0 +1,64 @@
+# ===========================================================================
+#  TRPG 客户端 —— .gitattributes
+#  统一换行符：脚本类文件按平台固定，避免跨平台克隆后启动失败。
+# ===========================================================================
+
+* text=auto
+
+# ---- 脚本（换行符必须固定，否则 cmd / PowerShell 5.1 解析异常）-----------
+*.bat text eol=crlf
+*.cmd text eol=crlf
+*.ps1 text eol=crlf
+*.psm1 text eol=crlf
+*.sh  text eol=lf
+
+# ---- 源码 / 文本 ----------------------------------------------------------
+*.py   text eol=lf
+*.js   text eol=lf
+*.css  text eol=lf
+*.html text eol=lf
+*.json text eol=lf
+*.yaml text eol=lf
+*.yml  text eol=lf
+*.toml text eol=lf
+*.md   text eol=lf
+*.txt  text eol=lf
+
+# ---- 元文件（无扩展名，显式固定以免平台差异）-----------------------------
+.gitignore     text eol=lf
+.gitattributes text eol=lf
+LICENSE        text eol=lf
+
+# ---- 二进制（禁止换行符转换）---------------------------------------------
+*.png  binary
+*.jpg  binary
+*.jpeg binary
+*.gif  binary
+*.ico  binary
+*.svg  text eol=lf
+*.woff binary
+*.woff2 binary
+*.ttf  binary
+*.eot  binary
+*.otf  binary
+*.wav  binary
+*.mp3  binary
+*.zip  binary
+*.gz   binary
+
+*.whl     binary
+*.modpkg  binary
+*.exe     binary
+*.dll     binary
+*.pyd     binary
+*.tar     binary
+*.7z      binary
+*.gz      binary
+*.woff    binary
+*.woff2   binary
+*.ttf     binary
+*.otf     binary
+*.png     binary
+*.jpg     binary
+*.jpeg    binary
+*.ico     binary

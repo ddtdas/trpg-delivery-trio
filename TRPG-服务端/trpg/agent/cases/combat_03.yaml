@@ -1,0 +1,5 @@
+id: C-COMBAT-03
+clause: combat
+question: 被多人围攻闪避几次？
+ruling: 每轮首次闪避正常，后续每次累计-1个成功等级，快判先跑。
+source: local-01ch4-5-plus-model

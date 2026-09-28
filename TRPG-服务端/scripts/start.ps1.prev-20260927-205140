@@ -1,0 +1,667 @@
+﻿<#
+.SYNOPSIS
+  TRPG 服务端（主持端）一键启动。
+.DESCRIPTION
+  由仓库根目录的 start.bat 调用。bat 保持纯 ASCII 以规避 cmd 代码页问题；
+  本脚本为 UTF-8 带 BOM。
+
+  用法:
+    start.bat            自动选择端口（从 9210 起依次探测 9210..9230，取第一个空闲）
+    start.bat 9300       显式指定端口（该端口被占用则报错退出，绝不静默换端口）
+
+  退出码:
+    0 = 启动成功，或目标端口上已有健康实例（幂等，不重复起第二个）
+    1 = 环境/依赖错误（未找到 Python、版本 < 3.12、缺少依赖、端口参数非法）
+    2 = 端口冲突（显式指定端口被占用且不是本服务；或自动探测区间全满）
+    3 = 健康检查超时
+#>
+param(
+  [string]$Port = '',
+  [switch]$Explicit
+)
+
+$ErrorActionPreference = 'Continue'
+try { [Console]::OutputEncoding = [Text.Encoding]::UTF8 } catch { }
+
+# scripts\start.ps1 -> 上一级即仓库根。不写死任何绝对路径。
+$root = Split-Path -Parent $PSScriptRoot
+$bindhost = '0.0.0.0'
+$portMin = 9210
+$portMax = 9230
+
+$rundir = Join-Path $root 'run'
+if (-not (Test-Path $rundir)) { New-Item -ItemType Directory -Force -Path $rundir | Out-Null }
+$outlog   = Join-Path $rundir 'server.log'
+$errlog   = Join-Path $rundir 'server.err.log'
+$portfile = Join-Path $rundir 'server.port'
+$jsonfile = Join-Path $rundir 'server.json'
+$pidfile  = Join-Path $rundir 'server.pid'
+
+# ---------------------------------------------------------------- 工具函数
+
+function Get-LanIp {
+  $ip = ''
+  # 首选：默认路由所在网卡的 IPv4 —— 这才是同局域网其它设备真正能访问到的地址。
+  # （直接取“第一个非回环 IPv4”容易选中 VMware/Hyper-V 虚拟网卡，例如 192.168.211.1，
+  #   那个地址玩家连不上。）
+  try {
+    $idx = Get-NetRoute -DestinationPrefix '0.0.0.0/0' -ErrorAction SilentlyContinue |
+           Sort-Object RouteMetric |
+           Select-Object -First 1 -ExpandProperty InterfaceIndex
+    if ($idx) {
+      $ip = (Get-NetIPAddress -AddressFamily IPv4 -InterfaceIndex $idx -ErrorAction SilentlyContinue |
+             Where-Object { $_.IPAddress -notlike '127.*' -and $_.IPAddress -notlike '169.254.*' } |
+             Select-Object -First 1 -ExpandProperty IPAddress)
+    }
+  } catch { }
+  # 回退 1：第一个非回环、非 link-local 的 IPv4
+  if (-not $ip) {
+    try {
+      $ip = (Get-NetIPAddress -AddressFamily IPv4 -ErrorAction SilentlyContinue |
+             Where-Object { $_.IPAddress -notlike '127.*' -and $_.IPAddress -notlike '169.254.*' } |
+             Select-Object -First 1 -ExpandProperty IPAddress)
+    } catch { }
+  }
+  # 回退 2：DNS 解析本机名
+  if (-not $ip) {
+    try {
+      $ip = ([System.Net.Dns]::GetHostAddresses([System.Net.Dns]::GetHostName()) |
+             Where-Object { $_.AddressFamily -eq 'InterNetwork' -and -not ([System.Net.IPAddress]::IsLoopback($_)) } |
+             Select-Object -First 1).IPAddressToString
+    } catch { }
+  }
+  if (-not $ip) { $ip = '127.0.0.1' }
+  return $ip
+}
+
+function Test-PortInUse([int]$p) {
+  # 三判据，任一命中即视为「被占用」（SPEC §七 第 5 条）。
+  # 原实现只在 Get-NetTCPConnection **抛异常**时才回退到试绑；但它在本机实测会
+  # 「成功返回空」——那种情况下旧代码直接 return $false，于是 start 会去 bind 一个
+  # 已被占用的端口 → uvicorn 起不来 → 健康检查超时 exit 3，而 SPEC §二 要求 exit 2。
+  # 纯增益：只增加识别能力，不改变任何既有分支的结论方向。
+  #
+  # 判据 1：Get-NetTCPConnection（快，但会漏报）
+  try {
+    $c = Get-NetTCPConnection -State Listen -LocalPort $p -ErrorAction SilentlyContinue
+    if ($c) { return $true }
+  } catch { }
+
+  # 判据 2：netstat -ano（能覆盖绑定在非回环地址上的监听者）
+  try {
+    $needle = ':' + $p + ' '
+    $hit = netstat -ano | Select-String -SimpleMatch -Pattern $needle -ErrorAction SilentlyContinue |
+           Where-Object { $_.Line.Contains('LISTENING') } | Select-Object -First 1
+    if ($hit) { return $true }
+  } catch { }
+
+  # 判据 3：TcpListener 试绑回环（绑不上 = 被占用）
+  try {
+    $l = New-Object System.Net.Sockets.TcpListener([System.Net.IPAddress]::Loopback, $p)
+    $l.Start(); $l.Stop(); return $false
+  } catch { return $true }
+}
+
+function Get-Health([int]$p) {
+  # 必须 200 且 status=ok 才算健康
+  try {
+    $r = Invoke-WebRequest -UseBasicParsing -Uri ('http://127.0.0.1:' + $p + '/api/health') -TimeoutSec 3 -ErrorAction Stop
+    if ($r.StatusCode -ne 200) { return $null }
+    $j = $null
+    try { $j = $r.Content | ConvertFrom-Json } catch { return $null }
+    if ($j -and ($j.status -eq 'ok')) { return $j }
+    return $null
+  } catch { return $null }
+}
+
+# ------------------------------------------------ 身份判定（SPEC-SERVER-IDENTITY v1.0）
+# 「是不是本部署」与「端口上是否活着」是两件事：
+#   /api/health        -> 只表示「活着」，响应在不同部署/版本间逐字节同构，不可用作身份判据；
+#   /__trpg_server__   -> 部署身份（service / install_dir / deployment_id），本迭代新增。
+# 旧版服务端没有该端点 -> Get-ServerIdentity 返回 $null -> 一律判为「不是本部署」（真冲突）。
+
+function Normalize-Path([string]$p) {
+  # 路径规范化：统一分隔符、去尾分隔符、小写（Windows 路径大小写不敏感）。
+  # 不调用 GetFullPath —— 目标路径可能指向别的部署（甚至不存在的目录），也必须能比较。
+  if (-not $p) { return '' }
+  $s = $p.Trim() -replace '/', '\'
+  while ($s.Length -gt 3 -and $s.EndsWith('\')) { $s = $s.Substring(0, $s.Length - 1) }
+  return $s.ToLowerInvariant()
+}
+
+function Get-PathDigest([string]$p) {
+  # 与 app/web/identity.py 的 path_digest() 同算法：正斜杠归一 + 小写 + 去尾分隔符 -> SHA256 前 16 位。
+  # 仅在 run\deployment.id 落盘失败时兜底，保证身份判定不会因写盘失败而失效。
+  $s = (Normalize-Path $p).Replace('\', '/')
+  $sha = [System.Security.Cryptography.SHA256]::Create()
+  try {
+    $hash = $sha.ComputeHash([System.Text.Encoding]::UTF8.GetBytes($s))
+    $hex = (($hash | ForEach-Object { $_.ToString('x2') }) -join '')
+    return $hex.Substring(0, 16)
+  } finally { $sha.Dispose() }
+}
+
+function Get-OwnDeploymentId {
+  # 本部署的稳定身份：首选 run\deployment.id（UUID v4，首次生成后每次启动复用），
+  # 与服务端 app/web/identity.py 的 ensure_deployment_id() 同源同文件。
+  $f = Join-Path $root 'run\deployment.id'
+  try {
+    if (Test-Path $f) {
+      $raw = (Get-Content -Path $f -ErrorAction SilentlyContinue | Select-Object -First 1)
+      $v = ("$raw").Trim()
+      if ($v) { return $v }
+    }
+    $dir = Split-Path -Parent $f
+    if (-not (Test-Path $dir)) { New-Item -ItemType Directory -Force -Path $dir | Out-Null }
+    $v = ([guid]::NewGuid()).ToString()
+    # 显式不带 BOM，方便 Python / 其它语言直接读取
+    [System.IO.File]::WriteAllText($f, $v, (New-Object System.Text.UTF8Encoding($false)))
+    return $v
+  } catch {
+    return (Get-PathDigest $root)
+  }
+}
+
+function Get-ResponseTextUtf8($r) {
+  # F1 修复：显式按 UTF-8 解码响应体，**不依赖服务端 Content-Type 里的 charset**。
+  # Windows PowerShell 5.1 的 Invoke-WebRequest 在 Content-Type 无 charset 时按
+  # ISO-8859-1 解码（HTTP/1.1 历史默认），会把 install_dir 里的非 ASCII（中文）路径
+  # 解成乱码，使「install_dir 相等」这条直接判据恒为 False —— 并集退化为仅
+  # deployment_id 一支，一旦 run\deployment.id 丢失/竞态，本部署会被误判为「别的部署」。
+  # 服务端始终以 UTF-8 输出 JSON（app/web/identity.py），故这里直接按 UTF-8 解码原始字节。
+  try {
+    if ($r -and $r.RawContentStream) {
+      $t = [System.Text.Encoding]::UTF8.GetString($r.RawContentStream.ToArray())
+      if ($t) { return $t.TrimStart(@([char]0xFEFF)) }
+    }
+  } catch { }
+  # 兜底：取不到原始字节流时退回 .Content（改造前行为）
+  return [string]$r.Content
+}
+
+function Get-ServerIdentity([int]$p) {
+  # SPEC §三 1)：GET /__trpg_server__。只有 service == 'trpg-server' 才算身份响应；
+  # 旧版服务端（无该端点）/ 非 TRPG 进程 / 网络故障 -> 一律返回 $null。
+  try {
+    $r = Invoke-WebRequest -UseBasicParsing -Uri ('http://127.0.0.1:' + $p + '/__trpg_server__') -TimeoutSec 3 -ErrorAction Stop
+    if ($r.StatusCode -ne 200) { return $null }
+    $j = $null
+    try { $j = (Get-ResponseTextUtf8 $r) | ConvertFrom-Json } catch { return $null }
+    if ($j -and ($j.service -eq 'trpg-server')) { return $j }
+    return $null
+  } catch { return $null }
+}
+
+function Test-IsOwnDeployment($ident) {
+  # SPEC §三 2)：必须同时满足
+  #   ① 身份端点可达且 service == "trpg-server"（由 Get-ServerIdentity 保证）；
+  #   ② install_dir 等于本部署根（规范化 + 大小写不敏感）—— 或 deployment_id 等于本部署 id。
+  # 只有本部署才算「已在运行 -> 幂等 exit 0」；别的 TRPG 部署 / 旧版服务端 -> 不是自己 -> exit 2。
+  if (-not $ident) { return $false }
+  $theirDir = Normalize-Path ([string]$ident.install_dir)
+  if ($theirDir -and ($theirDir -eq (Normalize-Path $root))) { return $true }
+  $theirId = ([string]$ident.deployment_id).Trim()
+  if ($theirId) {
+    $ownId = Get-OwnDeploymentId
+    if ($ownId -and ($theirId -eq $ownId)) { return $true }
+  }
+  return $false
+}
+
+function Get-ListenPid([int]$p) {
+  # Get-NetTCPConnection 在本机实测会漏报活着的监听者，必须回退 netstat -ano。
+  try {
+    $v = [int](Get-NetTCPConnection -State Listen -LocalPort $p -ErrorAction SilentlyContinue |
+               Select-Object -First 1 -ExpandProperty OwningProcess)
+    if ($v -gt 0) { return $v }
+  } catch { }
+  try {
+    $needle = ':' + $p + ' '
+    $hit = netstat -ano | Select-String -SimpleMatch -Pattern $needle -ErrorAction SilentlyContinue |
+           Where-Object { $_.Line.Contains('LISTENING') } | Select-Object -First 1
+    if ($hit) {
+      $parts = @(($hit.Line -split ' ') | Where-Object { $_ -ne '' })
+      if ($parts.Count -ge 5) { return [int]$parts[$parts.Count - 1] }
+    }
+  } catch { }
+  return 0
+}
+
+function Write-Discovery([int]$p, [int]$procId) {
+  if ($procId -le 0) {
+    $procId = Get-ListenPid $p
+  }
+  # 落盘 PID：stop.ps1 的兜底完全依赖它；此前全仓无人写 server.pid，导致兜底是死代码。
+  if ($procId -gt 0) {
+    Set-Content -Path $pidfile -Value ("$procId") -Encoding ascii -NoNewline
+  }
+  Set-Content -Path $portfile -Value ("$p") -Encoding ascii -NoNewline
+  $lan = Get-LanIp
+  # SPEC §三 4)：新增 deployment_id 与 install_dir —— 便于客户端与运维判断
+  # 「这个发现文件指向哪个部署」。既有字段（port/host/pid/url/started_at）原样保留。
+  $obj = [ordered]@{
+    port          = $p
+    host          = $bindhost
+    pid           = $procId
+    url           = ('http://' + $lan + ':' + $p)
+    deployment_id = (Get-OwnDeploymentId)
+    install_dir   = $root
+    started_at    = (Get-Date).ToString('yyyy-MM-ddTHH:mm:sszzz')
+  }
+  # 显式不带 BOM，方便客户端 / 其它语言直接解析
+  [System.IO.File]::WriteAllText($jsonfile, ($obj | ConvertTo-Json -Compress), (New-Object System.Text.UTF8Encoding($false)))
+}
+
+# ---------------------------------------------------------------- 打开 UI
+# 统一的开 UI 入口：正常启动 与 幂等（已在运行）两条路径都必须经过这里。
+# 修复点 1：此前开浏览器代码只在脚本最后一行，而三处幂等分支提前 exit 0，
+# 用户双击 start.bat 时不会弹出任何窗口 —— 与「双击即看到界面」的预期不符。
+# 修复点 2：Session 0（SSH/服务方式启动）下直接 Start-Process，窗口开在无桌面的会话里，
+# 用户在自己的桌面上看不见 —— 此时改用计划任务跨会话投递到交互式桌面。
+function Get-CurrentSessionId {
+  try { return [int](Get-Process -Id $PID).SessionId } catch { }
+  try { return [int][System.Diagnostics.Process]::GetCurrentProcess().SessionId } catch { }
+  return -1
+}
+
+function Get-InteractiveSessionId {
+  # explorer.exe 只跑在交互式桌面会话里 —— 用它判定"用户桌面"在哪个会话。
+  try {
+    $ex = @(Get-CimInstance Win32_Process -Filter "Name='explorer.exe'" -ErrorAction Stop |
+            Where-Object { $_.SessionId -gt 0 } | Sort-Object SessionId)
+    if ($ex.Count -gt 0) { return [int]$ex[0].SessionId }
+  } catch { }
+  return -1
+}
+
+function Start-UiCrossSession([string]$url) {
+  # schtasks /TR 对嵌套引号很脆弱，故先落一个临时 .cmd 包装器再调度。
+  # /IT = Interactive only，这是把窗口投到交互桌面的关键。
+  $chrome = Join-Path $env:LOCALAPPDATA 'Google\Chrome\Application\chrome.exe'
+  if (-not (Test-Path -LiteralPath $chrome)) { $chrome = 'C:\Program Files\Google\Chrome\Application\chrome.exe' }
+  if (-not (Test-Path -LiteralPath $chrome)) { $chrome = 'C:\Program Files (x86)\Microsoft\Edge\Application\msedge.exe' }
+  if (-not (Test-Path -LiteralPath $chrome)) {
+    Write-Host '        [跨会话] 未找到 Chrome/Edge 可执行文件，无法跨会话打开。'
+    return $false
+  }
+  $tag    = [guid]::NewGuid().ToString('N').Substring(0,8)
+  $tmpCmd = Join-Path $env:TEMP ('trpg_openui_' + $tag + '.cmd')
+  $tn     = 'TRPG_OpenUI_' + $tag
+  $body = @(
+    '@echo off',
+    ('start "" "' + $chrome + '" --app=' + $url + ' --new-window --no-first-run --no-default-browser-check')
+  )
+  try {
+    [IO.File]::WriteAllLines($tmpCmd, $body, (New-Object System.Text.ASCIIEncoding))
+  } catch {
+    Write-Host ('        [跨会话] 写临时包装脚本失败：' + $_.Exception.Message)
+    return $false
+  }
+  # /ST 必须给一个『未来』时间：否则 schtasks 会往 stderr 写 WARNING，
+  # 而 native stderr 在 $ErrorActionPreference='Stop' 下会被当成终止性错误直接
+  # 抛进 catch，导致『任务其实建好了』却被误判为失败（本机曾实测到）。
+  # 同时本地临时用 Continue，并用『任务是否存在』而非 $LASTEXITCODE 判定。
+  $oldEa = $ErrorActionPreference
+  $ErrorActionPreference = 'Continue'
+  try {
+    $stTime = (Get-Date).AddMinutes(2).ToString('HH:mm')
+    $r1 = schtasks /Create /TN $tn /TR $tmpCmd /SC ONCE /ST $stTime /F /IT /RL LIMITED 2>&1 | Out-String
+    $null = schtasks /Query /TN $tn 2>&1
+    if ($LASTEXITCODE -ne 0) {
+      Write-Host ('        [跨会话] 创建计划任务失败：' + ($r1 -replace '\s+', ' ').Trim())
+      return $false
+    }
+    $r2 = schtasks /Run /TN $tn 2>&1 | Out-String
+    if ($LASTEXITCODE -ne 0) {
+      Write-Host ('        [跨会话] 运行计划任务失败：' + ($r2 -replace '\s+', ' ').Trim())
+      return $false
+    }
+    Start-Sleep -Seconds 3
+    return $true
+  } catch {
+    Write-Host ('        [跨会话] 计划任务方式异常：' + $_.Exception.Message)
+    return $false
+  } finally {
+    $ErrorActionPreference = $oldEa
+    try { $null = schtasks /Delete /TN $tn /F 2>&1 } catch { }
+    try { Remove-Item -LiteralPath $tmpCmd -Force -ErrorAction SilentlyContinue } catch { }
+  }
+
+
+function Start-UiInSession([string]$url) {
+  # 同会话打开：复用 open_ui.ps1 的浏览器探测（不重复实现其逻辑）。
+  $openUi = Join-Path $PSScriptRoot 'open_ui.ps1'
+  if (-not (Test-Path $openUi)) {
+    Write-Host ('        [提示] 未找到 ' + $openUi + '，改用系统默认浏览器打开。')
+    try {
+      Start-Process $url | Out-Null
+      Write-Host ('        [提示] 已用系统默认浏览器打开：' + $url)
+    } catch {
+      Write-Host ('        [提示] 无法自动打开浏览器：' + $_.Exception.Message)
+      Write-Host ('               请手工访问：' + $url)
+    }
+    return
+  }
+  # 不再用【空 catch】也不再用 | Out-Null：失败必须回显可理解的中文提示。
+  try {
+    $uiOut = & powershell -NoProfile -ExecutionPolicy Bypass -File $openUi -Url $url -ServerRoot $root 2>&1
+    foreach ($line in @($uiOut)) { Write-Host ('        ' + $line) }
+    if ($LASTEXITCODE -ne 0) {
+      Write-Host ('        [提示] open_ui.ps1 退出码 ' + $LASTEXITCODE + '，浏览器可能未打开。')
+      Write-Host ('               请手工访问：' + $url)
+    }
+  } catch {
+    Write-Host ('        [提示] 无法自动打开浏览器：' + $_.Exception.Message)
+    Write-Host ('               请手工访问：' + $url)
+  }
+}
+
+function Invoke-OpenUi([int]$p) {
+  if ($env:TRPG_NO_BROWSER -eq '1') {
+    Write-Host '[提示] 已跳过自动打开浏览器（TRPG_NO_BROWSER=1）。'
+    return
+  }
+  $url = 'http://127.0.0.1:' + $p + '/app/'
+  $mySess = Get-CurrentSessionId
+  $uiSess = Get-InteractiveSessionId
+
+  if ($mySess -ne 0 -or $uiSess -le 0) {
+    # 已是交互式会话（用户双击 start.bat 的常见路径）-> 保持原有逻辑不变。
+    if ($mySess -eq 0 -and $uiSess -le 0) {
+      Write-Host '[提示] 当前为非交互会话且未检测到已登录桌面，浏览器可能不可见。'
+    } else {
+      Write-Host ('[提示] 当前为交互式会话（Session ' + $mySess + '），直接打开 UI。')
+    }
+    Start-UiInSession $url
+    return
+  }
+
+  Write-Host ('[提示] 当前为非交互会话（Session 0），检测到交互式桌面在 Session ' + $uiSess + '，改用计划任务跨会话打开 UI ...')
+  if (Start-UiCrossSession $url) {
+    Write-Host ('[提示] 已通过计划任务在会话 ' + $uiSess + ' 打开 UI：' + $url)
+  } else {
+    Write-Host ('[提示] 跨会话打开失败，请手工在桌面访问：' + $url)
+    Write-Host '       （这也是唯一能看到界面的方式：本进程运行在无桌面的 Session 0。）'
+  }
+}
+
+function Show-Info([int]$p) {
+  $lan = Get-LanIp
+  Write-Host ''
+  Write-Host '  ------------------------------------------------------------'
+  Write-Host ('   本机健康检查 : http://127.0.0.1:' + $p + '/api/health')
+  Write-Host ('   主持端       : http://127.0.0.1:' + $p + '/app/')
+  Write-Host ('   玩家端       : http://127.0.0.1:' + $p + '/player/')
+  Write-Host ('   局域网       : http://' + $lan + ':' + $p + '/player/')
+  Write-Host '  ------------------------------------------------------------'
+  Write-Host ('   发现文件     : ' + $portfile)
+  Write-Host ('                  ' + $jsonfile)
+  Write-Host ('   运行日志     : ' + $outlog)
+  Write-Host ('   停止服务     : stop.bat')
+  Write-Host '  ------------------------------------------------------------'
+  Write-Host '   玩家接入：用主持端开桌后，把「连接码」发给玩家即可。'
+  Write-Host '   客户端（玩家页）会自动读取本目录的 run\server.json 找到服务端；'
+  Write-Host '   若客户端不在同机，请手动把上面的局域网地址填进客户端。'
+  Write-Host '  ------------------------------------------------------------'
+  Write-Host ('   局域网其它设备访问需放行入站 TCP ' + $p + '（建议限定来源网段，勿对任意来源开放）:')
+  Write-Host ('     netsh advfirewall firewall add rule name="trpg-' + $p + '" dir=in action=allow protocol=TCP localport=' + $p + ' remoteip=192.168.0.0/16')
+  Write-Host '  ------------------------------------------------------------'
+  Write-Host ''
+}
+
+function Show-LogTail {
+  foreach ($f in @($errlog, $outlog)) {
+    if (Test-Path $f) {
+      Write-Host ('   ---- 日志尾部: ' + $f + ' ----')
+      try { Get-Content -Path $f -Tail 25 -ErrorAction SilentlyContinue | ForEach-Object { Write-Host ('   ' + $_) } } catch { }
+    }
+  }
+}
+
+function Resolve-Python {
+  $cands = @()
+  $py = Get-Command 'py' -ErrorAction SilentlyContinue
+  if ($py) {
+    $cands += ,@($py.Source, @('-3.12'))
+    $cands += ,@($py.Source, @('-3'))
+  }
+  $p = Get-Command 'python' -ErrorAction SilentlyContinue
+  if ($p) { $cands += ,@($p.Source, @()) }
+
+  foreach ($c in $cands) {
+    $exe = [string]$c[0]
+    $pre = @($c[1])
+    if (-not (Test-Path $exe)) { continue }
+    $ver = ''
+    $probeArgs = $pre + @('-c', 'import sys;print(sys.version.split()[0])')
+    try { $ver = (& $exe @probeArgs 2>$null) } catch { continue }
+    if ($LASTEXITCODE -ne 0 -or -not $ver) { continue }
+    $v = ("$ver").Trim()
+    $parts = $v.Split('.')
+    if ($parts.Count -lt 2) { continue }
+    $maj = 0; $min = 0
+    if (-not [int]::TryParse($parts[0], [ref]$maj)) { continue }
+    if (-not [int]::TryParse($parts[1], [ref]$min)) { continue }
+    if ($maj -gt 3 -or ($maj -eq 3 -and $min -ge 12)) {
+      return @{ Exe = $exe; Pre = $pre; Ver = $v }
+    }
+  }
+  return $null
+}
+
+# ---------------------------------------------------------------- 0) 参数解析
+
+$wantPort = 0
+if ($Port -ne '') {
+  $tmp = 0
+  if (-not [int]::TryParse(("$Port").Trim(), [ref]$tmp) -or $tmp -lt 1 -or $tmp -gt 65535) {
+    Write-Host ('[错误] 端口参数无效: "' + $Port + '"（应为 1..65535 的整数）')
+    exit 1
+  }
+  $wantPort = $tmp
+}
+$isExplicit = ($Explicit -or $wantPort -gt 0)
+
+Write-Host '============================================================'
+Write-Host '   TRPG 服务端（主持端）启动'
+Write-Host ('   目录 : ' + $root)
+if ($isExplicit) { Write-Host ('   端口 : ' + $wantPort + '  (显式指定)') }
+else { Write-Host ('   端口 : 自动选择 (' + $portMin + '..' + $portMax + ')') }
+Write-Host '============================================================'
+
+# ---------------------------------------------------------------- 1) 检测 Python
+
+$py = Resolve-Python
+if (-not $py) {
+  Write-Host '[错误] 未找到可用的 Python 3.12+。'
+  Write-Host '        请安装 Python 3.12 或更高版本，并在安装时勾选 "Add Python to PATH"。'
+  exit 1
+}
+Write-Host ('[1/6] Python : ' + $py.Exe + '  (' + $py.Ver + ')')
+
+# ---------------------------------------------------------------- 2) 依赖检查
+
+$depOut = ''
+$depArgs = @($py.Pre) + @('-c', 'import fastapi,uvicorn')
+try { $depOut = (& $py.Exe @depArgs 2>&1) } catch { $depOut = "$_" }
+if ($LASTEXITCODE -ne 0) {
+  Write-Host '[错误] 缺少运行依赖（fastapi / uvicorn）。请先执行:'
+  Write-Host ('         "' + $py.Exe + '" -m pip install -r "' + (Join-Path $root 'requirements.txt') + '"')
+  exit 1
+}
+Write-Host '[2/6] 依赖   : OK'
+
+# ---------------------------------------------------------------- 3) 选端口（含幂等）
+
+$actualPort = 0
+
+if ($isExplicit) {
+  if (Test-PortInUse $wantPort) {
+    # SPEC §三 2) 第 1 处：幂等判据 = 身份端点显示「是本部署」，不再是「/api/health 健康」。
+    $ident = Get-ServerIdentity $wantPort
+    if (Test-IsOwnDeployment $ident) {
+      Write-Host ('[提示] 端口 ' + $wantPort + ' 上已有本部署实例在运行（幂等，不重复启动）。')
+      Write-Discovery $wantPort 0
+      Show-Info $wantPort
+      Invoke-OpenUi $wantPort
+      exit 0
+    }
+    # 不是本部署 -> 真冲突（L13）。绝不落盘发现文件，避免把本部署的 run\server.json
+    # 覆写成他人实例的端口/PID。
+    Write-Host ('[错误] 端口 ' + $wantPort + ' 已被其它进程占用（显式指定端口不会自动改端口）。')
+    $occupantPid = Get-ListenPid $wantPort
+    if ($occupantPid -gt 0) { Write-Host ('        占用者 PID ' + $occupantPid) }
+    if ($ident) {
+      Write-Host '        占用者是别的 TRPG 部署 / 旧版服务端（身份端点显示不是本部署）：'
+      Write-Host ('          service       : ' + [string]$ident.service)
+      Write-Host ('          pid           : ' + [string]$ident.pid)
+      Write-Host ('          install_dir   : ' + [string]$ident.install_dir)
+      Write-Host ('          deployment_id : ' + [string]$ident.deployment_id)
+    } else {
+      Write-Host '        占用者不是 TRPG 服务端（无身份端点 /__trpg_server__，或非本服务）。'
+    }
+    Write-Host '        请释放该端口，或不带参数运行 start.bat 让其自动选端口。'
+    exit 2
+  }
+  $actualPort = $wantPort
+  Write-Host ('[3/6] 端口   : ' + $actualPort + ' 可用')
+}
+else {
+  # 幂等快捷路径 1：run\server.port 指向的实例**仍是本部署**才算幂等。
+  # SPEC §三 2) 第 2 处 + §三 2) 末段：发现文件可能被上一次误判覆写成「别人」的端口
+  # （正是 L13/L15 的产物），此时**不得**落回它，必须继续往下扫描。
+  if (Test-Path $portfile) {
+    $prevRaw = (Get-Content $portfile -ErrorAction SilentlyContinue | Select-Object -First 1)
+    $prevPort = 0
+    if ([int]::TryParse(("$prevRaw").Trim(), [ref]$prevPort) -and $prevPort -gt 0) {
+      if ((Test-PortInUse $prevPort) -and (Test-IsOwnDeployment (Get-ServerIdentity $prevPort))) {
+        Write-Host ('[提示] 本部署服务端已在运行（端口 ' + $prevPort + '，来自 run\server.port，幂等退出）。')
+        Write-Discovery $prevPort 0
+        Show-Info $prevPort
+        Invoke-OpenUi $prevPort
+        exit 0
+      }
+    }
+  }
+
+  # 幂等快捷路径 2：全区间先扫一遍，**只有本部署**已在运行（不论落在哪个端口）才复用。
+  # 不能只依赖 run\server.port —— 它可能被删掉或指向旧端口；那种情况下若直接取
+  # “第一个空闲端口”，就会在已有实例的前提下再起一个，违反“不起第二个实例”。
+  # SPEC §三 2) 第 3 处 + §三 2) 末段：区间内**别的** TRPG 部署/旧版服务端只跳过，
+  # **不得**因「某个端口上有健康实例」就落回它（L15 的根因）。
+  for ($p = $portMin; $p -le $portMax; $p++) {
+    if (-not (Test-PortInUse $p)) { continue }
+    $ident = Get-ServerIdentity $p
+    if (Test-IsOwnDeployment $ident) {
+      Write-Host ('[提示] 端口 ' + $p + ' 上已有本部署实例在运行（幂等，不重复启动）。')
+      Write-Discovery $p 0
+      Show-Info $p
+      Invoke-OpenUi $p
+      exit 0
+    }
+    if ($ident) {
+      Write-Host ('[跳过] 端口 ' + $p + ' 上是别的 TRPG 部署/旧版服务端（install_dir=' + [string]$ident.install_dir + '），不是本部署，继续探测 ...')
+    }
+  }
+
+  # 取第一个空闲端口（被其它进程占用的端口只提示、跳过）
+  for ($p = $portMin; $p -le $portMax; $p++) {
+    if (Test-PortInUse $p) {
+      Write-Host ('[跳过] 端口 ' + $p + ' 被其它进程占用，继续探测 ...')
+      continue
+    }
+    $actualPort = $p
+    break
+  }
+
+  if ($actualPort -eq 0) {
+    Write-Host ('[错误] ' + $portMin + '..' + $portMax + ' 全部被占用，无法自动选择端口。')
+    exit 2
+  }
+  Write-Host ('[3/6] 端口   : ' + $actualPort + ' 可用 (自动选择)')
+}
+
+# ---------------------------------------------------------------- 4) 后台启动
+
+# 用 WMI(Win32_Process.Create) 分离式启动 scripts\_serve.py。
+# 不能只用 Start-Process：它创建的子进程会**继承调用方的 stdout 管道句柄并一直持有**，
+# 导致任何用管道捕获 start.bat 输出的调用方在服务端停止前读不到 EOF
+# （实测阻塞 >30s，杀掉服务端后立即返回）。分离式启动可彻底解耦。
+$serveScript = Join-Path $PSScriptRoot '_serve.py'
+if (-not (Test-Path $serveScript)) {
+  Write-Host ('[错误] 缺少启动器: ' + $serveScript)
+  exit 1
+}
+$preStr = ''
+if ($py.Pre -and @($py.Pre).Count -gt 0) { $preStr = (@($py.Pre) -join ' ') + ' ' }
+$cmdline = '"' + $py.Exe + '" ' + $preStr + '"' + $serveScript + '" ' + $actualPort
+
+Write-Host ('[4/6] 启动   : uvicorn app.main:app --host ' + $bindhost + ' --port ' + $actualPort)
+$serverPid = 0
+$launched = $false
+try {
+  $res = Invoke-CimMethod -ClassName Win32_Process -MethodName Create -ErrorAction Stop -Arguments @{
+           CommandLine      = $cmdline
+           CurrentDirectory = $root
+         }
+  if ($res -and ($res.ReturnValue -eq 0) -and ($res.ProcessId -gt 0)) {
+    $serverPid = [int]$res.ProcessId
+    $launched = $true
+    Write-Host ('         PID  : ' + $serverPid + '  (分离式启动)')
+  } else {
+    Write-Host ('         警告: 分离式启动返回码 ' + $(if ($res) { $res.ReturnValue } else { 'null' }) + '，回退 Start-Process')
+  }
+} catch {
+  Write-Host ('         警告: 分离式启动失败（' + $_.Exception.Message + '），回退 Start-Process')
+}
+
+if (-not $launched) {
+  # 回退路径：功能可用，但调用方若用管道捕获输出，需等服务端退出才会收到 EOF。
+  $spArgs = @($py.Pre + @('-m', 'uvicorn', 'app.main:app', '--host', $bindhost, '--port', ("$actualPort")))
+  try {
+    $proc = Start-Process -FilePath $py.Exe -ArgumentList $spArgs -WorkingDirectory $root `
+            -RedirectStandardOutput $outlog -RedirectStandardError $errlog -WindowStyle Hidden -PassThru -ErrorAction Stop
+  } catch {
+    Write-Host ('[错误] 启动失败: ' + $_.Exception.Message)
+    exit 1
+  }
+  if (-not $proc) {
+    Write-Host ('[错误] uvicorn 进程未能创建，请查看 ' + $outlog)
+    exit 1
+  }
+  $serverPid = $proc.Id
+  Write-Host ('         PID  : ' + $serverPid + '  (Start-Process 回退)')
+}
+
+# ---------------------------------------------------------------- 5) 健康检查（<=30s，必须 200 且 status=ok）
+
+$healthy = $false
+for ($i = 0; $i -lt 30; $i++) {
+  $alive = $true
+  try { $null = Get-Process -Id $serverPid -ErrorAction Stop } catch { $alive = $false }
+  if (-not $alive) { break }
+  if (Get-Health $actualPort) { $healthy = $true; break }
+  Start-Sleep -Seconds 1
+}
+
+if (-not $healthy) {
+  Write-Host ('[错误] 30 秒内健康检查未通过（http://127.0.0.1:' + $actualPort + '/api/health 未返回 200 且 status=ok）。')
+  try { $null = Get-Process -Id $serverPid -ErrorAction Stop } catch { Write-Host ('         uvicorn 进程已退出 (PID ' + $serverPid + ')。') }
+  Show-LogTail
+  exit 3
+}
+Write-Host '[5/6] 健康   : OK'
+
+# ---------------------------------------------------------------- 6) 落盘发现文件
+
+# 以端口上真实监听的 PID 为准（分离式启动的中间进程可能已退出）
+$listenPid = Get-ListenPid $actualPort
+if ($listenPid -gt 0) { $serverPid = $listenPid }
+Write-Discovery $actualPort $serverPid
+Write-Host '[6/6] 发现文件已写入 run\server.port、run\server.json 与 run\server.pid'
+
+Show-Info $actualPort
+
+# 自动打开主持端 UI（设置 TRPG_NO_BROWSER=1 可跳过）。
+Invoke-OpenUi $actualPort
+exit 0

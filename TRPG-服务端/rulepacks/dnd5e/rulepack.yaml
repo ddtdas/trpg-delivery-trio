@@ -1,0 +1,169 @@
+# D&D 5th-edition rulepack -- schema v2 (MIT data file).
+#
+# Replaces the v1 placeholder (version 0.0.1-placeholder, six ability
+# scores and three skills). Now a complete, runnable pack:
+#   * six ability scores 1..20 plus a character level
+#   * the 18 SRD skills, each DERIVED as ability modifier + proficiency
+#     bonus (a card that enters its own value overrides the derivation)
+#   * d20 + bonus vs a DC, with nat-20 crit / nat-1 fumble and
+#     advantage / disadvantage
+#   * hit points, AC, initiative, spell save DC and passive scores
+#   * level advancement (XP thresholds) instead of skill-mark growth
+#
+# Licensing: SRD 5.1 is CC-BY-4.0; no Wizards of the Coast rules text is
+# reproduced here -- these are the numeric tables the engine needs.
+# Self-made registry model: {fn, args} pairs only, no expressions.
+id: dnd5e
+version: "2.0.0"
+display_name: "Dungeons & Dragons 5th Edition (SRD 5.1 table pack)"
+license: "MIT (table data compiled by the TRPG project; SRD 5.1 is CC-BY-4.0, WotC text not included)"
+schema: 2
+# t1's repository indexer reads schema_version (string); app.rules reads
+# schema (int). Both must agree -- see docs/RULEPACKS.md section 3.
+schema_version: "2.0.0"
+
+ruleset:
+  family: dnd
+  edition: "5e"
+  dice: d20
+  resolution_model: d20_dc
+
+attrs:
+  - {name: STR, min: 1, max: 20, abbr: "Strength",     roll: "4d6dl1"}
+  - {name: DEX, min: 1, max: 20, abbr: "Dexterity",    roll: "4d6dl1"}
+  - {name: CON, min: 1, max: 20, abbr: "Constitution", roll: "4d6dl1"}
+  - {name: INT, min: 1, max: 20, abbr: "Intelligence", roll: "4d6dl1"}
+  - {name: WIS, min: 1, max: 20, abbr: "Wisdom",       roll: "4d6dl1"}
+  - {name: CHA, min: 1, max: 20, abbr: "Charisma",     roll: "4d6dl1"}
+  - {name: LEVEL, min: 1, max: 20, abbr: "Character level"}
+
+# SRD skill table. The base is 0 because the real bonus is DERIVED in
+# formulas (ability modifier + proficiency bonus); a card that records a
+# final number wins over the derivation.
+skills:
+  acrobatics: 0
+  animal_handling: 0
+  arcana: 0
+  athletics: 0
+  deception: 0
+  history: 0
+  insight: 0
+  intimidation: 0
+  investigation: 0
+  medicine: 0
+  nature: 0
+  perception: 0
+  performance: 0
+  persuasion: 0
+  religion: 0
+  sleight_of_hand: 0
+  stealth: 0
+  survival: 0
+
+skill_meta:
+  acrobatics: {attr: DEX, category: physical}
+  animal_handling: {attr: WIS, category: exploration}
+  arcana: {attr: INT, category: knowledge}
+  athletics: {attr: STR, category: physical}
+  deception: {attr: CHA, category: social}
+  history: {attr: INT, category: knowledge}
+  insight: {attr: WIS, category: social}
+  intimidation: {attr: CHA, category: social}
+  investigation: {attr: INT, category: exploration}
+  medicine: {attr: WIS, category: knowledge}
+  nature: {attr: INT, category: knowledge}
+  perception: {attr: WIS, category: exploration}
+  performance: {attr: CHA, category: social}
+  persuasion: {attr: CHA, category: social}
+  religion: {attr: INT, category: knowledge}
+  sleight_of_hand: {attr: DEX, category: physical}
+  stealth: {attr: DEX, category: physical}
+  survival: {attr: WIS, category: exploration}
+
+checks:
+  difficulties: [very_easy, easy, medium, hard, very_hard, nearly_impossible]
+  dc_table:
+    very_easy: 5
+    easy: 10
+    medium: 15
+    hard: 20
+    very_hard: 25
+    nearly_impossible: 30
+  critical: {rule: "natural_eq_20"}
+  fumble: {rule: "natural_eq_1"}
+  opposed: {tie_break: [total, bonus, roll]}
+
+resolution:
+  model: d20_dc
+  roll: d20
+  success_rule: total_ge_dc
+  difficulties: [very_easy, easy, medium, hard, very_hard, nearly_impossible]
+  dc_table:
+    very_easy: 5
+    easy: 10
+    medium: 15
+    hard: 20
+    very_hard: 25
+    nearly_impossible: 30
+  critical_natural: 20
+  fumble_natural: 1
+  advantage: true
+  disadvantage: true
+
+combat:
+  initiative: {order_by: dex_desc, tie_break: seeded_d20}
+  attack_default: attack
+  defense_default: ac
+  damage_default: "1d8"
+  armor: {enabled: false}
+  major_wound: {enabled: false}
+
+growth:
+  model: level_advancement
+  xp_per_level: [300, 900, 2700, 6500, 14000, 23000, 34000, 48000, 64000,
+                 85000, 100000, 120000, 140000, 165000, 195000, 225000,
+                 265000, 305000, 355000]
+  proficiency_bonus_by_level: [2, 2, 2, 2, 3, 3, 3, 3, 4, 4, 4, 4, 5, 5, 5, 5, 6, 6, 6, 6]
+
+# Declaration order matters: skill bonuses $ref the ability modifiers and
+# the proficiency bonus, so those must come first.
+formulas:
+  str_mod: {fn: dnd_ability_mod, args: {score: $STR}}
+  dex_mod: {fn: dnd_ability_mod, args: {score: $DEX}}
+  con_mod: {fn: dnd_ability_mod, args: {score: $CON}}
+  int_mod: {fn: dnd_ability_mod, args: {score: $INT}}
+  wis_mod: {fn: dnd_ability_mod, args: {score: $WIS}}
+  cha_mod: {fn: dnd_ability_mod, args: {score: $CHA}}
+  prof_bonus: {fn: dnd_prof_bonus, args: {level: $LEVEL}}
+  hp_max: {fn: dnd_hp_max, args: {hit_die: 8, con_mod: $con_mod, level: $LEVEL}}
+  ac: {fn: dnd_ac, args: {base: 10, dex_mod: $dex_mod}}
+  initiative: {fn: const, args: {value: $dex_mod}}
+  attack: {fn: add, args: {values: [$str_mod, $prof_bonus]}}
+  spell_attack: {fn: add, args: {values: [$int_mod, $prof_bonus]}}
+  spell_dc: {fn: dnd_spell_dc, args: {prof: $prof_bonus, mod: $int_mod}}
+  passive_perception: {fn: dnd_passive, args: {base: 10, mod: $wis_mod, prof: $prof_bonus, proficient: true}}
+  athletics: {fn: add, args: {values: [$str_mod, $prof_bonus]}}
+  acrobatics: {fn: add, args: {values: [$dex_mod, $prof_bonus]}}
+  sleight_of_hand: {fn: add, args: {values: [$dex_mod, $prof_bonus]}}
+  stealth: {fn: add, args: {values: [$dex_mod, $prof_bonus]}}
+  arcana: {fn: add, args: {values: [$int_mod, $prof_bonus]}}
+  history: {fn: add, args: {values: [$int_mod, $prof_bonus]}}
+  investigation: {fn: add, args: {values: [$int_mod, $prof_bonus]}}
+  nature: {fn: add, args: {values: [$int_mod, $prof_bonus]}}
+  religion: {fn: add, args: {values: [$int_mod, $prof_bonus]}}
+  animal_handling: {fn: add, args: {values: [$wis_mod, $prof_bonus]}}
+  insight: {fn: add, args: {values: [$wis_mod, $prof_bonus]}}
+  medicine: {fn: add, args: {values: [$wis_mod, $prof_bonus]}}
+  perception: {fn: add, args: {values: [$wis_mod, $prof_bonus]}}
+  survival: {fn: add, args: {values: [$wis_mod, $prof_bonus]}}
+  deception: {fn: add, args: {values: [$cha_mod, $prof_bonus]}}
+  intimidation: {fn: add, args: {values: [$cha_mod, $prof_bonus]}}
+  performance: {fn: add, args: {values: [$cha_mod, $prof_bonus]}}
+  persuasion: {fn: add, args: {values: [$cha_mod, $prof_bonus]}}
+
+card_rules:
+  required_attrs: [STR, DEX, CON, INT, WIS, CHA, LEVEL]
+  skill_min: -5
+  skill_max: 20
+  allow_custom_skills: true
+  max_skill_total: 400

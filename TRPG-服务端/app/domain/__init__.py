@@ -1,0 +1,1 @@
+"""TRPG domain subpackage (MIT)."""

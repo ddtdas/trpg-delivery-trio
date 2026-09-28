@@ -1,0 +1,30 @@
+id: dead_light
+name: 死光
+display_name: 死光 (Dead Light)
+ruleset: coc7
+version: 1.0.0
+schema_version: 1.0.0
+min_engine_version: 0.1.0
+summary: "自建等价结构: 两张地图 / 十个房间 / 二十二个可交互物 / 十四个事件节点 / 五个 NPC / 八条线索。"
+source_note: 原版本体文档不可得 (captain D-05); 见 source/PROVENANCE.json。
+initial_scene: n_arrival
+counts:
+  areas: 2
+  rooms: 10
+  scenes: 10
+  event_nodes: 14
+  event_edges: 16
+  npcs: 5
+  clues: 8
+files:
+  event_graph: event_graph.yaml
+  clues: clues.yaml
+  npcs:
+    - npcs/npc_garage_attendant.yaml
+    - npcs/npc_trucker.yaml
+    - npcs/npc_innkeeper.yaml
+    - npcs/npc_deputy.yaml
+    - npcs/npc_emilia.yaml
+  maps:
+    - maps/m_garage.json
+    - maps/m_house.json

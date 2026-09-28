@@ -1,0 +1,5 @@
+id: C-SKILL-04
+clause: skill
+question: 调查同一房间反复投骰刷线索？
+ruling: 同一房间同一线索只判一次；失败走三线索保底其他路径。
+source: local-01ch4-5-plus-model

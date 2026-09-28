@@ -1,0 +1,81 @@
+# CoC7 background random tables (MIT data file) - additive, optional.
+# 默认关（wizard_config.random_background_enabled=false）；开启后每栏掷点。
+# 每栏一组选项（8-20 条）；来源为 7e IH 背景栏位（社区编译表数据）。
+schema: "coc.background_tables.v1"
+tables:
+  personal_desc:
+    - {text: 面容清瘦，目光锐利, ref: bt_pd_01}
+    - {text: 体格中等，常穿旧风衣, ref: bt_pd_02}
+    - {text: 蓄须，指节粗大, ref: bt_pd_03}
+    - {text: 娃娃脸，随身带笔记本, ref: bt_pd_04}
+    - {text: 高瘦，走路带风, ref: bt_pd_05}
+    - {text: 圆脸，眼神温和, ref: bt_pd_06}
+    - {text: 面容憔悴，眼下有青影, ref: bt_pd_07}
+    - {text: 皮肤微黑，笑容爽朗, ref: bt_pd_08}
+    - {text: 短发利落，佩戴旧怀表, ref: bt_pd_09}
+    - {text: 衣冠不整但谈吐得体, ref: bt_pd_10}
+  traits:
+    - {text: 固执己见, ref: bt_tr_01}
+    - {text: 好奇心旺盛, ref: bt_tr_02}
+    - {text: 冷静寡言, ref: bt_tr_03}
+    - {text: 乐于助人, ref: bt_tr_04}
+    - {text: 疑心很重, ref: bt_tr_05}
+    - {text: 嗜烟如命, ref: bt_tr_06}
+    - {text: 极度自信, ref: bt_tr_07}
+    - {text: 易受惊吓, ref: bt_tr_08}
+    - {text: 说话戏剧化, ref: bt_tr_09}
+    - {text: 夜猫子, ref: bt_tr_10}
+  beliefs:
+    - {text: 相信科学终将解释一切, ref: bt_bl_01}
+    - {text: 命运不可违抗, ref: bt_bl_02}
+    - {text: 亲眼所见才可信, ref: bt_bl_03}
+    - {text: 家庭高于一切, ref: bt_bl_04}
+    - {text: 世界远比表面危险, ref: bt_bl_05}
+    - {text: 人定胜天, ref: bt_bl_06}
+    - {text: 善恶终有报, ref: bt_bl_07}
+    - {text: 知识就是力量, ref: bt_bl_08}
+  significant_people:
+    - {text: 曾经救过命的警官, ref: bt_sp_01}
+    - {text: 青梅竹马的挚友, ref: bt_sp_02}
+    - {text: 导师般的教授, ref: bt_sp_03}
+    - {text: 神秘的匿名资助人, ref: bt_sp_04}
+    - {text: 相依为命的妹妹, ref: bt_sp_05}
+    - {text: 退伍老班长, ref: bt_sp_06}
+    - {text: 报社主编, ref: bt_sp_07}
+    - {text: 酒馆常客，消息灵通, ref: bt_sp_08}
+  meaningful_locations:
+    - {text: 大学图书馆的密室, ref: bt_ml_01}
+    - {text: 老城区的地下水道, ref: bt_ml_02}
+    - {text: 海边灯塔, ref: bt_ml_03}
+    - {text: 祖父留下的老宅, ref: bt_ml_04}
+    - {text: 深夜的火车站台, ref: bt_ml_05}
+    - {text: 山中的狩猎小屋, ref: bt_ml_06}
+    - {text: 废弃的纺织厂, ref: bt_ml_07}
+    - {text: 教堂地下墓穴, ref: bt_ml_08}
+  treasured_possessions:
+    - {text: 父亲的旧怀表, ref: bt_tp_01}
+    - {text: 整箱泛黄的剪报, ref: bt_tp_02}
+    - {text: 一把老式左轮, ref: bt_tp_03}
+    - {text: 绝版的地图册, ref: bt_tp_04}
+    - {text: 熏黑的煤油灯, ref: bt_tp_05}
+    - {text: 手写的家族族谱, ref: bt_tp_06}
+    - {text: 保存完好的合影, ref: bt_tp_07}
+    - {text: 原版《死灵之书》手抄本, ref: bt_tp_08}
+  wounds_scars:
+    - {text: 左臂有烧伤旧疤, ref: bt_ws_01}
+    - {text: 额头有道浅疤, ref: bt_ws_02}
+    - {text: 右膝行动不便, ref: bt_ws_03}
+    - {text: 眼睑下有一道细痕, ref: bt_ws_04}
+    - {text: 背部有大片晒斑, ref: bt_ws_05}
+    - {text: 右手少了一截小指, ref: bt_ws_06}
+    - {text: 无显著伤痕, ref: bt_ws_07}
+    - {text: 肩胛处一道刀伤疤痕, ref: bt_ws_08}
+  phobias_manias:
+    - {text: 恐高症, ref: bt_pm_01}
+    - {text: 幽闭恐惧症, ref: bt_pm_02}
+    - {text: 强迫整理癖, ref: bt_pm_03}
+    - {text: 怕黑, ref: bt_pm_04}
+    - {text: 恐水症, ref: bt_pm_05}
+    - {text: 收集癖, ref: bt_pm_06}
+    - {text: 害怕镜子, ref: bt_pm_07}
+    - {text: 无显著恐惧或狂躁, ref: bt_pm_08}

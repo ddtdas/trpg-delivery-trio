@@ -1,0 +1,5 @@
+id: C-SKILL-01
+clause: skill
+question: 技能值超过100怎么算？
+ruling: 仍掷1d100，超出部分视为加值缓冲；01恒大成功不受影响。
+source: local-01ch4-5-plus-model

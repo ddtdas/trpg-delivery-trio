@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>TRPG NPC 控制台（静态示例页 · 直连 REST）</title>
+<style>
+:root{--bg:#0f1115;--fg:#e6e8ee;--dim:#8b93a7;--card:#171a21;--line:#262b36;--ok:#3fb950;--warn:#d29922;--bad:#f85149;--acc:#58a6ff}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font:14px/1.55 -apple-system,"Segoe UI","Microsoft YaHei",sans-serif}
+header{padding:14px 20px;border-bottom:1px solid var(--line);display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+h1{font-size:15px;margin:0;font-weight:600}
+.tag{font-size:11px;color:var(--dim);border:1px solid var(--line);border-radius:10px;padding:1px 8px}
+main{padding:16px 20px;display:grid;grid-template-columns:1fr 1fr;gap:16px;align-items:start}
+@media(max-width:900px){main{grid-template-columns:1fr}}
+section{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:12px 14px}
+section h2{font-size:13px;margin:0 0 10px;font-weight:600;color:var(--dim);letter-spacing:.04em}
+input,textarea,button{font:inherit;background:#0b0d12;color:var(--fg);border:1px solid var(--line);border-radius:6px;padding:6px 8px}
+button{cursor:pointer}
+button:hover{border-color:var(--acc)}
+button.p{background:#12351d;border-color:#1f6f34}
+button.d{background:#3a1517;border-color:#7d2b2f}
+.row{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:8px}
+.npc{border:1px solid var(--line);border-radius:8px;padding:9px 11px;margin-bottom:8px}
+.npc .nm{font-weight:600}
+.npc .rl{color:var(--dim);font-size:12px}
+.pill{font-size:11px;border-radius:9px;padding:1px 8px;border:1px solid var(--line);margin-left:6px}
+.on{color:var(--ok);border-color:#1f6f34}.off{color:var(--dim)}
+.tk{color:var(--warn);border-color:#6b5313}
+.card{border:1px solid var(--line);border-left:3px solid var(--warn);border-radius:8px;padding:9px 11px;margin-bottom:8px}
+.card .ln{white-space:pre-wrap;margin:5px 0}
+.meta{font-size:11px;color:var(--dim);font-family:ui-monospace,Consolas,monospace}
+.mem{border-bottom:1px dashed var(--line);padding:5px 0;font-size:12px}
+.empty{color:var(--dim);font-size:12px}
+#log{white-space:pre-wrap;font-family:ui-monospace,Consolas,monospace;font-size:11px;color:var(--dim);max-height:200px;overflow:auto}
+.err{color:var(--bad)}
+</style>
+</head>
+<body>
+<header>
+  <h1>NPC 控制台</h1>
+  <span class="tag">静态示例页 · 直连 REST · 不经 vite 构建</span>
+  <span class="tag" id="tipTag">tip —</span>
+</header>
+<main>
+  <div>
+    <section>
+      <h2>连接</h2>
+      <div class="row"><input id="camp" placeholder="campaign id" style="flex:1;min-width:180px">
+        <button id="btnLoad">加载</button><button id="btnAuto">自动刷新: 关</button></div>
+      <div class="row"><input id="tok" placeholder="主持人 token (webapp)" style="flex:1;min-width:180px" type="password"></div>
+      <div class="meta">GET /api/campaigns/{c}/npc/state（KP 鉴权）· 直连本服务，无 mock</div>
+    </section>
+    <section style="margin-top:16px">
+      <h2>NPC 状态 <span class="meta" id="npcCount"></span></h2>
+      <div id="npcs"><div class="empty">未加载</div></div>
+    </section>
+    <section style="margin-top:16px">
+      <h2>立刻指定行为（绕过自动生成）</h2>
+      <div class="row"><input id="dNpc" placeholder="npc_id" style="width:140px">
+        <input id="dLine" placeholder="要 NPC 说的话" style="flex:1;min-width:160px">
+        <button id="btnDirect">指定</button></div>
+    </section>
+  </div>
+  <div>
+    <section>
+      <h2>待审候选 <span class="meta" id="pendCount"></span></h2>
+      <div id="pend"><div class="empty">未加载</div></div>
+    </section>
+    <section style="margin-top:16px">
+      <h2>记忆面板</h2>
+      <div class="row"><input id="mNpc" placeholder="npc_id" style="width:140px"><button id="btnMem">读取记忆</button></div>
+      <div id="mem"><div class="empty">未加载</div></div>
+    </section>
+    <section style="margin-top:16px">
+      <h2>请求日志（原始）</h2>
+      <div id="log"></div>
+    </section>
+  </div>
+</main>
+<script>
+const $ = (id) => document.getElementById(id);
+let TOKEN = localStorage.getItem("trpg_kp_token") || "";
+let CAMP  = localStorage.getItem("trpg_camp") || "";
+let timer = null;
+$("tok").value = TOKEN; $("camp").value = CAMP;
+
+function log(s, cls) {
+  const d = document.createElement("div");
+  if (cls) d.className = cls;
+  d.textContent = new Date().toLocaleTimeString() + "  " + s;
+  $("log").prepend(d);
+}
+async function api(path, opts) {
+  opts = opts || {};
+  const h = Object.assign({ "Authorization": "Bearer " + TOKEN }, opts.headers || {});
+  if (opts.body) h["Content-Type"] = "application/json";
+  const t0 = performance.now();
+  const r = await fetch(path, { method: opts.method || "GET", headers: h, body: opts.body });
+  const ms = (performance.now() - t0).toFixed(1);
+  let j = null;
+  try { j = await r.json(); } catch (e) { j = null; }
+  log((opts.method || "GET") + " " + path + " -> " + r.status + "  " + ms + "ms");
+  if (!r.ok) { log("  " + JSON.stringify(j), "err"); throw new Error(r.status); }
+  return j;
+}
+function save() { TOKEN = $("tok").value.trim(); CAMP = $("camp").value.trim();
+  localStorage.setItem("trpg_kp_token", TOKEN); localStorage.setItem("trpg_camp", CAMP); }
+
+function npcCard(nid, meta, table) {
+  const st = (table && table[nid]) || {};
+  const el = document.createElement("div"); el.className = "npc";
+  const nm = document.createElement("div");
+  const b = document.createElement("span"); b.className = "nm";
+  b.textContent = (meta && meta.name) ? meta.name : nid;
+  nm.appendChild(b);
+  const rl = document.createElement("span"); rl.className = "rl";
+  rl.textContent = " " + nid + (meta && meta.role ? " · " + meta.role : "") + (meta && meta.has_card === false ? " · 无卡" : "");
+  nm.appendChild(rl);
+  const pa = document.createElement("span"); pa.className = "pill " + (st.auto === false ? "off" : "on");
+  pa.textContent = "自动 " + (st.auto === false ? "关" : "开"); nm.appendChild(pa);
+  const pt = document.createElement("span"); pt.className = "pill " + (st.takeover ? "tk" : "off");
+  pt.textContent = "接管 " + (st.takeover ? "是" : "否"); nm.appendChild(pt);
+  el.appendChild(nm);
+  if (meta && meta.hooks && meta.hooks.length) {
+    const hk = document.createElement("div"); hk.className = "meta";
+    hk.textContent = "关联场景节点: " + meta.hooks.join("  ");
+    el.appendChild(hk);
+  }
+  const btns = document.createElement("div"); btns.className = "row"; btns.style.marginTop = "6px";
+  const ba = document.createElement("button"); ba.textContent = "切换自动";
+  ba.onclick = async () => { save();
+    await api("/api/campaigns/" + encodeURIComponent(CAMP) + "/npc/auto", { method: "POST",
+      body: JSON.stringify({ npc_id: nid, auto: st.auto === false }) }); refresh(); };
+  const bt = document.createElement("button"); bt.textContent = "切换接管";
+  bt.onclick = async () => { save();
+    await api("/api/campaigns/" + encodeURIComponent(CAMP) + "/npc/" + encodeURIComponent(nid) + "/takeover",
+      { method: "POST", body: JSON.stringify({ takeover: !st.takeover }) }); refresh(); };
+  btns.appendChild(ba); btns.appendChild(bt); el.appendChild(btns);
+  return el;
+}
+
+function pendCard(p) {
+  const el = document.createElement("div"); el.className = "card";
+  const m = document.createElement("div"); m.className = "meta";
+  m.textContent = p.npc_id + " · " + p.proposal_id + " · " + (p.status || "") +
+    (p.tone ? " · tone=" + p.tone : "") + (p.conceal ? " · conceal=" + p.conceal : "") +
+    (p.memory_refs && p.memory_refs.length ? " · mem=" + p.memory_refs.length : "");
+  el.appendChild(m);
+  const ln = document.createElement("div"); ln.className = "ln"; ln.textContent = p.line || "";
+  el.appendChild(ln);
+  const ta = document.createElement("textarea"); ta.value = p.line || "";
+  ta.style.cssText = "width:100%;min-height:44px;margin:4px 0"; ta.placeholder = "改写后的台词（改写批准用）";
+  el.appendChild(ta);
+  const row = document.createElement("div"); row.className = "row";
+  const b1 = document.createElement("button"); b1.className = "p"; b1.textContent = "批准";
+  b1.onclick = () => decide(p.proposal_id, "approve", "");
+  const b2 = document.createElement("button"); b2.textContent = "改写批准";
+  b2.onclick = () => decide(p.proposal_id, "edit", ta.value);
+  const b3 = document.createElement("button"); b3.className = "d"; b3.textContent = "驳回";
+  b3.onclick = () => decide(p.proposal_id, "reject", "");
+  row.appendChild(b1); row.appendChild(b2); row.appendChild(b3); el.appendChild(row);
+  return el;
+}
+async function decide(pid, decision, edited) {
+  save();
+  const body = { proposal_id: pid, decision: decision };
+  if (decision === "edit") body.edited_text = edited;
+  const j = await api("/api/campaigns/" + encodeURIComponent(CAMP) + "/approvals",
+    { method: "POST", body: JSON.stringify(body) });
+  log("  -> " + JSON.stringify(j)); refresh();
+}
+
+async function refresh() {
+  save();
+  if (!CAMP || !TOKEN) { log("缺 campaign 或 token", "err"); return; }
+  let s;
+  try { s = await api("/api/campaigns/" + encodeURIComponent(CAMP) + "/npc/state"); }
+  catch (e) { return; }
+  $("tipTag").textContent = "tip " + s.tip + "（事件流游标）";
+  const meta = s.npc_meta || {}, table = (s.settings && s.settings.table) || {};
+  const ids = new Set();
+  Object.keys(meta).forEach(k => ids.add(k));
+  Object.keys(table).forEach(k => { if (k !== "*") ids.add(k); });
+  Object.keys(s.player_visible_lines || {}).forEach(k => ids.add(k));
+  const box = $("npcs"); box.innerHTML = "";
+  if (!ids.size) box.innerHTML = '<div class="empty">该 campaign 暂无 NPC</div>';
+  ids.forEach(id => box.appendChild(npcCard(id, meta[id], table)));
+  $("npcCount").textContent = ids.size + " 个";
+  const pend = s.pending || [];
+  $("pendCount").textContent = pend.length + " 条";
+  const pb = $("pend"); pb.innerHTML = "";
+  if (!pend.length) pb.innerHTML = '<div class="empty">无待审候选</div>';
+  pend.forEach(p => pb.appendChild(pendCard(p)));
+}
+async function loadMem() {
+  save();
+  const nid = $("mNpc").value.trim(); if (!nid) return;
+  const j = await api("/api/campaigns/" + encodeURIComponent(CAMP) + "/npc/" + encodeURIComponent(nid) + "/memory");
+  const box = $("mem"); box.innerHTML = "";
+  const d = j.digest || {};
+  const head = document.createElement("div"); head.className = "meta";
+  head.textContent = "count=" + d.count + " attitude=" + d.attitude + " met=" + JSON.stringify(d.met || []);
+  box.appendChild(head);
+  (j.memories || []).forEach(m => {
+    const el = document.createElement("div"); el.className = "mem";
+    el.textContent = "[" + m.kind + "/" + m.source + "] " + m.text;
+    box.appendChild(el);
+  });
+  if (!(j.memories || []).length) box.innerHTML += '<div class="empty">无记忆</div>';
+}
+$("btnLoad").onclick = refresh;
+$("btnMem").onclick = loadMem;
+$("btnAuto").onclick = () => {
+  if (timer) { clearInterval(timer); timer = null; $("btnAuto").textContent = "自动刷新: 关"; }
+  else { timer = setInterval(refresh, 3000); $("btnAuto").textContent = "自动刷新: 开(3s)"; }
+};
+$("btnDirect").onclick = async () => {
+  save();
+  const j = await api("/api/campaigns/" + encodeURIComponent(CAMP) + "/npc/direct", { method: "POST",
+    body: JSON.stringify({ npc_id: $("dNpc").value.trim(), line: $("dLine").value.trim() }) });
+  log("  -> " + JSON.stringify(j)); refresh();
+};
+if (CAMP && TOKEN) refresh();
+</script>
+</body>
+</html>

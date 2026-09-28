@@ -1,0 +1,12 @@
+id: npc_emilia
+name: 艾米莉亚·韦伯
+role: 失踪者
+visibility: kp
+lines:
+  - 别让它照到你。
+  - 灯芯是我点的。
+traits:
+  nerve: broken
+  knows:
+    - c_emilia_letter
+    - c_deadlight_source

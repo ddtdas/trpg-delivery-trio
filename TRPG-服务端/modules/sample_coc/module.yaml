@@ -1,0 +1,24 @@
+# 示例模组《图书馆搜证》(CoC 短剧本)
+# schema: ModuleManifest v1 — 纯内容文件，无代码。
+# 引用关系: event_graph.yaml (nodes/edges) -> clues.yaml (clue id) / npcs/*.yaml (npc id) / maps/*.json (map id)
+id: sample_coc
+ruleset: coc7
+mode: trpg
+version: "1.0.0"
+license: "MIT (本模组为项目自研原创内容)"
+name: "图书馆搜证"
+era: "1920s 美国阿卡姆"
+players: "1 KP + 3 PL"
+duration_min: 30
+summary: "深夜的密斯卡托尼克大学图书馆发生窃案:一封 17 世纪密信不翼而飞。调查员受馆长委托,在闭馆前的 30 分钟内搜证,找出真凶并寻回密信。"
+world_intro: "1925 年深秋,阿卡姆。密斯卡托尼克大学图书馆古籍室收藏的一封殖民时代密信在展出前夜失窃。馆长封锁了消息,只请来三位可信的调查员。窗外起雾,闭馆的钟声将在 30 分钟后敲响。"
+initial_scene: n1_front_desk
+starting_nodes: [n1_front_desk]
+endings:
+  - {id: e_good, label: "寻回密信", condition: "抵达 n9_truth 且持有 c6_letter"}
+  - {id: e_bad, label: "密信遗失", condition: "n9_truth 揭示后未能指认真凶或密信未找回"}
+files:
+  event_graph: "event_graph.yaml"
+  clues: "clues.yaml"
+  npcs: ["npcs/director.yaml", "npcs/clerk.yaml", "npcs/borrower.yaml"]
+  maps: ["maps/library.json"]
